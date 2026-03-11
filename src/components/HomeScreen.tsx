@@ -1,11 +1,10 @@
 import React from 'react';
-import { 
-  Waves, 
-  Zap, 
-  Shield, 
-  Search, 
-  BarChart3, 
-  MessageSquare, 
+import {
+  Waves,
+  Zap,
+  Shield,
+  Search,
+  MessageSquare,
   ArrowRight,
   Droplets,
   Anchor,
@@ -13,6 +12,7 @@ import {
 } from 'lucide-react';
 import { ViewId } from '../types';
 import { cn } from '../lib/utils';
+import { DexTrendingFeed } from './DexTrendingFeed';
 
 interface HomeScreenProps {
   onNavigate: (view: ViewId) => void;
@@ -112,6 +112,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
           </button>
         ))}
       </div>
+
+      {/* Trending Feed */}
+      <DexTrendingFeed onNavigate={onNavigate} />
 
       {/* System Stats */}
       <div className="grid grid-cols-3 gap-6">
