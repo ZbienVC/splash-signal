@@ -34,7 +34,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'signalos-secret-key';
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = parseInt(process.env.PORT || '3000', 10);
   const db = new Database('signalos_v2.db');
   
   console.log('[Server] Initializing database schema (Part 1)...');
