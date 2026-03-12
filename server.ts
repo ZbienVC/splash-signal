@@ -38,6 +38,11 @@ async function startServer() {
   const dbPath = process.env.NODE_ENV === 'production' 
     ? '/app/data/signalos.db' 
     : 'signalos_v2.db';
+  // Ensure data directory exists in production
+  if (process.env.NODE_ENV === 'production') {
+    const fs = await import('fs');
+    fs.mkdirSync('/app/data', { recursive: true });
+  }
   const db = new Database(dbPath);
   
   console.log('[Server] Initializing database schema (Part 1)...');
