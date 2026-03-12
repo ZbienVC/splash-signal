@@ -1,6 +1,7 @@
 ﻿import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: (typeof window === "undefined" ? process.env.GEMINI_API_KEY as string : "") });
+let ai: any = null;
+try { if (typeof window === "undefined") { ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY as string) }); } } catch(e) { console.warn("[Gemini] Not available in browser context"); }
 
 export type TraderType = 'Sniper' | 'Whale' | 'Bot' | 'Retail' | 'Dev wallet';
 
