@@ -1,7 +1,7 @@
-import { Type, GoogleGenAI } from "@google/genai";
+﻿import { Type, GoogleGenAI } from "@google/genai";
 import { Evidence } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY as string) });
+const ai = new GoogleGenAI({ apiKey: (typeof window === "undefined" ? process.env.GEMINI_API_KEY as string : "") });
 
 export interface SmartAlert {
   id: string;

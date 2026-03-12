@@ -1,7 +1,7 @@
-import { GoogleGenAI, Type } from "@google/genai";
+﻿import { GoogleGenAI, Type } from "@google/genai";
 
 const getAI = () => {
-  return new GoogleGenAI({ apiKey: (process.env.GEMINI_API_KEY as string) });
+  return new GoogleGenAI({ apiKey: (typeof window === "undefined" ? process.env.GEMINI_API_KEY as string : "") });
 };
 
 async function callGeminiWithRetry(params: any, retries = 3, delay = 2000) {

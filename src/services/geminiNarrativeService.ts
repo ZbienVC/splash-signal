@@ -1,11 +1,11 @@
-import { GoogleGenAI, Type } from "@google/genai";
+﻿import { GoogleGenAI, Type } from "@google/genai";
 
 const getAI = () => {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     console.warn('[NarrativeAnalysis] GEMINI_API_KEY not found');
   }
-  return new GoogleGenAI({ apiKey: apiKey || '' });
+  return new GoogleGenAI({ apiKey: (typeof window === "undefined" ? (apiKey || "") : "") });
 };
 
 export interface NarrativeData {
