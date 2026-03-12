@@ -306,6 +306,13 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
 
+  // Serve frontend static files
+  const pathMod = await import('path');
+  const urlMod = await import('url');
+  const __dirname = pathMod.default.dirname(urlMod.fileURLToPath(import.meta.url));
+  const distPath = pathMod.default.join(__dirname, 'dist');
+  app.use(express.static(distPath));
+
   // --- Auth Middleware ---
   const authenticate = (req: any, res: any, next: any) => {
     const token = req.headers.authorization?.split(' ')[1];
@@ -1571,6 +1578,11 @@ async function startServer() {
       console.error('[NarrativeEngine] Update failed:', e);
     }
   }, 15 * 60 * 1000);
+
+  // SPA fallback — serve index.html for all non-API routes
+  app.get('*', (_req, res) => {
+    res.sendFile(pathMod.default.join(distPath, 'index.html'));
+  });
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`[Server] SignalOS Full-Stack Server running on port ${PORT}`);
