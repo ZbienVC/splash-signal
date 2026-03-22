@@ -18,8 +18,8 @@ export const Card: React.FC<CardProps> = ({
   onClick,
   ...props
 }) => {
-  // Use exact production patterns from MarketOverview/Settings
-  const baseStyles = 'bg-slate-panel border border-slate-border rounded-2xl';
+  // Use exact production patterns from MarketOverview/Settings  
+  const baseStyles = 'bg-slate-900 border border-slate-700 rounded-2xl';
   
   const variantStyles = {
     default: '',

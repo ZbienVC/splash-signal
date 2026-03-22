@@ -30,8 +30,8 @@ export const Section: React.FC<SectionProps> = ({
 
   const variantStyles = {
     default: spacingStyles[spacing],
-    card: cn('bg-slate-panel border border-slate-border rounded-2xl p-6', spacingStyles[spacing]),
-    bordered: cn('border border-slate-border rounded-lg p-6', spacingStyles[spacing])
+    card: cn('bg-slate-900 border border-slate-700 rounded-2xl p-6', spacingStyles[spacing]),
+    bordered: cn('border border-slate-700 rounded-lg p-6', spacingStyles[spacing])
   };
 
   return (

@@ -151,7 +151,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
               <button
                 key={tool.id}
                 onClick={() => onNavigate(tool.id as ViewId)}
-                className="bg-slate-panel/50 border border-slate-border rounded-2xl p-6 text-left group hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col h-full"
+                className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6 text-left group hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col h-full"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -165,7 +165,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
                 </div>
                 <h3 className="text-xl font-display font-bold mb-2 text-white">{tool.title}</h3>
                 <p className="text-sm text-sky-200/50 mb-6 flex-1">{tool.desc}</p>
-                <div className="pt-4 border-t border-slate-border/50 flex items-center justify-between">
+                <div className="pt-4 border-t border-slate-700/50 flex items-center justify-between">
                   <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{tool.insight}</span>
                   <ArrowRight size={14} className="text-slate-500 group-hover:text-primary transition-colors" />
                 </div>
@@ -186,14 +186,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
               <button
                 key={tool.id}
                 onClick={() => onNavigate(tool.id as ViewId)}
-                className="bg-slate-panel/50 border border-slate-border rounded-2xl p-6 text-left group hover:border-slate-border hover:bg-slate-panel/80 transition-all flex flex-col h-full"
+                className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6 text-left group hover:border-slate-700 hover:bg-slate-900/80 transition-all flex flex-col h-full"
               >
                 <div className="w-12 h-12 rounded-xl bg-slate-500/10 text-slate-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <tool.icon size={24} />
                 </div>
                 <h3 className="text-xl font-display font-bold mb-2 text-white">{tool.title}</h3>
                 <p className="text-sm text-sky-200/50 mb-6 flex-1">{tool.desc}</p>
-                <div className="pt-4 border-t border-slate-border/50 flex items-center justify-between">
+                <div className="pt-4 border-t border-slate-700/50 flex items-center justify-between">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{tool.insight}</span>
                   <ArrowRight size={14} className="text-slate-500 group-hover:text-slate-400 transition-colors" />
                 </div>
@@ -215,7 +215,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
           icon={<Monitor size={14} />}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-slate-panel/30 border border-slate-border rounded-2xl p-6 flex items-center gap-4">
+            <div className="bg-slate-900/30 border border-slate-700 rounded-2xl p-6 flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
                 <Anchor size={20} />
               </div>
@@ -224,7 +224,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
                 <div className="text-xl font-display font-bold text-white">99.98%</div>
               </div>
             </div>
-            <div className="bg-slate-panel/30 border border-slate-border rounded-2xl p-6 flex items-center gap-4">
+            <div className="bg-slate-900/30 border border-slate-700 rounded-2xl p-6 flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                 <Compass size={20} />
               </div>
@@ -233,7 +233,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
                 <div className="text-xl font-display font-bold text-white">Global</div>
               </div>
             </div>
-            <div className="bg-slate-panel/30 border border-slate-border rounded-2xl p-6 flex items-center gap-4">
+            <div className="bg-slate-900/30 border border-slate-700 rounded-2xl p-6 flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center">
                 <Shield size={20} />
               </div>

@@ -142,9 +142,9 @@
     @apply space-y-8 lg:space-y-12;
   }
 
-  /* Panel/Card styles - Match production patterns */
+  /* Panel/Card styles - Use actual color values */
   .panel-base {
-    @apply bg-slate-panel border border-slate-border rounded-2xl;
+    @apply bg-slate-900 border border-slate-700 rounded-2xl;
   }
   
   .panel-interactive {
