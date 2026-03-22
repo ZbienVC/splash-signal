@@ -142,19 +142,7 @@
     @apply space-y-8 lg:space-y-12;
   }
 
-  /* Panel/Card styles - Use actual color values */
-  .panel-base {
-    @apply bg-slate-900 border border-slate-700 rounded-2xl;
-  }
-  
-  .panel-interactive {
-    @apply panel-base transition-all 
-           hover:border-primary/50 hover:bg-primary/5 cursor-pointer group;
-  }
-  
-  .panel-elevated {
-    @apply panel-base shadow-lg;
-  }
+  /* Panel/Card styles removed - using direct Tailwind classes in components */
 
   /* Text hierarchy - Match production patterns */
   .text-decision {
