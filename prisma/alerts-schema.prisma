@@ -1,0 +1,118 @@
+// Signal Engine - Alerts Schema Addition
+// Add to existing schema.prisma
+
+// ALERTS SYSTEM
+model Alert {
+  id        String   @id @default(cuid())
+  
+  // Alert Classification
+  type      AlertType
+  severity  AlertSeverity
+  category  AlertCategory
+  
+  // Target Information
+  tokenId   String
+  token     Token    @relation(fields: [tokenId], references: [id])
+  
+  // Alert Content
+  title     String
+  message   String
+  data      Json?    // Additional alert data
+  
+  // Trigger Information  
+  triggeredBy String  // What caused this alert
+  conditions  Json    // Conditions that triggered alert
+  confidence  Float   // 0-1 confidence in alert
+  
+  // Status Tracking
+  status    AlertStatus @default(ACTIVE)
+  isRead    Boolean  @default(false)
+  isSent    Boolean  @default(false)
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  resolvedAt DateTime?
+  expiresAt  DateTime? // Auto-expire time
+  
+  // User Targeting (for future multi-user)
+  userId    String?
+  
+  @@map("alerts")
+  @@index([tokenId, type, createdAt])
+  @@index([severity, status, createdAt])
+}
+
+enum AlertType {
+  ENTRY_SIGNAL
+  EXIT_SIGNAL  
+  RISK_WARNING
+  SYSTEM_ALERT
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+  EMERGENCY
+}
+
+enum AlertCategory {
+  // Entry Categories
+  VOLUME_SURGE
+  ALPHA_SPIKE
+  SMART_MONEY_ENTRY
+  HOLDER_GROWTH
+  NARRATIVE_MOMENTUM
+  
+  // Exit Categories
+  DEV_SELL
+  WHALE_DUMP
+  VOLUME_DECLINE
+  LIQUIDITY_DRAIN
+  BOT_SELLING
+  
+  // Risk Categories
+  SNIPER_CONCENTRATION
+  UNLOCKED_LIQUIDITY
+  CONTRACT_RISK
+  RUG_WARNING
+  PUMP_DUMP
+}
+
+enum AlertStatus {
+  ACTIVE
+  RESOLVED
+  EXPIRED
+  DISMISSED
+}
+
+// ALERT SUBSCRIPTIONS (for targeting)
+model AlertSubscription {
+  id        String   @id @default(cuid())
+  
+  userId    String
+  tokenId   String?  // Null = all tokens
+  
+  // Subscription Preferences
+  alertTypes    AlertType[]
+  severityLevel AlertSeverity @default(MEDIUM) // Minimum severity
+  
+  // Delivery Preferences
+  inApp      Boolean @default(true)
+  email      Boolean @default(false)
+  telegram   Boolean @default(false)
+  discord    Boolean @default(false)
+  webhook    String? // Custom webhook URL
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean @default(true)
+  
+  @@map("alert_subscriptions")
+  @@unique([userId, tokenId])
+}
+
+// Add relation to existing Token model
+// tokens Alert[]

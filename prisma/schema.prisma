@@ -1,0 +1,215 @@
+// Splash Signal - Data Ingestion Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// TOKEN DATA
+model Token {
+  id          String   @id @default(cuid())
+  address     String   @unique
+  symbol      String
+  name        String
+  chainId     Int      @default(1) // 1=ETH, 56=BSC, 1399=SOL
+  
+  // Market Data
+  price       Float?
+  marketCap   Float?
+  volume24h   Float?
+  liquidity   Float?
+  
+  // Contract Info
+  verified    Boolean  @default(false)
+  ownershipRenounced Boolean @default(false)
+  isProxy     Boolean  @default(false)
+  buyTax      Float?
+  sellTax     Float?
+  
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastScanAt  DateTime?
+  
+  // Relations
+  wallets     WalletHolding[]
+  transactions Transaction[]
+  liquidityPools LiquidityPool[]
+  priceHistory PriceHistory[]
+  
+  @@map("tokens")
+}
+
+// WALLET DATA
+model Wallet {
+  id        String   @id @default(cuid())
+  address   String   @unique
+  
+  // Classification
+  type      WalletType @default(UNKNOWN)
+  isDevWallet Boolean @default(false)
+  isSniper    Boolean @default(false)
+  riskScore   Float?   // 0-100 risk rating
+  
+  // Metadata  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastScanAt DateTime?
+  
+  // Relations
+  holdings    WalletHolding[]
+  transactions Transaction[]
+  
+  @@map("wallets")
+}
+
+enum WalletType {
+  UNKNOWN
+  DEV
+  SNIPER
+  WHALE
+  NORMAL
+  EXCHANGE
+  DEPLOYER
+}
+
+// WALLET HOLDINGS
+model WalletHolding {
+  id        String   @id @default(cuid())
+  
+  // Relations
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+  tokenId   String  
+  token     Token    @relation(fields: [tokenId], references: [id])
+  
+  // Holding Data
+  balance   Float
+  percentage Float   // % of total supply
+  value     Float?   // USD value
+  
+  // Timing
+  firstBuyAt DateTime?
+  lastTxAt   DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@unique([walletId, tokenId])
+  @@map("wallet_holdings")
+}
+
+// TRANSACTION DATA
+model Transaction {
+  id        String   @id @default(cuid())
+  hash      String   @unique
+  
+  // Relations
+  tokenId   String
+  token     Token    @relation(fields: [tokenId], references: [id])
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+  
+  // Transaction Data
+  type      TxType
+  amount    Float
+  price     Float?
+  value     Float?    // USD value
+  gasUsed   Float?
+  
+  // Block Data
+  blockNumber Int
+  timestamp   DateTime
+  createdAt   DateTime @default(now())
+  
+  @@map("transactions")
+}
+
+enum TxType {
+  BUY
+  SELL
+  TRANSFER
+  DEPLOY
+  ADD_LIQUIDITY
+  REMOVE_LIQUIDITY
+}
+
+// LIQUIDITY POOLS
+model LiquidityPool {
+  id        String   @id @default(cuid())
+  address   String   @unique
+  
+  // Relations
+  tokenId   String
+  token     Token    @relation(fields: [tokenId], references: [id])
+  
+  // Pool Data
+  dex       String   // uniswap, pancakeswap, etc
+  pairedWith String  // WETH, USDC, etc
+  totalLiquidity Float
+  token0Reserve  Float
+  token1Reserve  Float
+  
+  // Lock Status
+  isLocked    Boolean @default(false)
+  lockUntil   DateTime?
+  lockProvider String? // uncx, dxsale, etc
+  
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("liquidity_pools")
+}
+
+// PRICE HISTORY
+model PriceHistory {
+  id        String   @id @default(cuid())
+  
+  // Relations
+  tokenId   String
+  token     Token    @relation(fields: [tokenId], references: [id])
+  
+  // Price Data
+  price     Float
+  volume    Float?
+  marketCap Float?
+  liquidity Float?
+  
+  // Metadata
+  timestamp DateTime
+  source    String   @default("dexscreener")
+  
+  @@unique([tokenId, timestamp])
+  @@map("price_history")
+}
+
+// SCAN STATUS
+model ScanJob {
+  id        String   @id @default(cuid())
+  type      String   // token_discovery, wallet_scan, price_update
+  status    JobStatus @default(PENDING)
+  
+  // Job Data
+  targetId  String?  // token/wallet ID
+  metadata  Json?    // additional job data
+  error     String?
+  
+  // Timing
+  startedAt DateTime?
+  completedAt DateTime?
+  createdAt DateTime @default(now())
+  
+  @@map("scan_jobs")
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  RETRYING
+}

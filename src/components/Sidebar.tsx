@@ -65,8 +65,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
   ];
 
   return (
-    <div className="w-64 h-screen bg-slate-panel border-r border-slate-border flex flex-col shrink-0">
-      <div className="p-6 border-b border-slate-border">
+    <div className="w-64 h-screen bg-slate-925 border-r border-slate-700 flex flex-col shrink-0">
+      <div className="p-6 border-b border-slate-700">
         <div className="flex items-center gap-3">
           <img 
             src="https://i.imgur.com/DJKVOsz.png" 
@@ -75,8 +75,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
             referrerPolicy="no-referrer"
           />
           <div className="flex flex-col">
-            <span className="font-display font-bold text-xl tracking-tight leading-none">SplashSignal</span>
-            <div className="mt-1 text-[10px] text-sky-400 font-mono tracking-widest uppercase">Intelligence I.O.</div>
+            <span className="font-display font-bold text-xl tracking-tight leading-none text-slate-100">SplashSignal</span>
+            <div className="mt-1 text-[10px] text-primary font-mono tracking-widest uppercase">Intelligence I.O.</div>
           </div>
         </div>
       </div>
@@ -92,10 +92,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
                 key={item.id}
                 onClick={() => onViewChange(item.id as ViewId)}
                 className={cn(
-                  "w-full px-6 py-2.5 flex items-center gap-3 transition-colors text-sm",
+                  "w-full px-6 py-2.5 flex items-center gap-3 transition-colors text-sm font-medium",
+                  "focus-ring-inset",
                   activeView === item.id 
                     ? "bg-primary/10 text-primary border-r-2 border-primary" 
-                    : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
                 )}
               >
                 <item.icon size={18} />
@@ -106,14 +107,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
         ))}
       </div>
 
-      <div className="p-4 border-t border-slate-border">
-        <div className="flex items-center gap-3 p-2 rounded-lg bg-black/20">
+      <div className="p-4 border-t border-slate-700">
+        <div className="flex items-center gap-3 p-2 rounded-lg bg-slate-800">
           <div className="w-8 h-8 rounded-full bg-slate-600 overflow-hidden border border-primary/30 flex items-center justify-center">
             <ShieldAlert size={16} className="text-primary" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold truncate uppercase">PUBLIC_ACCESS</div>
-            <div className="text-[10px] text-sky-400 font-mono">SECURE_TERMINAL</div>
+            <div className="text-xs font-bold truncate uppercase text-slate-200">PUBLIC_ACCESS</div>
+            <div className="text-[10px] text-primary font-mono">SECURE_TERMINAL</div>
           </div>
         </div>
       </div>
