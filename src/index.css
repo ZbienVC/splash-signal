@@ -171,62 +171,11 @@
     @apply block text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1.5 ml-1;
   }
 
-  /* Badge foundations */
-  .badge-base {
-    @apply inline-flex items-center gap-1 px-2.5 py-0.5 
-           rounded-full text-xs font-medium;
-  }
-  
-  .badge-alpha {
-    @apply badge-base bg-alpha-900/30 text-alpha-300 
-           border border-alpha-600/30;
-  }
-  
-  .badge-risk {
-    @apply badge-base bg-risk-900/30 text-risk-300 
-           border border-risk-600/30;
-  }
+  /* Badge styles removed - using direct Tailwind classes in components */
 
-  .badge-neutral {
-    @apply badge-base bg-neutral-900/30 text-neutral-300 
-           border border-neutral-600/30;
-  }
+  /* Table and focus styles removed - using direct Tailwind classes */
 
-  /* Table row styles */
-  .table-row-base {
-    @apply border-b border-slate-700 transition-colors;
-  }
-  
-  .table-row-interactive {
-    @apply table-row-base hover:bg-slate-875 cursor-pointer;
-  }
-  
-  .table-cell-base {
-    @apply px-4 py-3 text-sm text-slate-300;
-  }
-
-  /* Focus states */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 
-           focus:ring-offset-2 focus:ring-offset-slate-975;
-  }
-  
-  .focus-ring-inset {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 
-           focus:ring-inset;
-  }
-
-  /* Animation utilities */
-  .animate-shimmer {
-    background: linear-gradient(
-      90deg,
-      var(--color-slate-850) 25%,
-      var(--color-slate-800) 50%,
-      var(--color-slate-850) 75%
-    );
-    background-size: 200% 100%;
-    animation: var(--animate-shimmer);
-  }
+  /* Animation utilities - shimmer removed (unused) */
   
   .transition-micro {
     @apply transition-all duration-150 ease-out;
