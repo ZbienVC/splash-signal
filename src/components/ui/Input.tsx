@@ -28,8 +28,8 @@ export const Input: React.FC<InputProps> = ({
 
   const stateStyles = {
     default: 'border-slate-600 focus:border-primary/50',
-    error: 'border-risk-500 focus:border-risk-500/50',
-    success: 'border-alpha-500 focus:border-alpha-500/50'
+    error: 'border-red-500 focus:border-red-500/50',
+    success: 'border-green-500 focus:border-green-500/50'
   };
 
   const variantStyles = {

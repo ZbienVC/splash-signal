@@ -45,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({ activeView, onSearch }) => {
   };
 
   return (
-    <header className="h-14 border-b border-slate-700 bg-slate-975/95 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-50">
+    <header className="h-14 border-b border-slate-700 bg-slate-950/95 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-50">
       {/* Breadcrumbs */}
       <div className="flex items-center gap-4 min-w-0 flex-1">
         <div className="flex items-center gap-3 text-xs font-mono text-slate-500">
@@ -89,7 +89,7 @@ export const Header: React.FC<HeaderProps> = ({ activeView, onSearch }) => {
             "hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/50"
           )}>
             <Bell size={18} />
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-risk-500 rounded-full border border-slate-975"></span>
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-slate-950"></span>
           </button>
           <button className={cn(
             "text-slate-400 hover:text-slate-200 transition-colors p-1 rounded-md",
