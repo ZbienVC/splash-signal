@@ -14,7 +14,7 @@ export const Badge: React.FC<BadgeProps> = ({
   className,
   children
 }) => {
-  const baseStyles = 'badge-base';
+  const baseStyles = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium';
   
   const variantStyles = {
     alpha: 'badge-alpha',

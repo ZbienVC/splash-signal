@@ -86,14 +86,14 @@ export const Header: React.FC<HeaderProps> = ({ activeView, onSearch }) => {
           </div>
           <button className={cn(
             "text-slate-400 hover:text-slate-200 transition-colors relative p-1 rounded-md",
-            "hover:bg-slate-800 focus-ring"
+            "hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/50"
           )}>
             <Bell size={18} />
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-risk-500 rounded-full border border-slate-975"></span>
           </button>
           <button className={cn(
             "text-slate-400 hover:text-slate-200 transition-colors p-1 rounded-md",
-            "hover:bg-slate-800 focus-ring"
+            "hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/50"
           )}>
             <Shield size={18} />
           </button>

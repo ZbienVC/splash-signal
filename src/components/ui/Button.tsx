@@ -23,7 +23,7 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = [
     'inline-flex items-center justify-center gap-2',
     'rounded-lg font-medium transition-all',
-    'focus-ring',
+    'focus:outline-none focus:ring-2 focus:ring-primary/50',
     'disabled:opacity-50 disabled:cursor-not-allowed'
   ];
 

@@ -22,7 +22,7 @@ export const Input: React.FC<InputProps> = ({
     'w-full h-10 px-3 rounded-lg',
     'bg-slate-800 border text-slate-200 placeholder-slate-500',
     'transition-colors',
-    'focus-ring',
+    'focus:outline-none focus:ring-2 focus:ring-primary/50',
     'disabled:opacity-50 disabled:cursor-not-allowed'
   ];
 

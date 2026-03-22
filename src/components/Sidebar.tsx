@@ -93,7 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
                 onClick={() => onViewChange(item.id as ViewId)}
                 className={cn(
                   "w-full px-6 py-2.5 flex items-center gap-3 transition-colors text-sm font-medium",
-                  "focus-ring-inset",
+                  "focus:outline-none focus:ring-2 focus:ring-primary/50",
                   activeView === item.id 
                     ? "bg-primary/10 text-primary border-r-2 border-primary" 
                     : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
