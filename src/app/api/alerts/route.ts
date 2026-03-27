@@ -209,6 +209,19 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    // Also fetch recent PreciseAlerts from stream
+    let preciseAlerts: any[] = [];
+    try {
+      const raw = await redis.lrange('precise_alerts_stream', 0, limit - 1);
+      preciseAlerts = raw.map(r => JSON.parse(r));
+      // Filter by token if requested
+      if (tokenFilter) {
+        preciseAlerts = preciseAlerts.filter(a => a.tokenAddress === tokenFilter.toLowerCase());
+      }
+    } catch {
+      // non-fatal
+    }
+
     const response: AlertsResponse = {
       alerts: formattedAlerts,
       pagination: {
@@ -235,8 +248,9 @@ export async function GET(request: NextRequest) {
           acc[item.severity] = item._count.id;
           return acc;
         }, {} as Record<string, number>)
-      }
-    };
+      },
+      preciseAlerts,
+    } as any;
 
     // Cache for 1 minute (alerts change frequently)
     await redis.setex(cacheKey, 60, JSON.stringify(response));

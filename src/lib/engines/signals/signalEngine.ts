@@ -6,6 +6,7 @@ import { AlphaScorer } from '../analysis/alphaScorer';
 import { RugScorer } from '../analysis/rugScorer';
 import { DumpScorer } from '../analysis/dumpScorer';
 import { SmartWalletEngine } from '../wallets/smartWalletEngine';
+import { AlertRuleEngine, AlertContext, PreciseAlert } from './alertRuleEngine';
 
 // ============= NEW SIGNAL TYPES =============
 
@@ -71,6 +72,7 @@ export class SignalEngine {
   private smartWalletEngine: SmartWalletEngine;
   private signalQueue: Queue;
   private alertProcessorQueue: Queue;
+  private alertRuleEngine: AlertRuleEngine;
   
   // Configurable signal conditions
   private conditions: SignalConditions = {
@@ -121,6 +123,7 @@ export class SignalEngine {
     });
     
     this.setupWorkers();
+    this.alertRuleEngine = new AlertRuleEngine(this.redis);
   }
 
   private setupWorkers() {
@@ -159,6 +162,9 @@ export class SignalEngine {
 
       // 6. NEW: Combined entry signal (alpha + volume + smart money + low dump risk)
       await this.checkCombinedEntrySignal(token);
+
+      // 7. Run precise weighted rule engine
+      await this.runPreciseAlertEngine(token.address);
 
     } catch (error) {
       console.error(`Error detecting entry signals for ${tokenAddress}:`, error);
@@ -1065,6 +1071,74 @@ export class SignalEngine {
       data: {},
       timestamp: new Date()
     });
+  }
+
+  // ============= PRECISE ALERT RULE ENGINE =============
+
+  /**
+   * Evaluates the AlertRuleEngine against current token scores and stores
+   * the resulting PreciseAlerts in Redis for the alerts API to serve.
+   */
+  async runPreciseAlertEngine(tokenAddress: string): Promise<PreciseAlert[]> {
+    try {
+      const [alphaResult, dumpResult] = await Promise.all([
+        this.alphaScorer.calculateAlphaScore(tokenAddress).catch(() => null),
+        this.dumpScorer.calculateDumpScore(tokenAddress).catch(() => null),
+      ]);
+
+      if (!alphaResult || !dumpResult) return [];
+
+      const token = await this.prisma.token.findUnique({
+        where: { address: tokenAddress },
+        select: { symbol: true, chain: true, marketCap: true, createdAt: true },
+      });
+
+      const smartEntries = await this.smartWalletEngine.detectNewEntries(30).catch(() => []);
+      const tokenSmartEntries = smartEntries.filter((a: any) => a.tokenAddress === tokenAddress);
+      const smartExits = await this.smartWalletEngine.detectExits(tokenAddress).catch(() => []);
+
+      // Build context from available data
+      const ageMinutes = token?.createdAt
+        ? Math.floor((Date.now() - new Date(token.createdAt).getTime()) / 60000)
+        : 9999;
+
+      const ctx: AlertContext = {
+        tokenAddress,
+        tokenSymbol: token?.symbol ?? '',
+        chain: (token?.chain as any) ?? 'SOL',
+        alphaScore: alphaResult.finalScore,
+        dumpScore: dumpResult.finalScore,
+        tokenAgeLt6h: ageMinutes < 360,
+        smartWalletEntries30m: tokenSmartEntries.length,
+        smartWalletExiting: smartExits.length > 0,
+        affectedWallets: [
+          ...tokenSmartEntries.map((e: any) => e.walletAddress ?? e.wallet?.address).filter(Boolean),
+          ...smartExits.map((e: any) => e.wallet?.address).filter(Boolean),
+        ],
+        devSellAmount: dumpResult.signals
+          .filter((s: any) => s.type === 'DEV_SELL')
+          .reduce((sum: number, s: any) => sum + (s.amountUsd ?? 0), 0),
+      };
+
+      const alerts = await this.alertRuleEngine.evaluate(ctx);
+
+      if (alerts.length > 0) {
+        // Store in Redis for real-time consumption
+        const key = `precise_alerts:${tokenAddress}`;
+        await this.redis.setex(key, 3600, JSON.stringify(alerts));
+
+        // Also push to global stream
+        for (const alert of alerts) {
+          await this.redis.lpush('precise_alerts_stream', JSON.stringify(alert));
+        }
+        await this.redis.ltrim('precise_alerts_stream', 0, 199);
+      }
+
+      return alerts;
+    } catch (err) {
+      console.warn('[SignalEngine] runPreciseAlertEngine error:', err);
+      return [];
+    }
   }
 
   // Real-time alert streaming

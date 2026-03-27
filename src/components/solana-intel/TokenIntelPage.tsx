@@ -9,6 +9,10 @@ import {
   XCircle,
   MinusCircle
 } from 'lucide-react';
+import { ScorePill } from '../ui/ScorePill';
+import { DistributionStateBadge, DistributionState } from '../ui/DistributionStateBadge';
+import { TrendArrow } from '../ui/TrendArrow';
+import { InsightCard } from '../ui/InsightCard';
 import { motion, AnimatePresence } from 'motion/react';
 import { TokenHeader } from './TokenHeader';
 import { LiveChartPanel } from './LiveChartPanel';
@@ -25,18 +29,6 @@ import { fetchForensicData, ForensicData } from '../../services/forensicService'
 import { cn } from '../../lib/utils';
 
 // ── Signal Banner ────────────────────────────────────────────────────────────
-const ScoreCard: React.FC<{ title: string; score: number; type: 'alpha' | 'risk' }> = ({ title, score, type }) => {
-  const color = type === 'alpha'
-    ? score > 70 ? 'text-emerald-400' : score > 40 ? 'text-amber-400' : 'text-red-400'
-    : score > 70 ? 'text-red-400' : score > 40 ? 'text-amber-400' : 'text-emerald-400';
-  return (
-    <div className="bg-slate-panel/50 border border-slate-border rounded-xl p-4 text-center">
-      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{title}</div>
-      <div className={cn('text-4xl font-display font-bold', color)}>{score}</div>
-      <div className="text-[10px] text-slate-600 mt-1">/100</div>
-    </div>
-  );
-};
 
 type IntelSignal = 'ENTRY' | 'EXIT' | 'HOLD' | 'WATCH' | null;
 
@@ -74,45 +66,82 @@ const deriveAlphaScore = (intel: SolanaTokenIntel): number => {
   return Math.min(100, score);
 };
 
-const SignalBanner: React.FC<{ intel: SolanaTokenIntel }> = ({ intel }) => {
-  const signal = deriveSignal(intel);
-  const alphaScore = deriveAlphaScore(intel);
+const deriveDistributionState = (intel: SolanaTokenIntel): DistributionState => {
   const dumpScore = deriveDumpScore(intel);
+  if (dumpScore > 85) return 'BROKEN_STRUCTURE';
+  if (dumpScore > 70) return 'HIGH_DUMP_RISK';
+  if (dumpScore > 55) return 'ACTIVE_DISTRIBUTION';
+  if (dumpScore > 40) return 'EARLY_DISTRIBUTION';
+  const alphaScore = deriveAlphaScore(intel);
+  if (alphaScore > 60) return 'HEALTHY_ACCUMULATION';
+  if (alphaScore > 40) return 'WATCH_FOR_ROTATION';
+  return 'QUIET';
+};
+
+const deriveInsight = (intel: SolanaTokenIntel, signal: IntelSignal) => {
+  const alpha = deriveAlphaScore(intel);
+  const dump  = deriveDumpScore(intel);
+  if (signal === 'ENTRY') {
+    return {
+      whatHappening: 'Smart wallets are entering while volume accelerates',
+      whyMatters: `Alpha score ${alpha}/100 — positive conviction at early stage`,
+      suggestedAction: 'Monitor closely or consider starter entry position',
+      actionType: 'entry' as const,
+      confidence: Math.min(95, alpha + 8),
+    };
+  }
+  if (signal === 'EXIT') {
+    return {
+      whatHappening: 'Dump risk signals detected from on-chain activity',
+      whyMatters: `Risk score ${dump}/100 — high probability of coordinated sell pressure`,
+      suggestedAction: 'Consider reducing or exiting your position now',
+      actionType: 'exit' as const,
+      confidence: Math.min(95, dump + 5),
+    };
+  }
+  if (signal === 'WATCH') {
+    return {
+      whatHappening: 'Risk indicators rising — distribution may be forming',
+      whyMatters: `Risk at ${dump}/100 — watch for confirmation before acting`,
+      suggestedAction: 'Hold current position and monitor closely',
+      actionType: 'watch' as const,
+      confidence: 60,
+    };
+  }
+  return {
+    whatHappening: 'Token showing stable on-chain activity',
+    whyMatters: `Alpha ${alpha}/100 — no immediate catalyst detected`,
+    suggestedAction: 'No urgent action required — wait for a clearer signal',
+    actionType: 'watch' as const,
+    confidence: 55,
+  };
+};
+
+const SignalBanner: React.FC<{ intel: SolanaTokenIntel }> = ({ intel }) => {
+  const signal     = deriveSignal(intel);
+  const alphaScore = deriveAlphaScore(intel);
+  const dumpScore  = deriveDumpScore(intel);
+  const distState  = deriveDistributionState(intel);
+  const insight    = deriveInsight(intel, signal);
+
+  const alphaTrend: 'up' | 'down' | 'flat' = alphaScore > 60 ? 'up' : alphaScore < 40 ? 'down' : 'flat';
+  const riskTrend:  'up' | 'down' | 'flat' = dumpScore  > 60 ? 'up' : dumpScore  < 40 ? 'down' : 'flat';
+
   return (
-    <div className="space-y-4">
-      <div>
-        {signal === 'ENTRY' && (
-          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 flex items-center gap-3">
-            <span className="text-xl">🔥</span>
-            <span className="text-green-400 font-bold uppercase tracking-wide">EARLY ENTRY SIGNAL</span>
-            <span className="text-gray-400 ml-2 text-sm">Smart money entering + volume accelerating</span>
-          </div>
-        )}
-        {signal === 'EXIT' && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-center gap-3 animate-pulse">
-            <span className="text-xl">🚨</span>
-            <span className="text-red-400 font-bold uppercase tracking-wide">EXIT SIGNAL</span>
-            <span className="text-gray-400 ml-2 text-sm">High dump risk detected — consider reducing position</span>
-          </div>
-        )}
-        {signal === 'WATCH' && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 flex items-center gap-3">
-            <span className="text-xl">👀</span>
-            <span className="text-amber-400 font-bold uppercase tracking-wide">WATCH SIGNAL</span>
-            <span className="text-gray-400 ml-2 text-sm">Risk indicators rising — monitor closely</span>
-          </div>
-        )}
-        {signal === 'HOLD' && (
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex items-center gap-3">
-            <span className="text-xl">✅</span>
-            <span className="text-blue-400 font-bold uppercase tracking-wide">HOLD SIGNAL</span>
-            <span className="text-gray-400 ml-2 text-sm">Stable conditions — no immediate action needed</span>
-          </div>
-        )}
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <ScoreCard title="Alpha Score" score={alphaScore} type="alpha" />
-        <ScoreCard title="Dump Risk" score={dumpScore} type="risk" />
+    <div className="space-y-3">
+      <InsightCard
+        whatHappening={insight.whatHappening}
+        whyMatters={insight.whyMatters}
+        suggestedAction={insight.suggestedAction}
+        actionType={insight.actionType}
+        confidence={insight.confidence}
+      />
+      <div className="grid grid-cols-3 gap-3">
+        <ScorePill label="Alpha Score" score={alphaScore} type="alpha" showTrend={alphaTrend} size="lg" />
+        <ScorePill label="Dump Risk"   score={dumpScore}  type="risk"  showTrend={riskTrend}  size="lg" />
+        <div className="flex items-center justify-center">
+          <DistributionStateBadge state={distState} size="lg" />
+        </div>
       </div>
     </div>
   );
