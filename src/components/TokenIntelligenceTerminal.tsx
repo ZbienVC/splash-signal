@@ -145,16 +145,17 @@ export const TokenIntelligenceTerminal: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 min-h-screen bg-background-dark text-slate-200">
+    <div className="p-6 space-y-6 min-h-screen bg-[#F8FAFC]">
       {/* Search Bar & Terminal Header */}
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex justify-between items-end">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <ShieldCheck className="text-primary" size={20} />
-              <h1 className="text-4xl font-display font-bold tracking-tight">Token Intelligence Terminal</h1>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-1 h-8 bg-blue-500 rounded-full" />
+              <ShieldCheck className="text-blue-600" size={20} />
+              <h1 className="text-4xl font-display font-bold tracking-tight text-slate-900">Token Intelligence Terminal</h1>
             </div>
-            <p className="text-slate-500 text-sm max-w-xl">
+            <p className="text-slate-600 text-sm max-w-xl">
               SplashSignal Forensic Suite v2.4. Institutional-grade contract auditing, wallet cluster detection, and launch bundle analysis.
             </p>
           </div>
@@ -191,7 +192,7 @@ export const TokenIntelligenceTerminal: React.FC = () => {
             value={mint}
             onChange={(e) => setMint(e.target.value)}
             placeholder="Enter Contract Address (Solana Mint)..."
-            className="w-full bg-slate-panel/50 border border-slate-border rounded-2xl py-5 pl-14 pr-40 text-lg focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-slate-600 shadow-2xl"
+            className="w-full bg-white border-2 border-slate-200 rounded-2xl py-5 pl-14 pr-40 text-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-400 text-slate-900 shadow-sm"
           />
           <button 
             type="submit"

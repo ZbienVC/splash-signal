@@ -229,7 +229,7 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
 
       <div className="flex items-start gap-4 mb-4">
         <div className="relative shrink-0">
-          <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-primary font-display font-bold text-2xl border border-white/10 overflow-hidden shadow-inner">
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-700 font-display font-bold text-2xl border border-blue-200 overflow-hidden shadow-inner">
             {token.image ? (
               <img src={token.image} alt={token.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             ) : (
@@ -295,14 +295,14 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
 
       <div className="grid grid-cols-3 gap-3 mb-5">
         <div className={cn(
-          "bg-black/40 rounded-2xl p-3 border border-white/5 flex flex-col justify-center transition-colors duration-300 relative overflow-hidden",
-          mcFlash === 'up' && "bg-emerald-500/20 border-emerald-500/30",
-          mcFlash === 'down' && "bg-red-500/20 border-red-500/30"
+          "bg-slate-50 rounded-2xl p-3 border border-slate-200 flex flex-col justify-center transition-colors duration-300 relative overflow-hidden",
+          mcFlash === 'up' && "bg-emerald-50 border-emerald-200",
+          mcFlash === 'down' && "bg-red-50 border-red-200"
         )}>
           <div className="flex items-center justify-between mb-1">
             <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Market Cap</div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[8px] font-mono text-slate-600">
+              <span className="text-[8px] font-mono text-slate-500">
                 {updateMs < 1000 ? 'now' : `${Math.floor(updateMs / 1000)}s ago`}
               </span>
               {hasRecentActivity && <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />}
@@ -312,15 +312,15 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
             <SmoothCounter value={mc} prefix="$" />
           </div>
         </div>
-        <div className="bg-black/40 rounded-2xl p-3 border border-white/5 flex flex-col justify-center">
+        <div className="bg-slate-50 rounded-2xl p-3 border border-slate-200 flex flex-col justify-center">
           <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Liquidity</div>
-          <div className="text-sm font-mono font-bold text-slate-600 leading-none">
+          <div className="text-sm font-mono font-bold text-slate-700 leading-none">
             <SmoothCounter value={liq} prefix="$" />
           </div>
         </div>
-        <div className="bg-black/40 rounded-2xl p-3 border border-white/5 flex flex-col justify-center">
+        <div className="bg-slate-50 rounded-2xl p-3 border border-slate-200 flex flex-col justify-center">
           <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Volume</div>
-          <div className="text-sm font-mono font-bold text-emerald-400 leading-none">
+          <div className="text-sm font-mono font-bold text-green-600 leading-none">
             <SmoothCounter value={vol} prefix="$" />
           </div>
         </div>
@@ -457,7 +457,7 @@ const AlphaRankingLeaderboard: React.FC<{ tokens: HunterToken[] }> = ({ tokens }
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-black/40">
+            <tr className="bg-slate-50">
               <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Token</th>
               <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Market Cap</th>
               <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Volume (24h)</th>
@@ -471,11 +471,11 @@ const AlphaRankingLeaderboard: React.FC<{ tokens: HunterToken[] }> = ({ tokens }
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-mono text-slate-600 w-4">{idx + 1}</span>
-                    <div className="w-10 h-10 rounded-xl bg-slate-100 border border-white/10 overflow-hidden shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 overflow-hidden shrink-0">
                       {token.image ? (
                         <img src={token.image} alt={token.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-primary font-bold">{token.symbol[0]}</div>
+                        <div className="w-full h-full flex items-center justify-center text-blue-700 font-bold">{token.symbol[0]}</div>
                       )}
                     </div>
                     <div>
@@ -485,12 +485,12 @@ const AlphaRankingLeaderboard: React.FC<{ tokens: HunterToken[] }> = ({ tokens }
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm font-mono font-bold text-slate-600">
+                  <div className="text-sm font-mono font-bold text-slate-700">
                     <SmoothCounter value={token.market?.fdv || 0} prefix="$" />
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm font-mono font-bold text-emerald-400">
+                  <div className="text-sm font-mono font-bold text-green-600">
                     <SmoothCounter value={token.market?.volume24h || 0} prefix="$" />
                   </div>
                 </td>
@@ -498,7 +498,7 @@ const AlphaRankingLeaderboard: React.FC<{ tokens: HunterToken[] }> = ({ tokens }
                   <div className="inline-flex flex-col items-center">
                     <div className={cn(
                       "text-lg font-display font-black leading-none",
-                      (token.alphaRating?.score || 0) > 75 ? "text-amber-400" : (token.alphaRating?.score || 0) > 50 ? "text-emerald-400" : "text-slate-500"
+                      (token.alphaRating?.score || 0) > 75 ? "text-amber-700" : (token.alphaRating?.score || 0) > 50 ? "text-green-600" : "text-slate-500"
                     )}>
                       {token.alphaRating?.score || 0}
                     </div>
@@ -787,13 +787,14 @@ export const HunterFeed: React.FC = () => {
     <div className="p-4 space-y-6 max-w-[1600px] mx-auto animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary border border-primary/30">
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-8 bg-blue-500 rounded-full" />
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-200">
               <Zap size={18} />
             </div>
-            <h1 className="text-2xl font-display font-bold tracking-tight bg-gradient-to-r from-white to-slate-500 bg-clip-text text-transparent">Alpha Hunter</h1>
+            <h1 className="text-2xl font-display font-bold tracking-tight text-slate-900">Alpha Hunter</h1>
           </div>
-          <p className="text-slate-500 text-xs max-w-xl">Real-time forensic analysis of Solana launches.</p>
+          <p className="text-slate-600 text-xs max-w-xl">Real-time forensic analysis of Solana launches.</p>
         </div>
 
         <div className="flex flex-col items-end gap-3">
@@ -807,8 +808,8 @@ export const HunterFeed: React.FC = () => {
               className={cn(
                 "flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-[9px] font-bold uppercase tracking-wider",
                 isPaused 
-                  ? "bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20" 
-                  : "bg-white/5 border-white/10 text-slate-500 hover:bg-white/10"
+                  ? "bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100" 
+                  : "bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200"
               )}
             >
               {isPaused ? <><Play size={10} /> Resume Feed ({buffer.length})</> : <><Pause size={10} /> Pause Feed</>}
@@ -820,18 +821,18 @@ export const HunterFeed: React.FC = () => {
               <span className="text-[9px] font-mono text-slate-500 ml-2 border-l border-white/10 pl-2">Pool: {totalPool}</span>
             </div>
             {/* Sort controls */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-black/40 border border-slate-border rounded-lg">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg">
               <SortAsc size={12} className="text-slate-500" />
               {(['age', 'risk', 'volume', 'liquidity'] as SortKey[]).map((s) => (
                 <button key={s} onClick={() => setSortKey(s)}
                   className={cn("px-2 py-1 text-[9px] font-bold uppercase rounded transition-all",
-                    sortKey === s ? "bg-primary text-slate-900" : "text-slate-500 hover:text-slate-600")}>
+                    sortKey === s ? "bg-blue-600 text-white" : "text-slate-700 hover:text-blue-700")}>
                   {s}
                 </button>
               ))}
             </div>
             {/* Filter controls */}
-            <div className="flex items-center bg-black/40 backdrop-blur-md border border-slate-border rounded-lg p-1 shadow-xl">
+            <div className="flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
               {([
                 ['all',      'All'],
                 ['lowrisk',  'Low Risk'],
@@ -842,7 +843,7 @@ export const HunterFeed: React.FC = () => {
               ] as [FilterKey, string][]).map(([key, label]) => (
                 <button key={key} onClick={() => setFilter(key)}
                   className={cn("px-2.5 py-1.5 text-[9px] font-bold uppercase rounded-md transition-all duration-300",
-                    filter === key ? "bg-primary text-slate-900 shadow-lg" : "text-slate-500 hover:text-slate-600 hover:bg-white/5")}>
+                    filter === key ? "bg-blue-600 text-white shadow" : "text-slate-700 hover:text-blue-700 hover:bg-blue-50")}>
                   {label}
                 </button>
               ))}

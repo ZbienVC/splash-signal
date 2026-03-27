@@ -77,8 +77,8 @@ export const InvestigationGateway: React.FC<{ onModuleSelect: (id: string, targe
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest mb-4">
           <Sparkles size={12} /> AI-Powered Investigation Engine
         </div>
-        <h1 className="text-5xl font-display font-bold tracking-tight mb-4">Investigation Gateway</h1>
-        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+        <h1 className="text-5xl font-display font-bold tracking-tight mb-4 text-slate-900">Investigation Gateway</h1>
+        <p className="text-slate-600 text-lg max-w-2xl mx-auto">
           Analyze assets, entities, or events with SplashSignal's suite of specialized intelligence modules.
         </p>
       </div>
@@ -91,12 +91,12 @@ export const InvestigationGateway: React.FC<{ onModuleSelect: (id: string, targe
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
           placeholder="Enter Token Address, Wallet, or Case ID..." 
-          className="w-full bg-black/20 border border-white/10 rounded-xl py-4 pl-14 pr-32 text-lg focus:outline-none focus:border-primary/50 focus:bg-black/40 transition-all placeholder:text-slate-600 shadow-2xl"
+          className="w-full bg-white border-2 border-slate-200 rounded-xl py-4 pl-14 pr-32 text-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-400 text-slate-900 shadow-sm"
         />
         <button 
           onClick={handleAnalyze}
           disabled={!input.trim()}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white px-5 py-2 rounded-lg font-bold hover:bg-primary/90 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-blue-700 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
         >
           ANALYZE <ArrowRight size={16} />
         </button>
@@ -112,9 +112,9 @@ export const InvestigationGateway: React.FC<{ onModuleSelect: (id: string, targe
             <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110", mod.bg, mod.color)}>
               <mod.icon size={24} />
             </div>
-            <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors">{mod.title}</h3>
-            <p className="text-sm text-slate-500 leading-relaxed">{mod.desc}</p>
-            <div className="mt-4 flex items-center gap-1 text-[10px] font-bold text-slate-600 group-hover:text-primary transition-colors">
+            <h3 className="text-lg font-bold mb-2 group-hover:text-blue-600 transition-colors text-slate-900">{mod.title}</h3>
+            <p className="text-sm text-slate-600 leading-relaxed">{mod.desc}</p>
+            <div className="mt-4 flex items-center gap-1 text-[10px] font-bold text-slate-500 group-hover:text-blue-600 transition-colors">
               LAUNCH MODULE <ArrowRight size={12} />
             </div>
           </button>
@@ -126,21 +126,21 @@ export const InvestigationGateway: React.FC<{ onModuleSelect: (id: string, targe
           <Zap className="text-amber-500" size={32} />
           <div>
             <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Processing</div>
-            <div className="text-lg font-bold">Real-time</div>
+            <div className="text-lg font-bold text-slate-900">Real-time</div>
           </div>
         </div>
         <div className="flex items-center gap-4">
           <Globe className="text-primary" size={32} />
           <div>
             <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Coverage</div>
-            <div className="text-lg font-bold">Global Multi-chain</div>
+            <div className="text-lg font-bold text-slate-900">Global Multi-chain</div>
           </div>
         </div>
         <div className="flex items-center gap-4">
           <ShieldCheck className="text-emerald-500" size={32} />
           <div>
             <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Accuracy</div>
-            <div className="text-lg font-bold">99.9% Verified</div>
+            <div className="text-lg font-bold text-slate-900">99.9% Verified</div>
           </div>
         </div>
       </div>

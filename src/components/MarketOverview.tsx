@@ -98,12 +98,12 @@ const SectionHeader: React.FC<{
 
 const SourceBadge: React.FC<{ source: string; timestamp?: string; confidence?: number }> = ({ source, timestamp, confidence }) => (
   <div className="flex items-center gap-2 mt-2">
-    <div className="px-1.5 py-0.5 bg-black/40 border border-white/10 rounded text-[8px] font-mono text-slate-500 flex items-center gap-1">
+    <div className="px-1.5 py-0.5 bg-slate-50 border border-white/10 rounded text-[8px] font-mono text-slate-500 flex items-center gap-1">
       <Globe size={8} />
       SOURCE: {source.toUpperCase()}
     </div>
     {confidence !== undefined && (
-      <div className="px-1.5 py-0.5 bg-black/40 border border-white/10 rounded text-[8px] font-mono text-slate-500 flex items-center gap-1">
+      <div className="px-1.5 py-0.5 bg-slate-50 border border-white/10 rounded text-[8px] font-mono text-slate-500 flex items-center gap-1">
         <Shield size={8} />
         CONF: {(confidence * 100).toFixed(0)}%
       </div>
@@ -152,7 +152,7 @@ const MarketModePanel: React.FC<{ data: GlobalIntelligence['marketMode'] }> = ({
       <div className="space-y-2 mt-4">
         {data.signals.map((sig, i) => (
           <Tooltip key={i} content={sig.interpretation}>
-            <div className="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-white/5 hover:border-primary/30 transition-all group/sig">
+            <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200 hover:border-primary/30 transition-all group/sig">
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-bold text-slate-500 uppercase">{sig.label}</span>
@@ -369,7 +369,7 @@ const AltStrengthPanel: React.FC<{ data: GlobalIntelligence['altStrength'] }> = 
 
       <div className="flex-1 min-h-[300px] relative">
         {loading && chartData.length === 0 ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-xl">
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-50 rounded-xl">
             <div className="flex flex-col items-center gap-2">
               <RefreshCw className="animate-spin text-primary" size={20} />
               <span className="text-[10px] font-mono text-slate-500">FETCHING MARKET DATA...</span>
@@ -415,7 +415,7 @@ const AltStrengthPanel: React.FC<{ data: GlobalIntelligence['altStrength'] }> = 
                   if (active && payload && payload.length) {
                     return (
                       <div className="bg-slate-50 border border-slate-200 p-3 rounded-lg shadow-xl min-w-[150px]">
-                        <div className="text-[10px] text-slate-500 font-mono mb-2 border-bottom border-white/5 pb-1">
+                        <div className="text-[10px] text-slate-500 font-mono mb-2 border-bottom border-slate-200 pb-1">
                           {new Date(label).toLocaleString()}
                         </div>
                         <div className="space-y-1.5">
@@ -464,7 +464,7 @@ const AltStrengthPanel: React.FC<{ data: GlobalIntelligence['altStrength'] }> = 
       </div>
       
       <div className="mt-4 grid grid-cols-3 gap-4">
-        <div className="p-3 bg-black/20 rounded-xl border border-white/5 flex items-center gap-3">
+        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
           <div className="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-500">
             <Globe size={12} />
           </div>
@@ -473,7 +473,7 @@ const AltStrengthPanel: React.FC<{ data: GlobalIntelligence['altStrength'] }> = 
             <div className="text-[10px] font-mono text-slate-600">Global Indices</div>
           </div>
         </div>
-        <div className="p-3 bg-black/20 rounded-xl border border-white/5 flex items-center gap-3">
+        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
           <div className="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-500">
             <Activity size={12} />
           </div>
@@ -482,7 +482,7 @@ const AltStrengthPanel: React.FC<{ data: GlobalIntelligence['altStrength'] }> = 
             <div className="text-[10px] font-mono text-slate-600">SOL Ecosystem</div>
           </div>
         </div>
-        <div className="p-3 bg-black/20 rounded-xl border border-white/5 flex items-center gap-3">
+        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
           <div className="w-6 h-6 rounded bg-purple-500/20 flex items-center justify-center text-purple-500">
             <Layers size={12} />
           </div>
@@ -581,11 +581,11 @@ const NarrativeTradingRadar: React.FC<{ narratives: NarrativePerformance[] }> = 
                       </div>
                       
                       <div className="grid grid-cols-2 gap-3 mb-4">
-                        <div className="p-2 bg-white/5 rounded-lg border border-white/5">
+                        <div className="p-2 bg-white/5 rounded-lg border border-slate-200">
                           <div className="text-[7px] text-slate-500 uppercase font-bold mb-0.5">Social Velocity</div>
                           <div className="text-xs font-bold text-blue-400">+{data.socialVelocity.toFixed(1)}%</div>
                         </div>
-                        <div className="p-2 bg-white/5 rounded-lg border border-white/5">
+                        <div className="p-2 bg-white/5 rounded-lg border border-slate-200">
                           <div className="text-[7px] text-slate-500 uppercase font-bold mb-0.5">Wallet Growth</div>
                           <div className="text-xs font-bold text-emerald-400">+{data.walletGrowth.toFixed(1)}%</div>
                         </div>
@@ -594,7 +594,7 @@ const NarrativeTradingRadar: React.FC<{ narratives: NarrativePerformance[] }> = 
                       <div className="space-y-1.5">
                         <div className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mb-1">Top Narrative Assets</div>
                         {data.tokens && data.tokens.slice(0, 2).map((token, idx) => (
-                          <div key={idx} className="flex justify-between items-center p-1.5 bg-black/20 rounded-md border border-white/5">
+                          <div key={idx} className="flex justify-between items-center p-1.5 bg-slate-50 rounded-md border border-slate-200">
                             <div className="flex items-center gap-2">
                               <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-[7px] font-bold text-primary">
                                 {token.symbol[0]}
@@ -640,7 +640,7 @@ const NarrativeTradingRadar: React.FC<{ narratives: NarrativePerformance[] }> = 
           <button 
             key={i} 
             onClick={() => setSelectedNarrative(nar)}
-            className="p-3 bg-black/20 rounded-xl border border-white/5 hover:border-primary/30 transition-all text-left group/item relative overflow-hidden"
+            className="p-3 bg-slate-50 rounded-xl border border-slate-200 hover:border-primary/30 transition-all text-left group/item relative overflow-hidden"
           >
             <div className="flex justify-between items-start mb-2">
               <div className="text-xs font-bold group-hover/item:text-primary transition-colors">{nar.name}</div>
@@ -692,15 +692,15 @@ const NarrativeTradingRadar: React.FC<{ narratives: NarrativePerformance[] }> = 
 
             <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
               <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 bg-white/5 rounded-xl border border-white/5">
+                <div className="p-3 bg-white/5 rounded-xl border border-slate-200">
                   <div className="text-[8px] text-slate-500 uppercase font-bold mb-1">Social Velocity</div>
                   <div className="text-sm font-display font-bold text-blue-400">+{selectedNarrative.socialVelocity.toFixed(1)}%</div>
                 </div>
-                <div className="p-3 bg-white/5 rounded-xl border border-white/5">
+                <div className="p-3 bg-white/5 rounded-xl border border-slate-200">
                   <div className="text-[8px] text-slate-500 uppercase font-bold mb-1">Wallet Growth</div>
                   <div className="text-sm font-display font-bold text-emerald-400">+{selectedNarrative.walletGrowth.toFixed(1)}%</div>
                 </div>
-                <div className="p-3 bg-white/5 rounded-xl border border-white/5">
+                <div className="p-3 bg-white/5 rounded-xl border border-slate-200">
                   <div className="text-[8px] text-slate-500 uppercase font-bold mb-1">Token Launches</div>
                   <div className="text-sm font-display font-bold text-amber-400">{selectedNarrative.tokenLaunchCount}</div>
                 </div>
@@ -709,7 +709,7 @@ const NarrativeTradingRadar: React.FC<{ narratives: NarrativePerformance[] }> = 
               <div className="space-y-2">
                 <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">High-Confidence Assets</div>
                 {selectedNarrative.tokens && selectedNarrative.tokens.map((token, idx) => (
-                  <div key={idx} className="p-4 bg-black/40 rounded-2xl border border-white/5 hover:border-primary/30 transition-all group/token">
+                  <div key={idx} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 hover:border-primary/30 transition-all group/token">
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
@@ -731,7 +731,7 @@ const NarrativeTradingRadar: React.FC<{ narratives: NarrativePerformance[] }> = 
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200">
                       <div className="space-y-2">
                         <div className="flex justify-between text-[9px]">
                           <span className="text-slate-500 uppercase font-bold">Market Cap</span>
@@ -785,10 +785,10 @@ const NarrativeRotationTracker: React.FC<{ data: GlobalIntelligence['narrativeRo
       
       <div className="space-y-4">
         {data.map((rot, i) => (
-          <div key={i} className="relative p-4 bg-black/20 rounded-2xl border border-white/5 overflow-hidden">
+          <div key={i} className="relative p-4 bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
             <div className="flex justify-between items-center mb-4 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="px-3 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-500 border border-white/5">
+                <div className="px-3 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-500 border border-slate-200">
                   {rot.from}
                 </div>
                 <div className="flex flex-col items-center">
@@ -855,12 +855,12 @@ const MemeHealthPanel: React.FC<{ data: GlobalIntelligence['memeHealth'] }> = ({
       <ViewSource links={[{ label: 'Pump.fun', url: 'https://pump.fun' }]} />
       
       <div className="grid grid-cols-2 gap-4 mb-6 mt-4">
-        <div className="p-4 bg-black/20 rounded-2xl border border-white/5">
+        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
           <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">Launches / Hour</div>
           <div className="text-2xl font-display font-bold text-slate-900">{data.launchesPerHour} <span className="text-xs text-slate-500">/ hr</span></div>
           <div className="text-[9px] text-slate-600 font-mono mt-1">{data.launches24h} TOTAL (24H)</div>
         </div>
-        <div className="p-4 bg-black/20 rounded-2xl border border-white/5">
+        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
           <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">Bonding Success</div>
           <div className="text-2xl font-display font-bold text-primary">{data.bondingSuccessRate}%</div>
           <div className="text-[9px] text-slate-600 font-mono mt-1">{data.bondedCount24h} GRADUATED</div>
@@ -891,15 +891,15 @@ const MemeHealthPanel: React.FC<{ data: GlobalIntelligence['memeHealth'] }> = ({
       </div>
 
       <div className="space-y-2">
-        <div className="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-white/5">
+        <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
           <span className="text-xs text-slate-500">Avg Survival Time</span>
           <span className="text-sm font-bold font-mono text-slate-900">{data.avgSurvivalTime}</span>
         </div>
-        <div className="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-white/5">
+        <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
           <span className="text-xs text-slate-500">Median Market Cap</span>
           <span className="text-sm font-bold font-mono text-slate-900">${(data.medianMarketCap / 1000).toFixed(1)}K</span>
         </div>
-        <div className="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-white/5">
+        <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
           <span className="text-xs text-slate-500">Median Liquidity</span>
           <span className="text-sm font-bold font-mono text-slate-900">${(data.medianLiquidity / 1000).toFixed(1)}K</span>
         </div>
@@ -920,7 +920,7 @@ const WhaleIntelligencePanel: React.FC<{ data: GlobalIntelligence['whaleActivity
           tooltip="Monitoring large wallet movements and accumulation patterns."
         />
         <div className="flex flex-col items-end gap-1">
-          <div className="flex gap-1 bg-black/40 p-1 rounded-lg border border-white/5">
+          <div className="flex gap-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
             <button 
               onClick={() => setView('flow')}
               className={cn("px-2 py-1 text-[9px] font-bold rounded transition-all", view === 'flow' ? "bg-primary text-slate-900" : "text-slate-500 hover:text-slate-600")}
@@ -984,7 +984,7 @@ const WhaleIntelligencePanel: React.FC<{ data: GlobalIntelligence['whaleActivity
             <div className="space-y-2">
               <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Top Accumulated</div>
               {data.topAccumulatedTokens.map((token, i) => (
-                <div key={i} className="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-white/5 hover:border-white/10 transition-all">
+                <div key={i} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200 hover:border-white/10 transition-all">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
                       {token.symbol[0]}
@@ -1005,7 +1005,7 @@ const WhaleIntelligencePanel: React.FC<{ data: GlobalIntelligence['whaleActivity
         ) : (
           <div className="space-y-2 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
             {data.recentTransactions.map((tx, i) => (
-              <div key={i} className="p-3 bg-black/20 rounded-xl border border-white/5 hover:border-white/10 transition-all">
+              <div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-200 hover:border-white/10 transition-all">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2">
                     <div className={cn(
@@ -1062,7 +1062,7 @@ const MarketAlertsPanel: React.FC<{ alerts: MarketAlert[] }> = ({ alerts }) => {
 
   return (
     <div className="bg-slate-panel border border-slate-border rounded-2xl overflow-hidden group flex flex-col h-full">
-      <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
+      <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
         <div className="flex items-center gap-2">
           <ShieldAlert size={16} className="text-primary" />
           <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest">Real-Time Market Alert Engine</h3>
@@ -1271,7 +1271,7 @@ export const MarketOverview: React.FC = () => {
       <MarketAlertsPanel alerts={alerts} />
 
       {/* Footer / Data Sources */}
-      <div className="pt-6 border-t border-white/5 flex justify-between items-center text-[10px] text-slate-600 font-mono">
+      <div className="pt-6 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-600 font-mono">
         <div className="flex gap-6">
           <div className="flex items-center gap-1.5">
             <SourceChip evidence={{ sources: [{ label: 'DexScreener', url: 'https://dexscreener.com' }] }} title="Price Data" />

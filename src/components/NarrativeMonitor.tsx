@@ -232,7 +232,7 @@ export const NarrativeMonitor: React.FC = () => {
             <input 
               type="text" 
               placeholder="Search narrative (e.g. 'RWA', 'GameFi', 'ZK-Proofs')..."
-              className="w-full bg-black/40 border border-white/5 rounded-xl py-2.5 pl-11 pr-10 text-[11px] focus:outline-none focus:border-primary/50 focus:bg-black/60 transition-all placeholder:text-slate-600"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 pr-10 text-[11px] focus:outline-none focus:border-primary/50 focus:bg-black/60 transition-all placeholder:text-slate-600"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -251,7 +251,7 @@ export const NarrativeMonitor: React.FC = () => {
               </div>
             )}
           </form>
-          <div className="flex items-center gap-2 px-4 py-2 bg-black/20 rounded-xl border border-white/5 hover:border-slate-500 transition-colors cursor-pointer">
+          <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-500 transition-colors cursor-pointer">
             <Filter size={16} className="text-slate-500" />
             <span className="text-[10px] font-bold text-slate-500 uppercase">Filter</span>
           </div>
@@ -268,7 +268,7 @@ export const NarrativeMonitor: React.FC = () => {
                   "px-4 py-1.5 rounded-full text-[10px] font-bold border transition-all whitespace-nowrap",
                   currentNarrative === n.id 
                     ? "bg-primary border-primary text-slate-900 shadow-lg shadow-primary/20" 
-                    : "bg-black/20 border-slate-border text-slate-500 hover:border-slate-500 hover:text-slate-600"
+                    : "bg-slate-50 border-slate-border text-slate-500 hover:border-slate-500 hover:text-slate-600"
                 )}
               >
                 {n.id}
@@ -395,7 +395,7 @@ export const NarrativeMonitor: React.FC = () => {
                      `${stat.value.toFixed(0)}%`}
                   </span>
                 </div>
-                <div className="mt-3 h-1 bg-black/20 rounded-full overflow-hidden">
+                <div className="mt-3 h-1 bg-slate-50 rounded-full overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${stat.label === 'Narrative Strength' ? (stat.value / 400) * 100 : stat.value}%` }}
@@ -455,7 +455,7 @@ export const NarrativeMonitor: React.FC = () => {
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="mt-4 p-3 bg-black/20 rounded-lg border border-white/5">
+              <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
                 <div className="flex justify-between items-center mb-2">
                   <div className="text-[10px] font-bold text-primary uppercase">Market Signal:</div>
                   <div className={cn(
@@ -504,7 +504,7 @@ export const NarrativeMonitor: React.FC = () => {
                       </div>
                       <span className="font-mono font-bold">{item.value.toFixed(2)}%</span>
                     </div>
-                    <div className="h-2 bg-black/20 rounded-full overflow-hidden">
+                    <div className="h-2 bg-slate-50 rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${item.value}%` }}
@@ -589,7 +589,7 @@ export const NarrativeMonitor: React.FC = () => {
                   <button
                     key={i}
                     onClick={() => performSearch(narrative)}
-                    className="px-3 py-1.5 rounded-lg bg-black/20 border border-slate-border text-[10px] font-bold text-slate-500 hover:border-primary hover:text-primary transition-all uppercase tracking-wider"
+                    className="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-border text-[10px] font-bold text-slate-500 hover:border-primary hover:text-primary transition-all uppercase tracking-wider"
                   >
                     {narrative}
                   </button>

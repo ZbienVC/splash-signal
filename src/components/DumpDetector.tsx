@@ -392,7 +392,7 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken: _onSe
 
           {!analysis && !loading && !error && (
             <div className="border border-dashed border-slate-300 rounded-lg p-10 text-center">
-              <AlertTriangle size={24} className="text-slate-300 mx-auto mb-2" />
+              <AlertTriangle size={24} className="text-blue-400 mx-auto mb-2" />
               <p className="text-sm text-slate-500">Enter a token address to analyze dump risk</p>
               <p className="text-xs text-slate-400 mt-1">Live data via DexScreener + Birdeye</p>
             </div>

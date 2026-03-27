@@ -347,7 +347,7 @@ export const TokenIntelPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 min-h-screen bg-background-dark text-slate-200">
+    <div className="p-6 space-y-6 min-h-screen bg-[#F8FAFC]">
       {/* Search Bar & Mode Toggle */}
       <div className="max-w-4xl mx-auto space-y-4">
         <div className="flex justify-between items-center">
@@ -366,8 +366,8 @@ export const TokenIntelPage: React.FC = () => {
             className={cn(
               "flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-widest transition-all",
               deepMode 
-                ? "bg-primary/20 border-primary text-primary shadow-lg shadow-primary/20" 
-                : "bg-slate-panel border-slate-border text-slate-500 hover:text-slate-600"
+                ? "bg-blue-50 border-blue-400 text-blue-700 shadow-sm" 
+                : "bg-white border-slate-300 text-slate-700 hover:border-blue-400 hover:text-blue-600"
             )}
           >
             <Shield size={14} className={cn(deepMode && "animate-pulse")} />
@@ -384,7 +384,7 @@ export const TokenIntelPage: React.FC = () => {
             value={mint}
             onChange={(e) => setMint(e.target.value)}
             placeholder="Paste Solana Mint Address (e.g. 6p6W5...)"
-            className="w-full bg-slate-panel/50 border border-slate-border rounded-2xl py-4 pl-12 pr-32 text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-slate-600"
+            className="w-full bg-white border-2 border-slate-200 rounded-2xl py-4 pl-12 pr-32 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-400 text-slate-900"
           />
           <button 
             type="submit"
@@ -405,11 +405,11 @@ export const TokenIntelPage: React.FC = () => {
             exit={{ opacity: 0, y: -20 }}
             className="flex flex-col items-center justify-center py-32 text-center space-y-4"
           >
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
-              <Zap size={40} />
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto mb-4">
+              <Zap size={32} className="text-blue-500" />
             </div>
-            <h2 className="text-2xl font-display font-bold">Solana Live Intel Terminal</h2>
-            <p className="text-slate-500 max-w-md">Enter a Solana token mint address to begin deep real-time forensic investigation and live market monitoring.</p>
+            <h2 className="text-xl font-semibold text-slate-900">Solana Live Intel Terminal</h2>
+            <p className="text-slate-500 text-sm max-w-md">Enter a Solana token mint address to begin deep real-time forensic investigation and live market monitoring.</p>
           </motion.div>
         )}
 

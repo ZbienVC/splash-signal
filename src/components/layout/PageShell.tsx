@@ -27,7 +27,7 @@ export const PageShell: React.FC<PageShellProps> = ({
   };
 
   return (
-    <div className={cn('min-h-full', className)}>
+    <div className={cn('min-h-full page-gradient', className)}>
       {(title || actions) && (
         <div className={cn('pb-8', containerClasses[containerSize])}>
           <div className="flex items-start justify-between gap-4">
