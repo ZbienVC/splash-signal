@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AlertTriangle, Search, RefreshCw, Loader2, TrendingDown } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { getTokenByAddress, DexToken } from '../services/dexscreenerClient';
+import { getBirdeyeHolders, getBirdeyeTrades, BirdeyeHolder, BirdeyeTrade } from '../services/birdeyeClient';
+import { LiveIndicator } from './ui/LiveIndicator';
 
 interface DumpSignal {
   id: string;
@@ -14,15 +17,29 @@ interface DumpSignal {
   severity: 'critical' | 'high' | 'medium';
 }
 
+interface DumpScoreResult {
+  score: number;
+  riskLevel: 'CRITICAL' | 'HIGH' | 'ELEVATED' | 'LOW';
+  trend: 'INCREASING' | 'STABLE';
+  signals: string[];
+  top10Concentration: number;
+  buySellRatio: number;
+  liquidityRatio: number;
+}
+
 interface TokenDumpAnalysis {
   symbol: string;
   chain: string;
   mcap: string;
+  price: string;
+  priceChange1h: number;
   dumpRisk: number;
   trend: 'increasing' | 'stable' | 'decreasing';
   summary: string;
   recommendation: string;
   signals: DumpSignal[];
+  holderCount: number;
+  isLive: boolean;
 }
 
 const MOCK_LIVE_FEED: DumpSignal[] = [
@@ -35,21 +52,6 @@ const MOCK_LIVE_FEED: DumpSignal[] = [
   { id: '7', token: '$FROG',  type: 'WHALE_EXIT',  description: 'Top 3 holders reducing positions',       change: '-18%',  timeAgo: '1h ago',  severity: 'high' },
   { id: '8', token: '$SOG',   type: 'VOLUME_DROP', description: 'Volume down 82% vs 6h average',          change: '-82%',  timeAgo: '1h ago',  severity: 'high' },
 ];
-
-const MOCK_TOKEN_ANALYSIS: TokenDumpAnalysis = {
-  symbol: 'EXAMPLE',
-  chain: 'SOL',
-  mcap: '$234K',
-  dumpRisk: 78,
-  trend: 'increasing',
-  summary: 'Dev sold $8K into price strength. Top 3 holders reducing. Volume declining 67%.',
-  recommendation: 'Consider Exit',
-  signals: [
-    { id: 's1', token: '$EXAMPLE', type: 'DEV_SELL',    description: 'Dev wallet activity', amount: '$8.2K', timeAgo: '2h ago', severity: 'critical' },
-    { id: 's2', token: '$EXAMPLE', type: 'WHALE_EXIT',  description: 'Top holders reducing', change: '-18%', timeAgo: '4h ago', severity: 'high' },
-    { id: 's3', token: '$EXAMPLE', type: 'VOLUME_DROP', description: 'Volume dropped sharply', change: '-67%', timeAgo: '6h ago', severity: 'high' },
-  ],
-};
 
 const MOCK_DIST_FACTORS = [
   { label: 'Sniper concentration', value: '42%',        status: 'warn' as const },
@@ -84,6 +86,79 @@ const getRiskBarColor = (score: number) => {
   return 'bg-green-500';
 };
 
+function formatUsd(n: number): string {
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
+  return `$${n.toFixed(2)}`;
+}
+
+function computeLiveDumpScore(
+  token: DexToken,
+  holders: BirdeyeHolder[],
+  trades: BirdeyeTrade[],
+): DumpScoreResult {
+  let score = 0;
+  const signals: string[] = [];
+
+  const top10pct = holders.slice(0, 10).reduce((sum, h) => sum + h.percentage, 0);
+  if (top10pct > 60) {
+    score += 35;
+    signals.push(`Top 10 wallets hold ${top10pct.toFixed(0)}% of supply`);
+  } else if (top10pct > 40) {
+    score += 20;
+    signals.push(`Top 10 wallets hold ${top10pct.toFixed(0)}% of supply`);
+  }
+
+  const recentSells = trades.filter(t => t.side === 'sell').length;
+  const recentBuys = trades.filter(t => t.side === 'buy').length;
+  const ratio = recentBuys / Math.max(recentSells, 1);
+  if (ratio < 0.4) {
+    score += 30;
+    signals.push(`Heavy sell pressure: ${recentSells} sells vs ${recentBuys} buys`);
+  } else if (ratio < 0.7) {
+    score += 15;
+    signals.push(`Sell pressure building: ${recentSells} sells vs ${recentBuys} buys`);
+  }
+
+  const liquidityMcRatio = token.liquidity / Math.max(token.marketCap, 1);
+  if (liquidityMcRatio < 0.03) {
+    score += 25;
+    signals.push(`Very low liquidity: ${(liquidityMcRatio * 100).toFixed(1)}% of market cap`);
+  } else if (liquidityMcRatio < 0.07) {
+    score += 12;
+    signals.push(`Low liquidity: ${(liquidityMcRatio * 100).toFixed(1)}% of market cap`);
+  }
+
+  if (token.priceChange.h1 < -20) {
+    score += 10;
+    signals.push(`Price down ${token.priceChange.h1.toFixed(0)}% in 1h`);
+  }
+
+  const finalScore = Math.min(score, 100);
+  return {
+    score: finalScore,
+    riskLevel: finalScore > 70 ? 'CRITICAL' : finalScore > 50 ? 'HIGH' : finalScore > 30 ? 'ELEVATED' : 'LOW',
+    trend: token.priceChange.h1 < token.priceChange.h6 ? 'INCREASING' : 'STABLE',
+    signals,
+    top10Concentration: top10pct,
+    buySellRatio: ratio,
+    liquidityRatio: liquidityMcRatio,
+  };
+}
+
+function buildLiveDumpSignals(result: DumpScoreResult, symbol: string): DumpSignal[] {
+  return result.signals.map((desc, i) => ({
+    id: `live-${i}`,
+    token: `$${symbol}`,
+    type: 'VOLUME_DROP' as const,
+    description: desc,
+    timeAgo: 'now',
+    severity: result.riskLevel === 'CRITICAL' ? 'critical' : result.riskLevel === 'HIGH' ? 'high' : 'medium',
+  }));
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+
 interface DumpDetectorProps {
   onSelectToken?: (view: string, address: string) => void;
 }
@@ -94,6 +169,8 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
   const [liveFeed, setLiveFeed] = useState<DumpSignal[]>(MOCK_LIVE_FEED);
   const [loading, setLoading] = useState(false);
   const [feedLoading, setFeedLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [analysisLiveData, setAnalysisLiveData] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const refreshFeed = async () => {
@@ -101,7 +178,7 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
     try {
       const res = await fetch('/api/dump-signals/live?limit=20');
       if (!res.ok) throw new Error();
-      const data = await res.json();
+      const data = await res.json() as DumpSignal[];
       setLiveFeed(data);
     } catch {
       setLiveFeed(prev => [...prev].sort(() => Math.random() - 0.5));
@@ -111,25 +188,68 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
   };
 
   useEffect(() => {
-    intervalRef.current = setInterval(refreshFeed, 30000);
+    intervalRef.current = setInterval(() => { void refreshFeed(); }, 30000);
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, []);
 
   const analyzeToken = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!tokenInput.trim()) return;
+    const addr = tokenInput.trim();
+    if (!addr) return;
     setLoading(true);
+    setError(null);
+
     try {
-      const res = await fetch(`/api/dump-analysis/${tokenInput.trim()}`);
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      setAnalysis(data);
+      const [dexResult, holdersResult, tradesResult] = await Promise.allSettled([
+        getTokenByAddress(addr),
+        getBirdeyeHolders(addr, 20),
+        getBirdeyeTrades(addr, 50),
+      ]);
+
+      const token = dexResult.status === 'fulfilled' ? dexResult.value : null;
+      const holderList: BirdeyeHolder[] = holdersResult.status === 'fulfilled' ? holdersResult.value : [];
+      const tradeList: BirdeyeTrade[]  = tradesResult.status === 'fulfilled' ? tradesResult.value : [];
+
+      if (token) {
+        const dumpScore = computeLiveDumpScore(token, holderList, tradeList);
+        const liveSignals = buildLiveDumpSignals(dumpScore, token.symbol);
+        const trendLabel = dumpScore.trend === 'INCREASING' ? 'increasing' : 'stable';
+
+        setAnalysis({
+          symbol: token.symbol,
+          chain: token.chainLabel,
+          mcap: formatUsd(token.marketCap),
+          price: `$${token.price < 0.001 ? token.price.toExponential(3) : token.price.toFixed(6)}`,
+          priceChange1h: token.priceChange.h1,
+          dumpRisk: dumpScore.score,
+          trend: trendLabel,
+          summary: liveSignals.length > 0 ? liveSignals.map(s => s.description).join('. ') : 'No major risk signals detected.',
+          recommendation: dumpScore.score > 70 ? 'Consider Exit' : dumpScore.score > 40 ? 'Monitor Closely' : 'Hold',
+          signals: liveSignals,
+          holderCount: holderList.length,
+          isLive: true,
+        });
+        setAnalysisLiveData(true);
+      } else {
+        // Fallback: check if it looks like a symbol rather than address
+        setError('Token not found on DexScreener. Check the address and try again.');
+        setAnalysisLiveData(false);
+      }
     } catch {
-      setAnalysis({ ...MOCK_TOKEN_ANALYSIS, symbol: tokenInput.toUpperCase().replace('$', '') });
+      setError('Failed to fetch token data. Try again.');
+      setAnalysisLiveData(false);
     } finally {
       setLoading(false);
     }
   };
+
+  const liveDistFactors = analysis?.isLive
+    ? [
+        { label: 'Top 10 concentration', value: '-', status: 'ok' as const },
+        { label: 'Buy/Sell ratio',        value: '-', status: 'ok' as const },
+        { label: 'Liquidity vs MC',       value: '-', status: 'ok' as const },
+      ]
+    : MOCK_DIST_FACTORS;
 
   return (
     <motion.div
@@ -147,7 +267,7 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* LEFT: Search + Analysis */}
         <div className="space-y-4">
-          <form onSubmit={analyzeToken} className="flex gap-2">
+          <form onSubmit={e => { void analyzeToken(e); }} className="flex gap-2">
             <div className="relative flex-1">
               <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#475569]" />
               <input
@@ -168,6 +288,12 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
             </button>
           </form>
 
+          {error && (
+            <div className="text-xs text-red-400 bg-red-900/20 border border-red-900/40 rounded-lg px-3 py-2">
+              {error}
+            </div>
+          )}
+
           {analysis && (
             <motion.div
               initial={{ opacity: 0, y: 6 }}
@@ -175,12 +301,24 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
               className="bg-[#111827] border border-[#1E2A3A] rounded-lg overflow-hidden"
             >
               {/* Token identity */}
-              <div className="px-4 py-3 border-b border-[#1E2A3A] flex items-center gap-2 text-sm">
+              <div className="px-4 py-3 border-b border-[#1E2A3A] flex items-center gap-2 text-sm flex-wrap">
                 <span className="font-bold text-blue-400">${analysis.symbol}</span>
                 <span className="text-[#475569]">·</span>
                 <span className="text-[#94A3B8]">{analysis.chain}</span>
                 <span className="text-[#475569]">·</span>
                 <span className="text-[#94A3B8]">{analysis.mcap} MC</span>
+                {analysis.isLive && (
+                  <>
+                    <span className="text-[#475569]">·</span>
+                    <span className="text-[#94A3B8]">{analysis.price}</span>
+                    <span className={cn('text-xs font-medium', analysis.priceChange1h >= 0 ? 'text-green-400' : 'text-red-400')}>
+                      {analysis.priceChange1h >= 0 ? '+' : ''}{analysis.priceChange1h.toFixed(1)}% 1h
+                    </span>
+                  </>
+                )}
+                <span className="ml-auto">
+                  <LiveIndicator isLive={analysisLiveData} />
+                </span>
               </div>
 
               {/* Risk score */}
@@ -223,7 +361,7 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
               <div className="px-4 py-3 border-b border-[#1E2A3A]">
                 <div className="text-[10px] text-[#475569] uppercase tracking-wide mb-2">Distribution Factors</div>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
-                  {MOCK_DIST_FACTORS.map((f, i) => (
+                  {liveDistFactors.map((f, i) => (
                     <div key={i} className="flex items-center justify-between">
                       <span className="text-xs text-[#94A3B8]">{f.label}</span>
                       <div className="flex items-center gap-1">
@@ -236,25 +374,28 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
               </div>
 
               {/* Active signals */}
-              <div className="px-4 py-3">
-                <div className="text-[10px] text-[#475569] uppercase tracking-wide mb-2">Active Signals</div>
-                <div className="space-y-1.5">
-                  {analysis.signals.map(sig => (
-                    <div key={sig.id} className="flex items-center gap-2 text-xs">
-                      <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', sig.severity === 'critical' ? 'bg-red-400' : sig.severity === 'high' ? 'bg-amber-400' : 'bg-[#475569]')} />
-                      <span className="text-[#94A3B8] flex-1">{sig.description}</span>
-                      <span className="text-[#475569] font-mono">{sig.timeAgo}</span>
-                    </div>
-                  ))}
+              {analysis.signals.length > 0 && (
+                <div className="px-4 py-3">
+                  <div className="text-[10px] text-[#475569] uppercase tracking-wide mb-2">Active Signals</div>
+                  <div className="space-y-1.5">
+                    {analysis.signals.map(sig => (
+                      <div key={sig.id} className="flex items-center gap-2 text-xs">
+                        <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', sig.severity === 'critical' ? 'bg-red-400' : sig.severity === 'high' ? 'bg-amber-400' : 'bg-[#475569]')} />
+                        <span className="text-[#94A3B8] flex-1">{sig.description}</span>
+                        <span className="text-[#475569] font-mono">{sig.timeAgo}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </motion.div>
           )}
 
-          {!analysis && !loading && (
+          {!analysis && !loading && !error && (
             <div className="border border-dashed border-[#1E2A3A] rounded-lg p-10 text-center">
               <AlertTriangle size={24} className="text-[#2D3748] mx-auto mb-2" />
-              <p className="text-sm text-[#475569]">Enter a token to analyze dump risk</p>
+              <p className="text-sm text-[#475569]">Enter a token address to analyze dump risk</p>
+              <p className="text-xs text-[#2D3748] mt-1">Live data via DexScreener + Birdeye</p>
             </div>
           )}
         </div>
@@ -267,7 +408,7 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
               <span className="text-sm font-medium text-[#F1F5F9]">Live Risk Feed</span>
             </div>
             <button
-              onClick={refreshFeed}
+              onClick={() => { void refreshFeed(); }}
               className="text-[#475569] hover:text-[#94A3B8] transition-colors"
             >
               <RefreshCw size={12} className={feedLoading ? 'animate-spin' : ''} />
@@ -279,7 +420,7 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
                 key={sig.id}
                 onClick={() => {
                   setTokenInput(sig.token.replace('$', ''));
-                  setAnalysis({ ...MOCK_TOKEN_ANALYSIS, symbol: sig.token.replace('$', '') });
+                  setError(null);
                 }}
                 className="w-full px-4 py-2.5 flex items-center gap-3 text-left hover:bg-[#1A2234] transition-colors"
               >

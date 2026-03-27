@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Flame, Copy, Check, RefreshCw, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { getTrendingPairs, getNewPairs, DexToken } from '../services/dexscreenerClient';
+import { LiveIndicator } from './ui/LiveIndicator';
 
 interface AlphaToken {
   symbol: string;
@@ -94,6 +96,71 @@ const CopyAddress: React.FC<{ address: string }> = ({ address }) => {
   );
 };
 
+// ── Scoring helpers ──────────────────────────────────────────────────────────
+
+function computeAlphaScore(pair: DexToken): number {
+  let score = 0;
+  if (pair.priceChange.h1 > 200) score += 30;
+  else if (pair.priceChange.h1 > 100) score += 20;
+  else if (pair.priceChange.h1 > 50) score += 10;
+
+  const h1Ratio = pair.txns.h1.buys / Math.max(pair.txns.h1.sells, 1);
+  if (h1Ratio > 2) score += 20;
+  else if (h1Ratio > 1.5) score += 12;
+  else if (h1Ratio > 1) score += 5;
+
+  if (pair.ageMinutes < 120) score += 25;
+  else if (pair.ageMinutes < 360) score += 15;
+  else if (pair.ageMinutes < 1440) score += 5;
+
+  if (pair.liquidity > 50000) score += 10;
+  else if (pair.liquidity > 20000) score += 7;
+  else if (pair.liquidity > 5000) score += 3;
+
+  const volMcRatio = pair.volume.h1 / Math.max(pair.marketCap, 1);
+  if (volMcRatio > 0.5) score += 15;
+  else if (volMcRatio > 0.2) score += 8;
+
+  return Math.min(score, 100);
+}
+
+function computeRiskScore(pair: DexToken): number {
+  let score = 0;
+  if (pair.liquidity < 5000) score += 40;
+  else if (pair.liquidity < 15000) score += 20;
+  else if (pair.liquidity < 30000) score += 10;
+
+  const h1Ratio = pair.txns.h1.buys / Math.max(pair.txns.h1.sells, 1);
+  if (h1Ratio < 0.5) score += 30;
+  else if (h1Ratio < 0.8) score += 15;
+
+  if (pair.ageMinutes < 30) score += 20;
+  else if (pair.ageMinutes < 60) score += 10;
+
+  if (pair.priceChange.h1 > 500) score += 15;
+
+  return Math.min(score, 100);
+}
+
+function deriveSignal(alpha: number, risk: number): 'ENTRY' | 'HOLD' | 'EXIT' | 'WATCH' {
+  if (alpha > 65 && risk < 45) return 'ENTRY';
+  if (risk > 70) return 'EXIT';
+  if (alpha > 45 && risk < 60) return 'WATCH';
+  return 'HOLD';
+}
+
+function formatUsd(n: number): string {
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
+  return `$${n.toFixed(0)}`;
+}
+
+function formatPercent(n: number): string {
+  return n >= 0 ? `+${n.toFixed(0)}%` : `${n.toFixed(0)}%`;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+
 type SortMode = 'alpha' | 'risk' | 'volume';
 
 interface AlphaHunterProps {
@@ -103,6 +170,8 @@ interface AlphaHunterProps {
 export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
   const [tokens, setTokens] = useState<AlphaToken[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLiveData, setIsLiveData] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | undefined>(undefined);
   const [timeFilter, setTimeFilter] = useState<'5m' | '1h' | '6h' | '24h'>('1h');
   const [minAlpha, setMinAlpha] = useState(40);
   const [chainFilter, setChainFilter] = useState<'ALL' | 'SOL' | 'ETH' | 'BSC'>('ALL');
@@ -111,18 +180,52 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
   const fetchTokens = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/tokens/discover?minAlpha=${minAlpha}&limit=50`);
-      if (!res.ok) throw new Error('API unavailable');
-      const data = await res.json();
-      setTokens(data);
+      let pairs: DexToken[] = [];
+
+      if (timeFilter === '5m' || timeFilter === '1h') {
+        pairs = await getNewPairs(5000);
+      } else {
+        pairs = await getTrendingPairs('solana');
+      }
+
+      if (pairs.length > 0) {
+        const alphaTokens = pairs.map(pair => {
+          const alpha = computeAlphaScore(pair);
+          const risk  = computeRiskScore(pair);
+          return {
+            symbol: pair.symbol,
+            name: pair.name,
+            address: pair.address,
+            chain: pair.chainLabel,
+            age: pair.ageLabel,
+            alphaScore: alpha,
+            riskScore: risk,
+            signal: deriveSignal(alpha, risk),
+            mcap: formatUsd(pair.marketCap),
+            volume1h: formatUsd(pair.volume.h1),
+            volumeChange: formatPercent(pair.priceChange.h1),
+            holders: 0,
+            holderChange: '-',
+            smartWallets: 0,
+          } satisfies AlphaToken;
+        });
+
+        setTokens(alphaTokens.filter(t => t.alphaScore >= minAlpha));
+        setIsLiveData(true);
+        setLastUpdated(new Date());
+      } else {
+        setTokens(MOCK_ALPHA_TOKENS);
+        setIsLiveData(false);
+      }
     } catch {
       setTokens(MOCK_ALPHA_TOKENS);
+      setIsLiveData(false);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchTokens(); }, [minAlpha]);
+  useEffect(() => { void fetchTokens(); }, [minAlpha, timeFilter]);
 
   const filtered = tokens
     .filter(t => t.alphaScore >= minAlpha)
@@ -145,9 +248,10 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
         <div className="flex items-center gap-2">
           <Flame size={16} className="text-[#94A3B8]" />
           <h1 className="text-base font-semibold text-[#F1F5F9]">Alpha Hunter</h1>
+          <LiveIndicator isLive={isLiveData} lastUpdated={lastUpdated} />
         </div>
         <button
-          onClick={fetchTokens}
+          onClick={() => { void fetchTokens(); }}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-[#111827] border border-[#1E2A3A] rounded-lg text-xs text-[#94A3B8] hover:text-[#F1F5F9] transition-colors"
         >
           <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
@@ -295,8 +399,14 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
 
                     {/* HOLDERS */}
                     <td className="px-4 py-3">
-                      <span className="text-sm text-[#F1F5F9] num">{token.holders.toLocaleString()}</span>
-                      <span className="text-[10px] text-green-400 ml-1">{token.holderChange}</span>
+                      {token.holders > 0 ? (
+                        <>
+                          <span className="text-sm text-[#F1F5F9] num">{token.holders.toLocaleString()}</span>
+                          <span className="text-[10px] text-green-400 ml-1">{token.holderChange}</span>
+                        </>
+                      ) : (
+                        <span className="text-sm text-[#475569]">—</span>
+                      )}
                     </td>
 
                     {/* SMART $ */}
