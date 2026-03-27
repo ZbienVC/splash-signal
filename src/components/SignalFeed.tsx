@@ -55,15 +55,15 @@ const MOCK_SIGNALS: SignalItem[] = [
 type FilterType = 'ALL' | 'ENTRY' | 'EXIT' | 'WATCH';
 
 const DOT_COLOR: Record<string, string> = {
-  ENTRY: 'bg-green-400',
-  EXIT:  'bg-red-400',
-  WATCH: 'bg-amber-400',
+  ENTRY: 'bg-green-500',
+  EXIT:  'bg-red-500',
+  WATCH: 'bg-amber-500',
 };
 
 const ACTION_COLOR: Record<string, string> = {
-  ENTRY: 'text-green-400',
-  EXIT:  'text-red-400',
-  WATCH: 'text-amber-400',
+  ENTRY: 'text-green-600',
+  EXIT:  'text-red-600',
+  WATCH: 'text-amber-600',
 };
 
 interface SignalFeedProps {
@@ -87,18 +87,18 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Radio size={16} className="text-[#94A3B8]" />
-          <h1 className="text-base font-semibold text-[#F1F5F9]">Signal Feed</h1>
+          <Radio size={16} className="text-slate-500" />
+          <h1 className="text-base font-semibold text-slate-900">Signal Feed</h1>
           <div className="flex items-center gap-1.5 ml-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-live" />
-            <span className="text-xs text-[#475569]">Live</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-live" />
+            <span className="text-xs text-slate-500">Live</span>
           </div>
         </div>
-        <span className="text-xs text-[#475569]">{filtered.length} signals</span>
+        <span className="text-xs text-slate-400">{filtered.length} signals</span>
       </div>
 
       {/* Filter tabs */}
-      <div className="flex items-center gap-1 border-b border-[#1E2A3A]">
+      <div className="flex items-center gap-1 border-b border-slate-200">
         {(['ALL', 'ENTRY', 'EXIT', 'WATCH'] as FilterType[]).map(tab => (
           <button
             key={tab}
@@ -106,8 +106,8 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
             className={cn(
               'px-3 pb-2 text-xs font-medium transition-colors',
               activeFilter === tab
-                ? 'text-[#F1F5F9] border-b-2 border-blue-500 -mb-px'
-                : 'text-[#475569] hover:text-[#94A3B8]'
+                ? 'text-slate-900 border-b-2 border-blue-500 -mb-px'
+                : 'text-slate-500 hover:text-slate-700'
             )}
           >
             {tab}
@@ -116,20 +116,23 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
       </div>
 
       {/* Signal rows */}
-      <div className="space-y-px">
-        {filtered.map((signal) => {
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        {filtered.map((signal, idx) => {
           const key = `${signal.token}-${signal.timeAgo}`;
           const confPct = Math.round(signal.confidence * 100);
 
           return (
             <div
               key={key}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#111827] transition-colors group cursor-pointer"
+              className={cn(
+                'flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group cursor-pointer',
+                idx < filtered.length - 1 ? 'border-b border-slate-100' : ''
+              )}
               onClick={() => signal.address && onSelectToken?.('solana-intel', signal.address)}
               title={signal.reasons?.join(' • ')}
             >
               {/* Dot */}
-              <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', DOT_COLOR[signal.action])} />
+              <span className={cn('w-2 h-2 rounded-full shrink-0', DOT_COLOR[signal.action])} />
 
               {/* Signal type */}
               <span className={cn('text-[10px] font-mono font-medium w-10 shrink-0', ACTION_COLOR[signal.action])}>
@@ -137,19 +140,19 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
               </span>
 
               {/* Token */}
-              <span className="text-sm font-medium text-[#F1F5F9] w-16 shrink-0">{signal.token}</span>
+              <span className="text-sm font-medium text-slate-900 w-16 shrink-0">{signal.token}</span>
 
               {/* Description */}
-              <span className="text-sm text-[#94A3B8] flex-1 truncate">{signal.description}</span>
+              <span className="text-sm text-slate-500 flex-1 truncate">{signal.description}</span>
 
               {/* Confidence */}
-              <span className="text-xs text-[#475569] shrink-0">{confPct}% conf</span>
+              <span className="text-xs text-slate-400 shrink-0">{confPct}% conf</span>
 
               {/* Time */}
-              <span className="text-xs text-[#475569] w-14 text-right shrink-0">{signal.timeAgo}</span>
+              <span className="text-xs text-slate-400 w-14 text-right shrink-0">{signal.timeAgo}</span>
 
               {/* Arrow */}
-              <ChevronRight size={13} className="text-[#475569] group-hover:text-blue-400 transition-colors shrink-0" />
+              <ChevronRight size={13} className="text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
             </div>
           );
         })}

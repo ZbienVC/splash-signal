@@ -36,7 +36,7 @@ const TYPE_LABEL: Record<WalletClassification, string> = {
 };
 
 const scoreColor = (score: number) =>
-  score >= 80 ? 'text-green-400' : score >= 60 ? 'text-amber-400' : 'text-red-400';
+  score >= 80 ? 'text-green-600' : score >= 60 ? 'text-amber-600' : 'text-red-600';
 
 const CopyButton: React.FC<{ address: string }> = ({ address }) => {
   const [copied, setCopied] = useState(false);
@@ -44,10 +44,10 @@ const CopyButton: React.FC<{ address: string }> = ({ address }) => {
   return (
     <button
       onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(address).catch(() => {}); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
-      className="flex items-center gap-1 text-xs font-mono text-[#475569] hover:text-[#F1F5F9] transition-colors"
+      className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-slate-700 transition-colors"
     >
       {short}
-      {copied ? <Check size={10} className="text-green-400" /> : <Copy size={10} />}
+      {copied ? <Check size={10} className="text-green-600" /> : <Copy size={10} />}
     </button>
   );
 };
@@ -71,33 +71,33 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
     >
       {/* Header */}
       <div className="flex items-center gap-2">
-        <Trophy size={16} className="text-[#94A3B8]" />
-        <h1 className="text-base font-semibold text-[#F1F5F9]">Wallet Rankings</h1>
+        <Trophy size={16} className="text-slate-500" />
+        <h1 className="text-base font-semibold text-slate-900">Wallet Rankings</h1>
       </div>
 
       {/* Stats */}
       <div className="flex items-center gap-6">
         <div>
-          <span className="text-[10px] text-[#475569] uppercase tracking-wide">Tracked</span>
-          <span className="text-sm font-bold text-[#F1F5F9] ml-2 num">{totalWallets.toLocaleString()}</span>
+          <span className="text-[10px] text-slate-400 uppercase tracking-wide">Tracked</span>
+          <span className="text-sm font-bold text-slate-900 ml-2 num">{totalWallets.toLocaleString()}</span>
         </div>
         <div>
-          <span className="text-[10px] text-[#475569] uppercase tracking-wide">Avg Win Rate</span>
-          <span className="text-sm font-bold text-green-400 ml-2 num">{avgWinRate}%</span>
+          <span className="text-[10px] text-slate-400 uppercase tracking-wide">Avg Win Rate</span>
+          <span className="text-sm font-bold text-green-600 ml-2 num">{avgWinRate}%</span>
         </div>
         <div>
-          <span className="text-[10px] text-[#475569] uppercase tracking-wide">Best Avg Multiple</span>
-          <span className="text-sm font-bold text-amber-400 ml-2 num">{MOCK_WALLETS[0].avgMultiple}x</span>
+          <span className="text-[10px] text-slate-400 uppercase tracking-wide">Best Avg Multiple</span>
+          <span className="text-sm font-bold text-amber-600 ml-2 num">{MOCK_WALLETS[0].avgMultiple}x</span>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-[#111827] border border-[#1E2A3A] rounded-lg overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[#1E2A3A]">
+            <tr className="border-b border-slate-200 bg-slate-50">
               {['RANK', 'WALLET', 'TYPE', 'SCORE', 'WIN %', 'AVG X', 'TRADES', 'STREAK', ''].map(col => (
-                <th key={col} className="px-4 py-2.5 text-left text-[10px] font-medium text-[#475569] uppercase tracking-wide whitespace-nowrap">
+                <th key={col} className="px-4 py-2.5 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wide whitespace-nowrap">
                   {col}
                 </th>
               ))}
@@ -107,11 +107,11 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
             {MOCK_WALLETS.map(wallet => (
               <tr
                 key={wallet.rank}
-                className="border-b border-[#1E2A3A] last:border-0 table-row-hover transition-colors"
+                className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors"
               >
                 {/* RANK */}
                 <td className="px-4 py-3">
-                  <span className={cn('text-sm font-mono font-bold', wallet.rank <= 3 ? 'text-[#F1F5F9]' : 'text-[#475569]')}>
+                  <span className={cn('text-sm font-mono font-bold', wallet.rank <= 3 ? 'text-slate-900' : 'text-slate-400')}>
                     #{wallet.rank}
                   </span>
                 </td>
@@ -121,14 +121,14 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
                   <div className="flex items-center gap-1.5">
                     <CopyButton address={wallet.address} />
                     {wallet.newEntry && (
-                      <span className="text-[9px] font-bold text-blue-400 border border-blue-500/30 px-1 rounded">NEW</span>
+                      <span className="text-[9px] font-bold text-blue-600 border border-blue-200 bg-blue-50 px-1 rounded">NEW</span>
                     )}
                   </div>
                 </td>
 
                 {/* TYPE */}
                 <td className="px-4 py-3">
-                  <span className="text-xs text-[#94A3B8]">{TYPE_LABEL[wallet.classification]}</span>
+                  <span className="text-xs text-slate-500">{TYPE_LABEL[wallet.classification]}</span>
                 </td>
 
                 {/* SCORE */}
@@ -138,25 +138,25 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
 
                 {/* WIN % */}
                 <td className="px-4 py-3">
-                  <span className="text-sm text-[#F1F5F9] num">{wallet.winRate}%</span>
+                  <span className="text-sm text-slate-700 num">{wallet.winRate}%</span>
                 </td>
 
                 {/* AVG X */}
                 <td className="px-4 py-3">
-                  <span className="text-sm text-[#F1F5F9] num">{wallet.avgMultiple}x</span>
+                  <span className="text-sm text-slate-700 num">{wallet.avgMultiple}x</span>
                 </td>
 
                 {/* TRADES */}
                 <td className="px-4 py-3">
-                  <span className="text-sm text-[#F1F5F9] num">{wallet.trades}</span>
+                  <span className="text-sm text-slate-700 num">{wallet.trades}</span>
                 </td>
 
                 {/* STREAK */}
                 <td className="px-4 py-3">
                   {wallet.streak && wallet.streak > 2 ? (
-                    <span className="text-xs text-amber-400 num">🔥 {wallet.streak}W</span>
+                    <span className="text-xs text-amber-600 num">🔥 {wallet.streak}W</span>
                   ) : (
-                    <span className="text-xs text-[#475569]">—</span>
+                    <span className="text-xs text-slate-400">—</span>
                   )}
                 </td>
 
@@ -170,17 +170,15 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
                         return next;
                       })}
                       className={cn(
-                        'px-2.5 py-1 rounded border text-[10px] font-medium transition-colors',
-                        tracked.has(wallet.address)
-                          ? 'border-blue-500/40 text-blue-400 bg-blue-500/10'
-                          : 'border-[#2D3748] text-[#94A3B8] hover:text-[#F1F5F9]'
+                        'bg-blue-600 text-white hover:bg-blue-700 text-xs px-3 py-1 rounded-md transition-colors',
+                        tracked.has(wallet.address) && 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                       )}
                     >
                       {tracked.has(wallet.address) ? 'Tracking' : 'Track'}
                     </button>
                     <button
                       onClick={() => onSelectWallet?.('wallet-behavior', wallet.address)}
-                      className="text-[#475569] hover:text-blue-400 transition-colors"
+                      className="text-slate-400 hover:text-blue-600 transition-colors"
                     >
                       <ChevronRight size={13} />
                     </button>

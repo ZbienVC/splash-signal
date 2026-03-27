@@ -2,26 +2,39 @@
 
 /* ─── Design System Variables ─────────────────────────────────── */
 :root {
-  /* Backgrounds (3 levels) */
-  --bg-base:     #0A0E17;
-  --bg-surface:  #111827;
-  --bg-elevated: #1A2234;
+  /* Backgrounds */
+  --bg-base:     #F8FAFC;        /* Page background — very light blue-gray */
+  --bg-surface:  #FFFFFF;        /* Cards, panels */
+  --bg-elevated: #F1F5F9;        /* Hover, inputs, subtle fills */
+  --bg-overlay:  #E2E8F0;        /* Selected states, active rows */
 
-  /* Borders (2 levels) */
-  --border-subtle:  #1E2A3A;
-  --border-default: #2D3748;
-  --border-active:  #3B82F6;
+  /* Borders */
+  --border-subtle:  #E2E8F0;     /* Default borders */
+  --border-default: #CBD5E1;     /* Visible borders */
+  --border-active:  #3B82F6;     /* Focus/active — blue */
 
-  /* Text (3 levels) */
-  --text-primary:   #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted:     #475569;
+  /* Text */
+  --text-primary:   #0F172A;     /* Headings, important values */
+  --text-secondary: #475569;     /* Labels, descriptions */
+  --text-muted:     #94A3B8;     /* Timestamps, metadata */
 
-  /* Semantic */
-  --color-green: #4ADE80;
-  --color-red:   #F87171;
-  --color-amber: #FBBF24;
-  --color-blue:  #3B82F6;
+  /* Brand accent */
+  --brand:        #2563EB;       /* Blue-600 — primary brand */
+  --brand-light:  #EFF6FF;       /* Blue-50 — brand tinted bg */
+  --brand-border: #BFDBFE;       /* Blue-200 — brand border */
+
+  /* Semantic signals */
+  --signal-entry:        #16A34A;   /* Green-600 */
+  --signal-entry-bg:     #F0FDF4;   /* Green-50 */
+  --signal-entry-border: #BBF7D0;   /* Green-200 */
+
+  --signal-exit:        #DC2626;    /* Red-600 */
+  --signal-exit-bg:     #FEF2F2;    /* Red-50 */
+  --signal-exit-border: #FECACA;    /* Red-200 */
+
+  --signal-watch:        #D97706;   /* Amber-600 */
+  --signal-watch-bg:     #FFFBEB;   /* Amber-50 */
+  --signal-watch-border: #FDE68A;   /* Amber-200 */
 }
 
 @theme {
@@ -31,8 +44,8 @@
 
 @layer base {
   body {
-    background: #0A0E17;
-    color: #F1F5F9;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
     @apply antialiased font-sans;
   }
 }
@@ -43,21 +56,21 @@
   }
 }
 
-/* Clean scrollbar */
+/* Clean scrollbar for light theme */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2D3748; border-radius: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-elevated); }
+::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 4px; }
 
 /* Table row hover */
-.table-row-hover:hover { background: #1A2234; }
+.table-row-hover:hover { background: var(--bg-elevated); }
 
-/* Mono numbers */
+/* Monospace numbers */
 .num {
   font-family: 'JetBrains Mono', monospace;
   font-variant-numeric: tabular-nums;
 }
 
-/* Live dot pulse */
+/* Live indicator */
 @keyframes live-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }

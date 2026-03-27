@@ -51,32 +51,32 @@ const MOCK_ALPHA_TOKENS: AlphaToken[] = [
 ];
 
 const SIGNAL_STYLE: Record<string, string> = {
-  ENTRY: 'text-green-400 bg-green-900/30',
-  EXIT:  'text-red-400 bg-red-900/30',
-  WATCH: 'text-amber-400 bg-amber-900/30',
-  HOLD:  'text-blue-400 bg-blue-900/30',
+  ENTRY: 'text-green-700 bg-green-50 border border-green-200',
+  EXIT:  'text-red-700 bg-red-50 border border-red-200',
+  WATCH: 'text-amber-700 bg-amber-50 border border-amber-200',
+  HOLD:  'text-blue-700 bg-blue-50 border border-blue-200',
 };
 
 const scoreColor = (score: number, invert = false) => {
   if (invert) {
-    if (score > 70) return 'text-red-400';
-    if (score > 40) return 'text-amber-400';
-    return 'text-green-400';
+    if (score > 70) return 'text-red-600';
+    if (score > 40) return 'text-amber-600';
+    return 'text-green-600';
   }
-  if (score > 70) return 'text-green-400';
-  if (score > 40) return 'text-amber-400';
-  return 'text-red-400';
+  if (score > 70) return 'text-green-600';
+  if (score > 40) return 'text-amber-600';
+  return 'text-red-600';
 };
 
 const scoreDot = (score: number, invert = false) => {
   if (invert) {
-    if (score > 70) return 'bg-red-400';
-    if (score > 40) return 'bg-amber-400';
-    return 'bg-green-400';
+    if (score > 70) return 'bg-red-500';
+    if (score > 40) return 'bg-amber-500';
+    return 'bg-green-500';
   }
-  if (score > 70) return 'bg-green-400';
-  if (score > 40) return 'bg-amber-400';
-  return 'bg-red-400';
+  if (score > 70) return 'bg-green-500';
+  if (score > 40) return 'bg-amber-500';
+  return 'bg-red-500';
 };
 
 const CopyAddress: React.FC<{ address: string }> = ({ address }) => {
@@ -89,9 +89,9 @@ const CopyAddress: React.FC<{ address: string }> = ({ address }) => {
     setTimeout(() => setCopied(false), 1500);
   };
   return (
-    <button onClick={handleCopy} className="flex items-center gap-1 text-[10px] font-mono text-[#475569] hover:text-[#94A3B8] transition-colors">
+    <button onClick={handleCopy} className="flex items-center gap-1 text-[10px] font-mono text-slate-400 hover:text-slate-600 transition-colors">
       {short}
-      {copied ? <Check size={10} className="text-green-400" /> : <Copy size={10} />}
+      {copied ? <Check size={10} className="text-green-600" /> : <Copy size={10} />}
     </button>
   );
 };
@@ -246,13 +246,13 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Flame size={16} className="text-[#94A3B8]" />
-          <h1 className="text-base font-semibold text-[#F1F5F9]">Alpha Hunter</h1>
+          <Flame size={16} className="text-slate-500" />
+          <h1 className="text-base font-semibold text-slate-900">Alpha Hunter</h1>
           <LiveIndicator isLive={isLiveData} lastUpdated={lastUpdated} />
         </div>
         <button
           onClick={() => { void fetchTokens(); }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#111827] border border-[#1E2A3A] rounded-lg text-xs text-[#94A3B8] hover:text-[#F1F5F9] transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors"
         >
           <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
           Refresh
@@ -264,7 +264,7 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
         <select
           value={timeFilter}
           onChange={e => setTimeFilter(e.target.value as typeof timeFilter)}
-          className="h-7 px-2 text-xs bg-[#111827] border border-[#1E2A3A] rounded text-[#94A3B8] focus:outline-none focus:border-blue-500"
+          className="h-7 px-2 text-xs bg-slate-100 border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
         >
           {(['5m', '1h', '6h', '24h'] as const).map(t => (
             <option key={t} value={t}>Time: {t}</option>
@@ -274,7 +274,7 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
         <select
           value={minAlpha}
           onChange={e => setMinAlpha(Number(e.target.value))}
-          className="h-7 px-2 text-xs bg-[#111827] border border-[#1E2A3A] rounded text-[#94A3B8] focus:outline-none focus:border-blue-500"
+          className="h-7 px-2 text-xs bg-slate-100 border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
         >
           {[0, 20, 40, 60, 80].map(v => (
             <option key={v} value={v}>Min Alpha: {v}+</option>
@@ -284,7 +284,7 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
         <select
           value={chainFilter}
           onChange={e => setChainFilter(e.target.value as typeof chainFilter)}
-          className="h-7 px-2 text-xs bg-[#111827] border border-[#1E2A3A] rounded text-[#94A3B8] focus:outline-none focus:border-blue-500"
+          className="h-7 px-2 text-xs bg-slate-100 border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
         >
           {(['ALL', 'SOL', 'ETH', 'BSC'] as const).map(c => (
             <option key={c} value={c}>Chain: {c}</option>
@@ -294,42 +294,42 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
         <select
           value={sortMode}
           onChange={e => setSortMode(e.target.value as SortMode)}
-          className="h-7 px-2 text-xs bg-[#111827] border border-[#1E2A3A] rounded text-[#94A3B8] focus:outline-none focus:border-blue-500"
+          className="h-7 px-2 text-xs bg-slate-100 border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
         >
           <option value="alpha">Sort: Alpha</option>
           <option value="risk">Sort: Risk</option>
           <option value="volume">Sort: Volume</option>
         </select>
 
-        <span className="ml-auto text-xs text-[#475569]">Showing {filtered.length} tokens</span>
+        <span className="ml-auto text-xs text-slate-400">Showing {filtered.length} tokens</span>
       </div>
 
       {/* Table */}
       {loading ? (
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-12 bg-[#111827] rounded animate-skeleton" />
+            <div key={i} className="h-12 bg-slate-100 rounded animate-skeleton" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="border border-dashed border-[#1E2A3A] rounded-lg p-12 text-center">
-          <p className="text-sm text-[#475569]">No tokens match your filters</p>
+        <div className="border border-dashed border-slate-300 rounded-lg p-12 text-center">
+          <p className="text-sm text-slate-500">No tokens match your filters</p>
           <button
             onClick={() => { setMinAlpha(0); setChainFilter('ALL'); }}
-            className="mt-3 px-3 py-1.5 text-xs text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/10 transition-colors"
+            className="mt-3 px-3 py-1.5 text-xs text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
           >
             Reset filters
           </button>
         </div>
       ) : (
-        <div className="bg-[#111827] border border-[#1E2A3A] rounded-lg overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[#1E2A3A]">
+                <tr className="border-b border-slate-200 bg-slate-50">
                   {['TOKEN', 'SIGNAL', 'α SCORE', 'RISK', 'MC', 'VOL 1H', 'Δ VOL', 'HOLDERS', 'SMART $', ''].map(col => (
-                    <th key={col} className="px-4 py-2.5 text-left text-[10px] font-medium text-[#475569] uppercase tracking-wide whitespace-nowrap">
+                    <th key={col} className="px-4 py-2.5 text-left text-[10px] font-medium text-slate-500 uppercase tracking-wide whitespace-nowrap">
                       {col}
                     </th>
                   ))}
@@ -340,14 +340,14 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
                   <tr
                     key={token.address}
                     onClick={() => onSelectToken?.('solana-intel', token.address)}
-                    className="border-b border-[#1E2A3A] last:border-0 table-row-hover cursor-pointer transition-colors"
+                    className="border-b border-slate-100 last:border-0 table-row-hover cursor-pointer transition-colors"
                   >
                     {/* TOKEN */}
                     <td className="px-4 py-3">
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-[#F1F5F9]">${token.symbol}</span>
+                        <span className="text-sm font-bold text-slate-900">${token.symbol}</span>
                         <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className="text-[10px] text-[#475569]">{token.age}</span>
+                          <span className="text-[10px] text-slate-400">{token.age}</span>
                           <CopyAddress address={token.address} />
                         </div>
                       </div>
@@ -382,17 +382,17 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
 
                     {/* MC */}
                     <td className="px-4 py-3 text-right">
-                      <span className="text-sm text-[#F1F5F9] num">{token.mcap}</span>
+                      <span className="text-sm text-slate-700 num">{token.mcap}</span>
                     </td>
 
                     {/* VOL 1H */}
                     <td className="px-4 py-3 text-right">
-                      <span className="text-sm text-[#F1F5F9] num">{token.volume1h}</span>
+                      <span className="text-sm text-slate-700 num">{token.volume1h}</span>
                     </td>
 
                     {/* Δ VOL */}
                     <td className="px-4 py-3">
-                      <span className={cn('text-sm font-medium num', token.volumeChange.startsWith('+') ? 'text-green-400' : 'text-red-400')}>
+                      <span className={cn('text-sm font-medium num', token.volumeChange.startsWith('+') ? 'text-green-600' : 'text-red-600')}>
                         {token.volumeChange}
                       </span>
                     </td>
@@ -401,26 +401,26 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
                     <td className="px-4 py-3">
                       {token.holders > 0 ? (
                         <>
-                          <span className="text-sm text-[#F1F5F9] num">{token.holders.toLocaleString()}</span>
-                          <span className="text-[10px] text-green-400 ml-1">{token.holderChange}</span>
+                          <span className="text-sm text-slate-700 num">{token.holders.toLocaleString()}</span>
+                          <span className="text-[10px] text-green-600 ml-1">{token.holderChange}</span>
                         </>
                       ) : (
-                        <span className="text-sm text-[#475569]">—</span>
+                        <span className="text-sm text-slate-400">—</span>
                       )}
                     </td>
 
                     {/* SMART $ */}
                     <td className="px-4 py-3">
                       {token.smartWallets > 0 ? (
-                        <span className="text-sm text-[#F1F5F9] num">{token.smartWallets}</span>
+                        <span className="text-sm text-slate-700 num">{token.smartWallets}</span>
                       ) : (
-                        <span className="text-sm text-[#475569]">—</span>
+                        <span className="text-sm text-slate-400">—</span>
                       )}
                     </td>
 
                     {/* ACTION */}
                     <td className="px-4 py-3">
-                      <span className="flex items-center gap-0.5 text-xs text-blue-400 hover:text-blue-300 transition-colors whitespace-nowrap">
+                      <span className="flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-700 transition-colors whitespace-nowrap">
                         View <ChevronRight size={12} />
                       </span>
                     </td>
@@ -431,27 +431,27 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
           </div>
 
           {/* Mobile cards */}
-          <div className="md:hidden divide-y divide-[#1E2A3A]">
+          <div className="md:hidden divide-y divide-slate-100">
             {filtered.map((token) => (
               <div
                 key={token.address}
                 onClick={() => onSelectToken?.('solana-intel', token.address)}
-                className="p-4 cursor-pointer hover:bg-[#1A2234] transition-colors"
+                className="p-4 cursor-pointer hover:bg-slate-50 transition-colors"
               >
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    <span className="text-sm font-bold text-[#F1F5F9]">${token.symbol}</span>
-                    <span className="text-xs text-[#475569] ml-2">{token.age}</span>
+                    <span className="text-sm font-bold text-slate-900">${token.symbol}</span>
+                    <span className="text-xs text-slate-400 ml-2">{token.age}</span>
                   </div>
                   <span className={cn('px-2 py-0.5 rounded text-[10px] font-bold', SIGNAL_STYLE[token.signal])}>
                     {token.signal}
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-[#94A3B8]">
+                <div className="flex items-center gap-4 text-xs text-slate-500">
                   <span>α <span className={scoreColor(token.alphaScore)}>{token.alphaScore}</span></span>
                   <span>Risk <span className={scoreColor(token.riskScore, true)}>{token.riskScore}</span></span>
                   <span>{token.mcap}</span>
-                  <span className="ml-auto text-blue-400">View →</span>
+                  <span className="ml-auto text-blue-600">View →</span>
                 </div>
               </div>
             ))}

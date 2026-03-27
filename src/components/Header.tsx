@@ -45,17 +45,17 @@ export const Header: React.FC<HeaderProps> = ({ activeView, onSearch }) => {
   const [section, page] = getBreadcrumbs();
 
   return (
-    <header className="h-[52px] bg-[#0A0E17]/90 backdrop-blur-sm border-b border-[#1E2A3A] flex items-center justify-between px-6 sticky top-0 z-50">
+    <header className="h-[52px] bg-white/90 backdrop-blur-sm border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-50">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-1.5 text-sm text-[#475569] min-w-0">
+      <div className="flex items-center gap-1.5 text-sm text-slate-400 min-w-0">
         <span>{section}</span>
-        <span className="text-[#2D3748]">/</span>
-        <span className="text-[#94A3B8]">{page}</span>
+        <span className="text-slate-300">/</span>
+        <span className="text-slate-600">{page}</span>
       </div>
 
       {/* Search */}
       <form onSubmit={handleSearch} className="relative">
-        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#475569]" />
+        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
           type="text"
           placeholder="Search token or address..."
@@ -63,19 +63,19 @@ export const Header: React.FC<HeaderProps> = ({ activeView, onSearch }) => {
           onChange={e => setSearchQuery(e.target.value)}
           className={cn(
             'w-64 h-8 pl-9 pr-16 rounded-lg text-sm',
-            'bg-[#1A2234] border border-[#1E2A3A]',
-            'text-[#F1F5F9] placeholder:text-[#475569]',
-            'focus:outline-none focus:border-blue-500 transition-colors'
+            'bg-slate-100 border border-slate-200',
+            'text-slate-900 placeholder:text-slate-400',
+            'focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors'
           )}
         />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-[#475569] font-mono">⌘K</span>
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 font-mono">⌘K</span>
       </form>
 
       {/* Right */}
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-live" />
-          <span className="text-xs text-[#475569]">Live</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-live" />
+          <span className="text-xs text-slate-500">Live</span>
         </div>
       </div>
     </header>

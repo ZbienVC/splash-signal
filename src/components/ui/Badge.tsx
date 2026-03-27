@@ -12,21 +12,20 @@ interface BadgeProps {
 export const Badge: React.FC<BadgeProps> = ({
   variant = 'neutral',
   size = 'md',
-  glow = false,
   className,
   children
 }) => {
   const baseStyles = 'inline-flex items-center gap-1 rounded-full font-medium px-2.5 py-0.5 text-xs';
 
   const variantStyles = {
-    alpha:   'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
-    entry:   'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
-    risk:    'bg-red-500/10 text-red-400 border border-red-500/30',
-    exit:    'bg-red-500/10 text-red-400 border border-red-500/30',
-    watch:   'bg-amber-500/10 text-amber-400 border border-amber-500/30',
-    warning: 'bg-amber-500/10 text-amber-400 border border-amber-500/30',
-    success: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
-    neutral: 'bg-[#1C2128] text-[#8B949E] border border-[#30363D]',
+    alpha:   'bg-green-50 text-green-700 border border-green-200',
+    entry:   'bg-green-50 text-green-700 border border-green-200',
+    risk:    'bg-red-50 text-red-700 border border-red-200',
+    exit:    'bg-red-50 text-red-700 border border-red-200',
+    watch:   'bg-amber-50 text-amber-700 border border-amber-200',
+    warning: 'bg-amber-50 text-amber-700 border border-amber-200',
+    success: 'bg-green-50 text-green-700 border border-green-200',
+    neutral: 'bg-slate-100 text-slate-500 border border-slate-200',
   };
 
   const sizeStyles = {
@@ -35,19 +34,12 @@ export const Badge: React.FC<BadgeProps> = ({
     lg: 'px-3 py-1 text-sm'
   };
 
-  const glowStyle = glow
-    ? variant === 'risk' || variant === 'exit'
-      ? 'animate-glow-risk'
-      : 'animate-glow-alpha'
-    : '';
-
   return (
     <span
       className={cn(
         baseStyles,
         variantStyles[variant],
         sizeStyles[size],
-        glowStyle,
         className
       )}
     >

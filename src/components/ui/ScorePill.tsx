@@ -12,29 +12,29 @@ export interface ScorePillProps {
 const getColors = (type: ScorePillProps['type'], score: number) => {
   switch (type) {
     case 'alpha':
-      if (score > 70) return { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', label: 'HIGH', glow: 'animate-glow-alpha' };
-      if (score > 40) return { text: 'text-amber-400',   bg: 'bg-amber-500/10',   border: 'border-amber-500/30',   label: 'MED',  glow: '' };
-      return             { text: 'text-[#8B949E]',   bg: 'bg-[#1C2128]',       border: 'border-[#30363D]',       label: 'LOW',  glow: '' };
+      if (score > 70) return { text: 'text-green-700',  bg: 'bg-green-50',  border: 'border-green-200',  label: 'HIGH' };
+      if (score > 40) return { text: 'text-amber-700',  bg: 'bg-amber-50',  border: 'border-amber-200',  label: 'MED'  };
+      return             { text: 'text-slate-500',  bg: 'bg-slate-100', border: 'border-slate-200', label: 'LOW'  };
     case 'risk':
-      if (score > 70) return { text: 'text-red-400',     bg: 'bg-red-500/10',     border: 'border-red-500/30',     label: 'HIGH', glow: 'animate-glow-risk' };
-      if (score > 40) return { text: 'text-orange-400',  bg: 'bg-orange-500/10',  border: 'border-orange-500/30',  label: 'MED',  glow: '' };
-      return             { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', label: 'LOW',  glow: '' };
+      if (score > 70) return { text: 'text-red-700',    bg: 'bg-red-50',    border: 'border-red-200',    label: 'HIGH' };
+      if (score > 40) return { text: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-200', label: 'MED'  };
+      return             { text: 'text-green-700',  bg: 'bg-green-50',  border: 'border-green-200',  label: 'LOW'  };
     case 'wallet':
-      if (score > 75) return { text: 'text-yellow-300',  bg: 'bg-yellow-500/10',  border: 'border-yellow-500/30',  label: 'ELITE', glow: '' };
-      if (score > 50) return { text: 'text-blue-300',    bg: 'bg-blue-500/10',    border: 'border-blue-500/30',    label: 'GOOD',  glow: '' };
-      return             { text: 'text-[#8B949E]',   bg: 'bg-[#1C2128]',       border: 'border-[#30363D]',       label: 'FAIR',  glow: '' };
+      if (score > 75) return { text: 'text-amber-700',  bg: 'bg-amber-50',  border: 'border-amber-200',  label: 'ELITE' };
+      if (score > 50) return { text: 'text-blue-700',   bg: 'bg-blue-50',   border: 'border-blue-200',   label: 'GOOD'  };
+      return             { text: 'text-slate-500',  bg: 'bg-slate-100', border: 'border-slate-200', label: 'FAIR'  };
     case 'confidence':
     default:
-      if (score > 70) return { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', label: 'HIGH', glow: '' };
-      if (score > 40) return { text: 'text-amber-400',   bg: 'bg-amber-500/10',   border: 'border-amber-500/30',   label: 'MED',  glow: '' };
-      return             { text: 'text-[#8B949E]',   bg: 'bg-[#1C2128]',       border: 'border-[#30363D]',       label: 'LOW',  glow: '' };
+      if (score > 70) return { text: 'text-green-700',  bg: 'bg-green-50',  border: 'border-green-200',  label: 'HIGH' };
+      if (score > 40) return { text: 'text-amber-700',  bg: 'bg-amber-50',  border: 'border-amber-200',  label: 'MED'  };
+      return             { text: 'text-slate-500',  bg: 'bg-slate-100', border: 'border-slate-200', label: 'LOW'  };
   }
 };
 
 const TREND_ICONS = {
-  up:   { icon: '↑', color: 'text-emerald-400' },
-  down: { icon: '↓', color: 'text-red-400'     },
-  flat: { icon: '→', color: 'text-[#484F58]'   },
+  up:   { icon: '↑', color: 'text-green-600' },
+  down: { icon: '↓', color: 'text-red-600'   },
+  flat: { icon: '→', color: 'text-slate-400'  },
 };
 
 export const ScorePill: React.FC<ScorePillProps> = ({
@@ -50,10 +50,10 @@ export const ScorePill: React.FC<ScorePillProps> = ({
   if (size === 'lg') {
     return (
       <div className={cn(
-        'flex flex-col items-center justify-center rounded-xl border p-4 min-w-[110px] shadow-lg',
-        colors.bg, colors.border, colors.glow
+        'flex flex-col items-center justify-center rounded-xl border p-4 min-w-[110px] shadow-sm',
+        colors.bg, colors.border
       )}>
-        <div className="text-[9px] font-bold text-[#484F58] uppercase tracking-widest mb-1">{label}</div>
+        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">{label}</div>
         <div className={cn('text-4xl font-mono font-bold', colors.text)}>
           {score}
         </div>
@@ -69,7 +69,7 @@ export const ScorePill: React.FC<ScorePillProps> = ({
     return (
       <span className={cn(
         'inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase font-mono',
-        colors.bg, colors.border, colors.text, colors.glow
+        colors.bg, colors.border, colors.text
       )}>
         {trend && <span className={trend.color}>{trend.icon}</span>}
         {score}
@@ -81,9 +81,9 @@ export const ScorePill: React.FC<ScorePillProps> = ({
   return (
     <div className={cn(
       'flex flex-col items-center rounded-xl border px-3 py-2 text-center',
-      colors.bg, colors.border, colors.glow
+      colors.bg, colors.border
     )}>
-      <div className="text-[9px] font-bold text-[#484F58] uppercase tracking-widest mb-0.5">{label}</div>
+      <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{label}</div>
       <div className={cn('text-2xl font-mono font-bold', colors.text)}>
         {score}
       </div>

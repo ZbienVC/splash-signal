@@ -18,14 +18,14 @@ export const Card: React.FC<CardProps> = ({
   onClick,
   ...props
 }) => {
-  const baseStyles = 'bg-[#0D1117] border border-[#21262D] rounded-xl transition-all';
+  const baseStyles = 'bg-white border border-slate-200 rounded-xl shadow-sm transition-all';
 
   const variantStyles = {
-    default: 'hover:border-[#30363D] hover:shadow-lg hover:shadow-black/40',
-    interactive: 'cursor-pointer hover:border-[#30363D] hover:shadow-lg hover:shadow-black/40 hover:shadow-[0_0_20px_rgba(0,210,255,0.06)] group',
-    elevated: 'shadow-lg shadow-black/40',
-    'signal-entry': 'border-emerald-500/30 hover:border-emerald-500/50 animate-glow-alpha',
-    'signal-risk': 'border-red-500/30 hover:border-red-500/50 animate-glow-risk',
+    default: 'hover:border-slate-300 hover:shadow-md',
+    interactive: 'cursor-pointer hover:border-blue-200 hover:shadow-md group',
+    elevated: 'shadow-md',
+    'signal-entry': 'border-green-200 bg-green-50/30 hover:border-green-300',
+    'signal-risk': 'border-red-200 bg-red-50/30 hover:border-red-300',
   };
 
   const paddingStyles = {

@@ -29,9 +29,11 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ViewId } from './types';
 import { motion, AnimatePresence } from 'motion/react';
 import { NarrativeSync } from './components/NarrativeSync';
+import Landing from './pages/Landing';
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();
+  const [showLanding, setShowLanding] = useState(true);
   const [activeView, setActiveView] = useState<ViewId>(user?.settings?.defaultLandingPage || 'home');
   const [analysisTarget, setAnalysisTarget] = useState<string>('');
 
@@ -41,6 +43,10 @@ const AppContent: React.FC = () => {
       setActiveView(landingPage);
     }
   }, [user?.settings?.defaultLandingPage]);
+
+  if (showLanding) {
+    return <Landing onLaunch={() => setShowLanding(false)} />;
+  }
 
   const handleModuleSelect = (id: string, target?: string) => {
     if (target) setAnalysisTarget(target);
@@ -115,20 +121,11 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-background-dark overflow-hidden selection:bg-primary/30 selection:text-white">
+    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden selection:bg-blue-100 selection:text-blue-900">
       <NarrativeSync />
       <Sidebar activeView={activeView} onViewChange={setActiveView} />
       
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        {/* Background Decorative Elements */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] -mr-96 -mt-96 animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[100px] -ml-72 -mb-72"></div>
-          <div className="absolute inset-0 fluid-bg opacity-30"></div>
-          <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-primary/5 to-transparent opacity-50"></div>
-          <div className="absolute inset-0 chart-grid opacity-10"></div>
-        </div>
-
         <Header 
           activeView={activeView} 
           onSearch={(query) => {
@@ -153,19 +150,19 @@ const AppContent: React.FC = () => {
         </div>
 
         {/* Status Bar */}
-        <footer className="h-8 border-t border-slate-border bg-slate-panel flex items-center justify-between px-6 text-[10px] font-mono text-slate-500 shrink-0">
+        <footer className="h-8 border-t border-slate-200 bg-white flex items-center justify-between px-6 text-[10px] font-mono text-slate-400 shrink-0">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
               <span>SYSTEM_READY</span>
             </div>
-            <div className="h-3 w-px bg-slate-border"></div>
+            <div className="h-3 w-px bg-slate-200"></div>
             <span>NODE_ID: 0x882A...F92</span>
           </div>
           <div className="flex items-center gap-4">
             <span>{new Date().toISOString()}</span>
-            <div className="h-3 w-px bg-slate-border"></div>
-            <span className="text-primary">v2.4.1-STABLE</span>
+            <div className="h-3 w-px bg-slate-200"></div>
+            <span className="text-blue-600">v2.4.1-STABLE</span>
           </div>
         </footer>
       </main>

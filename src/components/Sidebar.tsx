@@ -74,14 +74,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
   ];
 
   return (
-    <div className="w-[220px] h-screen bg-[#0A0E17] border-r border-[#1E2A3A] flex flex-col shrink-0">
+    <div className="w-[220px] h-screen bg-white border-r border-slate-200 flex flex-col shrink-0">
       {/* Logo */}
       <div className="px-4 py-5">
         <div className="flex items-center gap-2.5">
-          <Waves size={18} className="text-blue-500 shrink-0" />
+          <Waves size={18} className="text-blue-600 shrink-0" />
           <span>
-            <span className="font-semibold text-sm text-[#F1F5F9]">Splash</span>
-            <span className="text-sm text-[#475569]">Signal</span>
+            <span className="font-semibold text-sm text-slate-900">Splash</span>
+            <span className="text-sm text-slate-400">Signal</span>
           </span>
         </div>
       </div>
@@ -90,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
       <div className="flex-1 overflow-y-auto py-2 scrollbar-hide">
         {categories.map((cat, idx) => (
           <div key={idx} className="mb-4">
-            <div className="px-3 mb-1 text-[11px] font-medium text-[#475569] uppercase tracking-[0.08em]">
+            <div className="px-3 mb-1 text-[10px] font-medium text-slate-400 uppercase tracking-widest">
               {cat.title}
             </div>
             {cat.items.map((item) => {
@@ -102,13 +102,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
                   className={cn(
                     'w-full px-3 py-1.5 flex items-center gap-2.5 text-sm rounded-md transition-colors focus:outline-none',
                     isActive
-                      ? 'text-[#F1F5F9] bg-[#1A2234]'
-                      : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A2234]'
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   )}
                 >
                   <item.icon
                     size={14}
-                    className={isActive ? 'text-[#F1F5F9]' : 'text-[#94A3B8]'}
+                    className={isActive ? 'text-blue-600' : 'text-slate-400'}
                   />
                   <span>{item.label}</span>
                 </button>
@@ -119,14 +119,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
       </div>
 
       {/* Footer */}
-      <div className="p-3 border-t border-[#1E2A3A] flex items-center justify-between">
+      <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-[#1A2234] flex items-center justify-center text-xs text-[#94A3B8] font-medium">
+          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs text-slate-600 font-medium">
             Z
           </div>
-          <span className="text-xs text-[#475569]">v2.1</span>
+          <span className="text-xs text-slate-600">v2.1</span>
         </div>
-        <button className="text-[#475569] hover:text-[#94A3B8] transition-colors">
+        <button className="text-slate-400 hover:text-slate-600 transition-colors">
           <LogOut size={13} />
         </button>
       </div>
