@@ -23,6 +23,7 @@ import { cn } from '../lib/utils';
 import { DexTrendingFeed } from './DexTrendingFeed';
 import { Button, Card, Badge } from './ui';
 import { PageShell, Section } from './layout';
+import { motion } from 'motion/react';
 
 type AlertSeverity = 'entry' | 'exit' | 'watch' | 'warning';
 type SuggestedAction = 'ENTRY' | 'EXIT' | 'WATCH' | 'HOLD';
@@ -72,16 +73,16 @@ const NowPanel: React.FC<{ onNavigate: (view: ViewId) => void; onSelectToken?: (
   const exitCount  = items.filter(i => i.action === 'EXIT').length;
 
   return (
-    <div className="bg-slate-900/70 border border-slate-700 rounded-2xl overflow-hidden">
+    <div className="bg-[#0D1117] border border-[#21262D] rounded-xl overflow-hidden">
       {/* Panel header */}
-      <div className="px-5 py-3 border-b border-slate-700 flex items-center justify-between">
+      <div className="px-5 py-3 border-b border-[#21262D] flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="text-sm font-bold text-white">What's happening now</span>
+            <span className="text-sm font-semibold text-[#E6EDF3]">What's happening now</span>
           </div>
           <div className="flex items-center gap-1.5">
             {entryCount > 0 && (
@@ -209,7 +210,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate, onSelectToke
 
   return (
     <PageShell className="animate-in fade-in duration-700">
-      <div className="section-spacing-loose">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        className="section-spacing-loose"
+      >
         {/* Hero Section */}
         <Section className="relative overflow-hidden rounded-3xl bg-slate-925 border border-slate-700 p-12 flex flex-col items-center text-center">
           <div className="absolute inset-0 fluid-bg opacity-50"></div>
@@ -298,11 +304,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate, onSelectToke
               <button
                 key={tool.id}
                 onClick={() => onNavigate(tool.id as ViewId)}
-                className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6 text-left group hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col h-full"
+                className="bg-[#0D1117] border border-[#21262D] rounded-xl p-5 text-left group hover:border-[#00D2FF]/40 hover:bg-[#161B22] transition-all flex flex-col h-full"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <tool.icon size={24} />
+                  <div className="w-10 h-10 rounded-xl bg-[#00D2FF]/10 text-[#00D2FF] flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <tool.icon size={20} />
                   </div>
                   {tool.badge && (
                     <div className="px-2 py-0.5 bg-emerald-500/20 text-emerald-500 rounded-full text-[8px] font-bold uppercase tracking-widest">
@@ -310,11 +316,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate, onSelectToke
                     </div>
                   )}
                 </div>
-                <h3 className="text-xl font-display font-bold mb-2 text-white">{tool.title}</h3>
-                <p className="text-sm text-sky-200/50 mb-6 flex-1">{tool.desc}</p>
-                <div className="pt-4 border-t border-slate-700/50 flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{tool.insight}</span>
-                  <ArrowRight size={14} className="text-slate-500 group-hover:text-primary transition-colors" />
+                <h3 className="text-sm font-semibold mb-1 text-[#E6EDF3]">{tool.title}</h3>
+                <p className="text-xs text-[#8B949E] mb-4 flex-1 leading-relaxed">{tool.desc}</p>
+                <div className="pt-3 border-t border-[#21262D] flex items-center justify-between">
+                  <span className="text-[10px] font-semibold text-[#00D2FF] uppercase tracking-widest">{tool.insight}</span>
+                  <ArrowRight size={13} className="text-[#484F58] group-hover:text-[#00D2FF] transition-colors" />
                 </div>
               </button>
             ))}
@@ -333,16 +339,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate, onSelectToke
               <button
                 key={tool.id}
                 onClick={() => onNavigate(tool.id as ViewId)}
-                className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6 text-left group hover:border-slate-700 hover:bg-slate-900/80 transition-all flex flex-col h-full"
+                className="bg-[#0D1117] border border-[#21262D] rounded-xl p-5 text-left group hover:border-[#30363D] hover:bg-[#161B22] transition-all flex flex-col h-full"
               >
-                <div className="w-12 h-12 rounded-xl bg-slate-500/10 text-slate-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <tool.icon size={24} />
+                <div className="w-10 h-10 rounded-xl bg-[#1C2128] text-[#8B949E] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <tool.icon size={20} />
                 </div>
-                <h3 className="text-xl font-display font-bold mb-2 text-white">{tool.title}</h3>
-                <p className="text-sm text-sky-200/50 mb-6 flex-1">{tool.desc}</p>
-                <div className="pt-4 border-t border-slate-700/50 flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{tool.insight}</span>
-                  <ArrowRight size={14} className="text-slate-500 group-hover:text-slate-400 transition-colors" />
+                <h3 className="text-sm font-semibold mb-1 text-[#E6EDF3]">{tool.title}</h3>
+                <p className="text-xs text-[#8B949E] mb-4 flex-1 leading-relaxed">{tool.desc}</p>
+                <div className="pt-3 border-t border-[#21262D] flex items-center justify-between">
+                  <span className="text-[10px] font-semibold text-[#8B949E] uppercase tracking-widest">{tool.insight}</span>
+                  <ArrowRight size={13} className="text-[#484F58] group-hover:text-[#8B949E] transition-colors" />
                 </div>
               </button>
             ))}
@@ -391,7 +397,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate, onSelectToke
             </div>
           </div>
         </Section>
-      </div>
+      </motion.div>
     </PageShell>
   );
 };

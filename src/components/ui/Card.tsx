@@ -3,7 +3,7 @@ import { cn } from '../../lib/utils';
 import { motion } from 'motion/react';
 
 interface CardProps {
-  variant?: 'default' | 'interactive' | 'elevated';
+  variant?: 'default' | 'interactive' | 'elevated' | 'signal-entry' | 'signal-risk';
   padding?: 'sm' | 'md' | 'lg';
   className?: string;
   children: React.ReactNode;
@@ -18,13 +18,14 @@ export const Card: React.FC<CardProps> = ({
   onClick,
   ...props
 }) => {
-  // Use exact production patterns from MarketOverview/Settings  
-  const baseStyles = 'bg-slate-900 border border-slate-700 rounded-2xl';
-  
+  const baseStyles = 'bg-[#0D1117] border border-[#21262D] rounded-xl transition-all';
+
   const variantStyles = {
-    default: '',
-    interactive: 'cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group',
-    elevated: 'shadow-lg'
+    default: 'hover:border-[#30363D] hover:shadow-lg hover:shadow-black/40',
+    interactive: 'cursor-pointer hover:border-[#30363D] hover:shadow-lg hover:shadow-black/40 hover:shadow-[0_0_20px_rgba(0,210,255,0.06)] group',
+    elevated: 'shadow-lg shadow-black/40',
+    'signal-entry': 'border-emerald-500/30 hover:border-emerald-500/50 animate-glow-alpha',
+    'signal-risk': 'border-red-500/30 hover:border-red-500/50 animate-glow-risk',
   };
 
   const paddingStyles = {
@@ -34,7 +35,7 @@ export const Card: React.FC<CardProps> = ({
   };
 
   const Component = onClick ? motion.div : 'div';
-  
+
   return (
     <Component
       className={cn(
@@ -45,7 +46,7 @@ export const Card: React.FC<CardProps> = ({
       )}
       onClick={onClick}
       {...(onClick && {
-        whileHover: { scale: 1.02 },
+        whileHover: { y: -1 },
         whileTap: { scale: 0.98 },
         transition: { duration: 0.15 }
       })}

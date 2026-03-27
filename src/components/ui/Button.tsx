@@ -63,7 +63,8 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <motion.button
-      whileTap={{ scale: disabled ? 1 : 0.95 }}
+      whileHover={disabled ? undefined : { scale: 1.02 }}
+      whileTap={{ scale: disabled ? 1 : 0.97 }}
       className={cn(
         baseStyles,
         variantStyles[variant],

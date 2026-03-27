@@ -75,10 +75,10 @@ const FILTER_TABS: { id: FilterType; label: string; emoji: string }[] = [
 ];
 
 const CARD_STYLES: Record<string, string> = {
-  ENTRY:   'border-l-emerald-500 shadow-[inset_2px_0_0_0_rgba(16,185,129,0.5)]',
-  EXIT:    'border-l-red-500 shadow-[inset_2px_0_0_0_rgba(239,68,68,0.5)]',
-  WATCH:   'border-l-blue-500 shadow-[inset_2px_0_0_0_rgba(59,130,246,0.5)]',
-  WARNING: 'border-l-amber-500 shadow-[inset_2px_0_0_0_rgba(245,158,11,0.5)]',
+  ENTRY:   'border-l-emerald-500 bg-emerald-500/[0.03]',
+  EXIT:    'border-l-red-500 bg-red-500/[0.03]',
+  WATCH:   'border-l-amber-500 bg-amber-500/[0.03]',
+  WARNING: 'border-l-amber-500 bg-amber-500/[0.03]',
 };
 
 const CHAIN_BADGE: Record<string, string> = {
@@ -122,44 +122,51 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
   return (
     <div className="p-6 space-y-6 min-h-screen">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-          <Radio size={22} />
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        className="flex items-center gap-3"
+      >
+        <div className="w-10 h-10 rounded-xl bg-[#00D2FF]/10 text-[#00D2FF] flex items-center justify-center">
+          <Radio size={20} />
         </div>
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-display font-bold text-white">Signal Feed</h1>
-            <div className="flex items-center gap-1.5">
-              {/* Premium pulsing live dot */}
-              <span className="relative flex h-2.5 w-2.5">
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl font-semibold text-[#E6EDF3] tracking-tight">Signal Feed</h1>
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+              <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </span>
-              <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">LIVE</span>
+              <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">LIVE</span>
             </div>
           </div>
-          <p className="text-xs text-slate-500 uppercase tracking-widest font-mono">Real-time trading intelligence</p>
+          <p className="text-xs text-[#484F58] uppercase tracking-[0.12em] font-mono">Real-time trading intelligence</p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1 flex-wrap">
+      <div className="flex items-center gap-1.5 flex-wrap">
         {FILTER_TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveFilter(tab.id)}
             className={cn(
-              'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wide transition-all flex items-center gap-1.5',
+              'px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all flex items-center gap-1.5 border',
               activeFilter === tab.id
-                ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'
+                ? tab.id === 'ENTRY' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                : tab.id === 'EXIT' ? 'bg-red-500/15 text-red-400 border-red-500/30'
+                : tab.id === 'WARNING' || tab.id === 'WATCH' ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                : 'bg-[#161B22] text-[#E6EDF3] border-[#30363D]'
+                : 'bg-transparent text-[#484F58] border-[#21262D] hover:text-[#8B949E] hover:border-[#30363D]'
             )}
           >
             {tab.emoji && <span>{tab.emoji}</span>}
             {tab.label}
           </button>
         ))}
-        <span className="ml-auto text-[10px] font-mono text-slate-500">{filtered.length} signals</span>
+        <span className="ml-auto text-[10px] font-mono text-[#484F58]">{filtered.length} signals</span>
       </div>
 
       {/* Signal Cards */}
@@ -179,8 +186,8 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ delay: i * 0.03 }}
                 className={cn(
-                  'bg-slate-900/60 border border-slate-700 border-l-4 rounded-2xl p-5 transition-all',
-                  isSeen ? 'opacity-60' : 'hover:bg-slate-800/40',
+                  'bg-[#0D1117] border border-[#21262D] border-l-4 rounded-xl p-5 transition-all',
+                  isSeen ? 'opacity-60' : 'hover:border-[#30363D] hover:bg-[#161B22]/50',
                   CARD_STYLES[signal.action] ?? CARD_STYLES.WATCH
                 )}
               >
@@ -191,19 +198,19 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-bold text-white">{signal.title}</span>
-                          <span className="text-sm font-bold text-primary">{signal.token}</span>
-                          <span className={cn('px-1.5 py-0.5 rounded border text-[9px] font-bold uppercase', CHAIN_BADGE[signal.chain] ?? 'bg-slate-700 text-slate-400')}>
+                          <span className="text-sm font-semibold text-[#E6EDF3]">{signal.title}</span>
+                          <span className="text-sm font-semibold text-[#00D2FF]">{signal.token}</span>
+                          <span className={cn('px-1.5 py-0.5 rounded border text-[9px] font-bold uppercase', CHAIN_BADGE[signal.chain] ?? 'bg-[#1C2128] text-[#8B949E]')}>
                             {signal.chain}
                           </span>
                           {signal.distributionState && (
                             <DistributionStateBadge state={signal.distributionState} size="sm" />
                           )}
                         </div>
-                        <p className="text-xs text-slate-400 mt-1">{signal.description}</p>
+                        <p className="text-xs text-[#8B949E] mt-1 leading-relaxed">{signal.description}</p>
                       </div>
                       <div className="text-right shrink-0 flex flex-col items-end gap-1">
-                        <div className="text-[10px] text-slate-500 font-mono">{signal.timeAgo}</div>
+                        <div className="text-[10px] text-[#484F58] font-mono">{signal.timeAgo}</div>
                         {signal.expiresAt && (
                           <div className="text-[9px] font-bold text-amber-500 font-mono">⏱ expires {signal.expiresAt}</div>
                         )}
@@ -215,7 +222,7 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
                             'w-6 h-6 rounded-full border flex items-center justify-center transition-all',
                             isSeen
                               ? 'bg-emerald-900/30 border-emerald-600/40 text-emerald-400'
-                              : 'bg-slate-800 border-slate-700 text-slate-600 hover:border-slate-500 hover:text-slate-400'
+                              : 'bg-[#161B22] border-[#30363D] text-[#484F58] hover:border-[#484F58] hover:text-[#8B949E]'
                           )}
                         >
                           <Check size={10} />
@@ -223,21 +230,21 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
                       </div>
                     </div>
 
-                    {/* Confidence bar (visual) */}
+                    {/* Confidence bar */}
                     <div className="flex items-center gap-2 mt-3">
-                      <span className="text-[9px] text-slate-600 uppercase tracking-widest whitespace-nowrap">Confidence</span>
-                      <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                      <span className="text-[9px] text-[#484F58] uppercase tracking-widest whitespace-nowrap">Confidence</span>
+                      <div className="flex-1 h-1 bg-[#1C2128] rounded-full overflow-hidden">
                         <div
                           className={cn(
                             'h-full rounded-full transition-all',
-                            signal.confidence > 0.8 ? 'bg-emerald-500' : signal.confidence > 0.6 ? 'bg-amber-400' : 'bg-slate-500'
+                            signal.confidence > 0.8 ? 'bg-emerald-500' : signal.confidence > 0.6 ? 'bg-amber-400' : 'bg-[#484F58]'
                           )}
                           style={{ width: `${signal.confidence * 100}%` }}
                         />
                       </div>
                       <span className={cn(
                         'text-[10px] font-bold font-mono shrink-0',
-                        signal.confidence > 0.8 ? 'text-emerald-400' : signal.confidence > 0.6 ? 'text-amber-400' : 'text-slate-400'
+                        signal.confidence > 0.8 ? 'text-emerald-400' : signal.confidence > 0.6 ? 'text-amber-400' : 'text-[#8B949E]'
                       )}>
                         {Math.round(signal.confidence * 100)}%
                       </span>
@@ -248,7 +255,7 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
                       {signal.reasons && signal.reasons.length > 0 && (
                         <button
                           onClick={() => toggleReasons(key)}
-                          className="flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-slate-300 transition-colors"
+                          className="flex items-center gap-1 text-[10px] font-bold text-[#484F58] hover:text-[#8B949E] transition-colors"
                         >
                           {reasonsOpen ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
                           {reasonsOpen ? 'Hide reasons' : `${signal.reasons.length} reasons`}
@@ -257,7 +264,7 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
 
                       <button
                         onClick={() => signal.address && onSelectToken?.('solana-intel', signal.address)}
-                        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-400 hover:text-white hover:border-primary/50 transition-all"
+                        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-[#161B22] border border-[#30363D] rounded-lg text-[10px] font-bold text-[#8B949E] hover:text-[#E6EDF3] hover:border-[#00D2FF]/50 transition-all"
                       >
                         Investigate <ArrowRight size={10} />
                       </button>
@@ -273,10 +280,10 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
                           transition={{ duration: 0.15 }}
                           className="overflow-hidden"
                         >
-                          <ul className="mt-3 space-y-1 pl-2 border-l border-slate-700">
+                          <ul className="mt-3 space-y-1 pl-2 border-l border-[#21262D]">
                             {signal.reasons.map((r, ri) => (
-                              <li key={ri} className="flex items-start gap-1.5 text-[11px] text-slate-400 font-mono">
-                                <span className="text-slate-600 mt-0.5 shrink-0">›</span>
+                              <li key={ri} className="flex items-start gap-1.5 text-[11px] text-[#8B949E] font-mono">
+                                <span className="text-[#484F58] mt-0.5 shrink-0">›</span>
                                 {r}
                               </li>
                             ))}

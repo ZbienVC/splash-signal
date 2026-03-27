@@ -149,7 +149,12 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
   return (
     <div className="p-6 space-y-6 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        className="flex items-center justify-between"
+      >
         <div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -157,7 +162,7 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-display font-bold text-white">Alpha Hunter</h1>
+                <h1 className="text-xl font-semibold text-[#E6EDF3] tracking-tight">Alpha Hunter</h1>
                 {/* Live indicator */}
                 <button
                   onClick={() => setIsLive(p => !p)}
@@ -172,21 +177,21 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
                   {isLive ? 'LIVE' : 'PAUSED'}
                 </button>
               </div>
-              <p className="text-xs text-slate-500 uppercase tracking-widest font-mono">Early momentum detection</p>
+              <p className="text-xs text-[#484F58] uppercase tracking-[0.12em] font-mono">Early momentum detection</p>
             </div>
           </div>
         </div>
         <button
           onClick={fetchTokens}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:border-primary/50 transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-[#0D1117] border border-[#21262D] rounded-xl text-xs font-bold text-[#8B949E] hover:text-[#E6EDF3] hover:border-[#00D2FF]/50 transition-all"
         >
           <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
           REFRESH
         </button>
-      </div>
+      </motion.div>
 
       {/* Filter Bar */}
-      <div className="flex flex-wrap items-center gap-4 p-4 bg-slate-900/50 border border-slate-700 rounded-2xl">
+      <div className="flex flex-wrap items-center gap-4 p-4 bg-[#0D1117] border border-[#21262D] rounded-xl">
         {/* Time Filter */}
         <div className="flex items-center gap-1">
           {(['5m', '1h', '6h', '24h'] as const).map(t => (
@@ -194,8 +199,10 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
               key={t}
               onClick={() => setTimeFilter(t)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all',
-                timeFilter === t ? 'bg-primary text-white' : 'text-slate-500 hover:text-slate-300'
+                'px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all',
+                timeFilter === t
+                  ? 'bg-[#00D2FF]/15 text-[#00D2FF] border border-[#00D2FF]/30'
+                  : 'text-[#484F58] hover:text-[#8B949E] border border-transparent'
               )}
             >
               {t}
@@ -203,20 +210,20 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
           ))}
         </div>
 
-        <div className="h-5 w-px bg-slate-700" />
+        <div className="h-5 w-px bg-[#21262D]" />
 
         {/* Alpha Score Slider */}
         <div className="flex items-center gap-3">
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">Min Alpha</span>
+          <span className="text-[10px] font-semibold text-[#484F58] uppercase tracking-[0.12em] whitespace-nowrap">Min Alpha</span>
           <input
             type="range" min={0} max={90} step={5} value={minAlpha}
             onChange={e => setMinAlpha(Number(e.target.value))}
-            className="w-28 accent-primary"
+            className="w-28 accent-[#00D2FF]"
           />
           <span className="text-sm font-bold font-mono text-emerald-400">{minAlpha}</span>
         </div>
 
-        <div className="h-5 w-px bg-slate-700" />
+        <div className="h-5 w-px bg-[#21262D]" />
 
         {/* Chain Filter */}
         <div className="flex items-center gap-1">
@@ -225,8 +232,10 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
               key={c}
               onClick={() => setChainFilter(c)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all',
-                chainFilter === c ? 'bg-slate-600 text-white' : 'text-slate-500 hover:text-slate-300'
+                'px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all',
+                chainFilter === c
+                  ? 'bg-[#1C2128] text-[#E6EDF3] border border-[#30363D]'
+                  : 'text-[#484F58] hover:text-[#8B949E] border border-transparent'
               )}
             >
               {c}
@@ -234,18 +243,20 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
           ))}
         </div>
 
-        <div className="h-5 w-px bg-slate-700" />
+        <div className="h-5 w-px bg-[#21262D]" />
 
         {/* Sort Mode */}
         <div className="flex items-center gap-1">
-          <SortAsc size={12} className="text-slate-500" />
+          <SortAsc size={12} className="text-[#484F58]" />
           {(['alpha', 'risk', 'volume'] as SortMode[]).map(s => (
             <button
               key={s}
               onClick={() => setSortMode(s)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all',
-                sortMode === s ? 'bg-primary/20 text-primary border border-primary/30' : 'text-slate-500 hover:text-slate-300'
+                'px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all',
+                sortMode === s
+                  ? 'bg-[#00D2FF]/15 text-[#00D2FF] border border-[#00D2FF]/30'
+                  : 'text-[#484F58] hover:text-[#8B949E] border border-transparent'
               )}
             >
               {s}
@@ -253,7 +264,7 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
           ))}
         </div>
 
-        <div className="ml-auto text-[10px] font-mono text-slate-500">
+        <div className="ml-auto text-[10px] font-mono text-[#484F58]">
           {filtered.length} tokens
         </div>
       </div>
@@ -266,20 +277,25 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="border border-dashed border-slate-700 rounded-2xl p-12 flex flex-col items-center justify-center text-center space-y-3">
-          <Flame size={36} className="text-slate-700" />
-          <p className="text-sm font-bold text-slate-500">No tokens match your filters</p>
-          <p className="text-xs text-slate-600">Try lowering the Min Alpha threshold or changing the chain filter</p>
+        <div className="border border-dashed border-[#21262D] rounded-xl p-12 flex flex-col items-center justify-center text-center space-y-3">
+          <Flame size={32} className="text-[#30363D]" />
+          <p className="text-sm font-semibold text-[#484F58]">No tokens match your filters</p>
+          <p className="text-xs text-[#30363D]">Try lowering the Min Alpha threshold or changing the chain filter</p>
           <button
             onClick={() => { setMinAlpha(0); setChainFilter('ALL'); }}
-            className="mt-2 px-4 py-2 bg-primary/20 border border-primary/30 text-primary rounded-xl text-xs font-bold"
+            className="mt-2 px-4 py-2 bg-[#00D2FF]/10 border border-[#00D2FF]/30 text-[#00D2FF] rounded-xl text-xs font-bold"
           >
             Reset Filters
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((token, i) => {
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
+          variants={{ visible: { transition: { staggerChildren: 0.04 } } }}
+          initial="hidden"
+          animate="visible"
+        >
+          {filtered.map((token) => {
             const sig = SIGNAL_CONFIG[token.signal];
             const distState = deriveDistState(token);
             const volDir = volumeDirection(token.volumeChange);
@@ -287,24 +303,26 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
             return (
               <motion.div
                 key={token.address}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
+                variants={{
+                  hidden: { opacity: 0, y: 8 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.25 } }
+                }}
+                whileHover={{ y: -1 }}
                 onClick={() => onSelectToken?.('solana-intel', token.address)}
-                className="bg-slate-900/60 border border-slate-700 rounded-2xl p-5 cursor-pointer hover:border-primary/40 hover:bg-primary/5 transition-all group"
+                className="bg-[#0D1117] border border-[#21262D] rounded-xl p-5 cursor-pointer hover:border-[#30363D] hover:shadow-lg hover:shadow-black/40 transition-all group"
               >
                 {/* Token Header Row */}
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-display font-bold text-white">${token.symbol}</span>
-                      <span className={cn('px-2 py-0.5 rounded border text-[9px] font-bold uppercase', CHAIN_COLORS[token.chain] ?? 'bg-slate-700 text-slate-400')}>
+                      <span className="text-base font-semibold text-[#E6EDF3]">${token.symbol}</span>
+                      <span className={cn('px-2 py-0.5 rounded border text-[9px] font-bold uppercase', CHAIN_COLORS[token.chain] ?? 'bg-[#1C2128] text-[#8B949E]')}>
                         {token.chain}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
                       <CopyAddress address={token.address} />
-                      <span className="text-[9px] text-slate-600 font-mono">• {token.age}</span>
+                      <span className="text-[9px] text-[#484F58] font-mono">• {token.age}</span>
                     </div>
                   </div>
                   <span className={cn('px-2.5 py-1 rounded-lg border text-[10px] font-bold', sig.cls)}>
@@ -326,24 +344,24 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
                 {/* Key Metrics */}
                 <div className="grid grid-cols-3 gap-2 text-center mb-3">
                   <div>
-                    <div className="text-[9px] text-slate-600 uppercase tracking-wide">MCap</div>
-                    <div className="text-xs font-bold text-white">{token.mcap}</div>
+                    <div className="text-[9px] text-[#484F58] uppercase tracking-wide">MCap</div>
+                    <div className="text-xs font-bold text-[#E6EDF3]">{token.mcap}</div>
                   </div>
                   <div>
-                    <div className="text-[9px] text-slate-600 uppercase tracking-wide">Vol 1h</div>
-                    <div className="text-xs font-bold text-white">{token.volume1h}</div>
+                    <div className="text-[9px] text-[#484F58] uppercase tracking-wide">Vol 1h</div>
+                    <div className="text-xs font-bold text-[#E6EDF3]">{token.volume1h}</div>
                   </div>
                   <div>
-                    <div className="text-[9px] text-slate-600 uppercase tracking-wide">Vol Δ</div>
+                    <div className="text-[9px] text-[#484F58] uppercase tracking-wide">Vol Δ</div>
                     <TrendArrow direction={volDir} value={token.volumeChange} size="sm" />
                   </div>
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-700/50 text-[10px] text-slate-500">
+                <div className="flex items-center justify-between pt-3 border-t border-[#21262D] text-[10px] text-[#484F58]">
                   <span>{token.holders.toLocaleString()} holders <span className="text-emerald-400">{token.holderChange}</span></span>
                   {token.smartWallets > 0 && (
-                    <span className="flex items-center gap-1 text-primary font-bold">
+                    <span className="flex items-center gap-1 text-[#00D2FF] font-bold">
                       <Shield size={10} />
                       {token.smartWallets} smart {token.smartWallets === 1 ? 'wallet' : 'wallets'} in
                     </span>
@@ -352,7 +370,7 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
     </div>
   );

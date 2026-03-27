@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trophy, Copy, Check, ChevronDown, ChevronUp, Wallet } from 'lucide-react';
+import { Trophy, Copy, Check, ChevronDown, ChevronUp, Wallet, Medal, Award } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { WalletBadge, WalletClassification } from './ui/WalletBadge';
@@ -85,26 +85,26 @@ const MOCK_WALLETS: WalletEntry[] = [
   },
 ];
 
-const RANK_TROPHY: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
+const RANK_ICON: Record<number, React.ReactNode> = {
+  1: <Medal size={18} className="text-yellow-400" />,
+  2: <Medal size={18} className="text-[#E6EDF3]" />,
+  3: <Award size={18} className="text-amber-600" />,
+};
 
-// Simple SVG sparkline from an array of 5 values (0-100)
+// Simple SVG sparkline with fill
 const Sparkline: React.FC<{ values: number[]; positive?: boolean }> = ({ values, positive = true }) => {
   const W = 56, H = 24;
-  const pts = values.map((v, i) => {
-    const x = (i / (values.length - 1)) * W;
-    const y = H - (v / 100) * H;
-    return `${x},${y}`;
-  }).join(' ');
+  const pts = values.map((v, i) => ({
+    x: (i / (values.length - 1)) * W,
+    y: H - (v / 100) * H,
+  }));
+  const lineD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+  const fillD = `${lineD} L ${W} ${H} L 0 ${H} Z`;
+  const color = positive ? '#10b981' : '#ef4444';
   return (
     <svg width={W} height={H} className="shrink-0">
-      <polyline
-        points={pts}
-        fill="none"
-        stroke={positive ? '#10b981' : '#ef4444'}
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      />
+      <path d={fillD} fill={color} fillOpacity="0.08" />
+      <path d={lineD} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
     </svg>
   );
 };
@@ -115,7 +115,7 @@ const CopyButton: React.FC<{ address: string }> = ({ address }) => {
   return (
     <button
       onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(address).catch(() => {}); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
-      className="flex items-center gap-1.5 text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors"
+      className="flex items-center gap-1.5 text-xs font-mono text-[#484F58] hover:text-[#E6EDF3] transition-colors"
     >
       {short}
       {copied ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
@@ -141,15 +141,20 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
   return (
     <div className="p-6 space-y-6 min-h-screen">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        className="flex items-center gap-3"
+      >
         <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
-          <Trophy size={22} />
+          <Trophy size={20} />
         </div>
         <div>
-          <h1 className="text-2xl font-display font-bold text-white">Smart Wallet Rankings</h1>
-          <p className="text-xs text-slate-500 uppercase tracking-widest font-mono">Updated every hour</p>
+          <h1 className="text-xl font-semibold text-[#E6EDF3] tracking-tight">Smart Wallet Rankings</h1>
+          <p className="text-xs text-[#484F58] uppercase tracking-[0.12em] font-mono">Updated every hour</p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stats Bar */}
       <div className="grid grid-cols-3 gap-4">
@@ -158,8 +163,8 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
           { label: 'Avg Win Rate', value: `${avgWinRate}%`, color: 'text-emerald-400' },
           { label: 'Best This Week', value: `${bestPerformer.avgMultiple}x avg`, color: 'text-amber-400' },
         ].map(stat => (
-          <div key={stat.label} className="bg-slate-900/50 border border-slate-700 rounded-2xl p-4">
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{stat.label}</div>
+          <div key={stat.label} className="bg-[#0D1117] border border-[#21262D] rounded-xl p-4">
+            <div className="text-[10px] font-bold text-[#484F58] uppercase tracking-widest mb-1">{stat.label}</div>
             <div className={cn('text-xl font-display font-bold', stat.color)}>{stat.value}</div>
           </div>
         ))}
@@ -168,18 +173,18 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
       {/* Rankings */}
       <div className="space-y-2">
         {MOCK_WALLETS.map(wallet => (
-          <div key={wallet.rank} className="bg-slate-900/60 border border-slate-700 rounded-2xl overflow-hidden">
+          <div key={wallet.rank} className="bg-[#0D1117] border border-[#21262D] rounded-xl overflow-hidden">
             {/* Main Row */}
             <div
-              className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-slate-800/30 transition-colors"
+              className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-[#161B22]/30 transition-colors"
               onClick={() => setExpanded(expanded === wallet.rank ? null : wallet.rank)}
             >
               {/* Rank */}
-              <div className="w-8 text-center shrink-0">
-                {RANK_TROPHY[wallet.rank] ? (
-                  <span className="text-lg">{RANK_TROPHY[wallet.rank]}</span>
+              <div className="w-8 flex items-center justify-center shrink-0">
+                {RANK_ICON[wallet.rank] ? (
+                  RANK_ICON[wallet.rank]
                 ) : (
-                  <span className="text-sm font-bold text-slate-500">#{wallet.rank}</span>
+                  <span className="text-sm font-mono font-bold text-[#484F58]">#{wallet.rank}</span>
                 )}
               </div>
 
@@ -192,7 +197,7 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
               <div className="w-32 shrink-0 flex items-center gap-2">
                 <WalletBadge classification={wallet.classification} size="md" />
                 {wallet.newEntry && (
-                  <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-900/30 border border-emerald-600/30 text-emerald-400 text-[8px] font-bold animate-pulse">
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#00D2FF]/10 border border-[#00D2FF]/30 text-[#00D2FF] text-[8px] font-bold tracking-widest animate-pulse">
                     NEW
                   </span>
                 )}
@@ -205,15 +210,15 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
                   <ScorePill label="Score" score={wallet.score} type="wallet" size="sm" />
                 </div>
                 <div className="text-center">
-                  <div className="text-[9px] text-slate-600 uppercase tracking-wide">Win Rate</div>
+                  <div className="text-[9px] text-[#484F58] uppercase tracking-wide">Win Rate</div>
                   <div className="text-sm font-bold text-white">{wallet.winRate}%</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-[9px] text-slate-600 uppercase tracking-wide">Avg Mult</div>
+                  <div className="text-[9px] text-[#484F58] uppercase tracking-wide">Avg Mult</div>
                   <div className="text-sm font-bold text-primary">{wallet.avgMultiple}x</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-[9px] text-slate-600 uppercase tracking-wide">Trades</div>
+                  <div className="text-[9px] text-[#484F58] uppercase tracking-wide">Trades</div>
                   <div className="text-sm font-bold text-white">{wallet.trades}</div>
                 </div>
                 {/* Sparkline + streak */}
@@ -222,7 +227,7 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
                     <Sparkline values={wallet.perfHistory} positive={wallet.winRate >= 60} />
                   )}
                   {wallet.streak && wallet.streak >= 2 && (
-                    <span className="text-[9px] text-amber-400 font-bold">🔥 {wallet.streak}W</span>
+                    <span className="text-[9px] text-amber-400 font-bold font-mono">🔥 {wallet.streak}W streak</span>
                   )}
                 </div>
               </div>
@@ -242,18 +247,18 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
                     'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide transition-all border',
                     tracked.has(wallet.address)
                       ? 'bg-primary/20 border-primary/40 text-primary'
-                      : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
+                      : 'bg-[#161B22] border-[#21262D] text-[#8B949E] hover:text-white'
                   )}
                 >
                   {tracked.has(wallet.address) ? 'Tracked ✓' : 'Track'}
                 </button>
                 <button
                   onClick={e => { e.stopPropagation(); onSelectWallet?.('wallet-behavior', wallet.address); }}
-                  className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all"
+                  className="w-8 h-8 rounded-lg bg-[#161B22] border border-[#21262D] text-[#8B949E] hover:text-white flex items-center justify-center transition-all"
                 >
                   <Wallet size={13} />
                 </button>
-                {expanded === wallet.rank ? <ChevronUp size={14} className="text-slate-500" /> : <ChevronDown size={14} className="text-slate-500" />}
+                {expanded === wallet.rank ? <ChevronUp size={14} className="text-[#484F58]" /> : <ChevronDown size={14} className="text-[#484F58]" />}
               </div>
             </div>
 
@@ -265,23 +270,23 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="overflow-hidden border-t border-slate-700/50"
+                  className="overflow-hidden border-t border-[#21262D]/50"
                 >
-                  <div className="px-5 py-4 bg-slate-950/30">
-                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Last 5 Trades</div>
-                    <div className="grid grid-cols-5 gap-2 text-[9px] font-bold text-slate-600 uppercase tracking-widest mb-2 px-2">
+                  <div className="px-5 py-4 bg-[#080B11]/50">
+                    <div className="text-[10px] font-bold text-[#484F58] uppercase tracking-widest mb-3">Last 5 Trades</div>
+                    <div className="grid grid-cols-5 gap-2 text-[9px] font-bold text-[#484F58] uppercase tracking-widest mb-2 px-2">
                       <span>Token</span>
                       <span>Action</span>
                       <span>MC at Entry</span>
                       <span>Est. PnL</span>
                     </div>
                     {wallet.recentTrades.map((trade, ti) => (
-                      <div key={ti} className="grid grid-cols-5 gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-800/40 transition-colors">
+                      <div key={ti} className="grid grid-cols-5 gap-2 px-2 py-1.5 rounded-lg hover:bg-[#161B22]/40 transition-colors">
                         <span className="text-xs font-bold text-white">{trade.token}</span>
                         <span className={cn('text-[10px] font-bold uppercase', trade.action === 'BUY' ? 'text-emerald-400' : 'text-red-400')}>
                           {trade.action}
                         </span>
-                        <span className="text-[10px] text-slate-400">{trade.mcAtEntry}</span>
+                        <span className="text-[10px] text-[#8B949E]">{trade.mcAtEntry}</span>
                         <span className={cn('text-[10px] font-bold', trade.pnlPositive ? 'text-emerald-400' : 'text-red-400')}>
                           {trade.pnl}
                         </span>

@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
+/* ─── Premium Design System Variables ─────────────────────────── */
+:root {
+  /* Core backgrounds */
+  --surface-base: #080B11;
+  --surface-raised: #0D1117;
+  --surface-overlay: #161B22;
+  --surface-subtle: #1C2128;
+  --surface-border: #30363D;
+  --surface-border-subtle: #21262D;
+
+  /* Brand */
+  --brand-primary: #00D2FF;
+  --brand-secondary: #0EA5E9;
+  --brand-glow: rgba(0,210,255,0.12);
+
+  /* Signals */
+  --signal-alpha: #10B981;
+  --signal-alpha-glow: rgba(16,185,129,0.15);
+  --signal-risk: #EF4444;
+  --signal-risk-glow: rgba(239,68,68,0.15);
+  --signal-watch: #F59E0B;
+  --signal-watch-glow: rgba(245,158,11,0.15);
+
+  /* Text hierarchy */
+  --text-primary: #E6EDF3;
+  --text-secondary: #8B949E;
+  --text-muted: #484F58;
+  --text-inverse: #080B11;
+}
+
 @theme {
   /* Typography System */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -98,7 +128,9 @@
 
 @layer base {
   body {
-    @apply bg-background-dark text-sky-50 antialiased font-sans;
+    background-color: var(--surface-base);
+    color: var(--text-primary);
+    @apply antialiased font-sans;
   }
 }
 
@@ -185,6 +217,17 @@
     @apply transition-all duration-250 ease-out;
   }
 }
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--signal-alpha-glow); }
+  50% { box-shadow: 0 0 16px var(--signal-alpha-glow), 0 0 32px rgba(16,185,129,0.08); }
+}
+@keyframes glow-pulse-risk {
+  0%, 100% { box-shadow: 0 0 8px var(--signal-risk-glow); }
+  50% { box-shadow: 0 0 16px var(--signal-risk-glow), 0 0 32px rgba(239,68,68,0.08); }
+}
+.animate-glow-alpha { animation: glow-pulse 2s ease-in-out infinite; }
+.animate-glow-risk { animation: glow-pulse-risk 2s ease-in-out infinite; }
 
 .water-gradient {
   background: linear-gradient(180deg, rgba(14, 165, 233, 0.1) 0%, rgba(8, 47, 73, 0) 100%);

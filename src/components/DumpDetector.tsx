@@ -166,28 +166,33 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
   return (
     <div className="p-6 space-y-6 min-h-screen">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        className="flex items-center gap-3"
+      >
         <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center">
-          <AlertTriangle size={22} />
+          <AlertTriangle size={20} />
         </div>
         <div>
-          <h1 className="text-2xl font-display font-bold text-white">Dump Detector</h1>
-          <p className="text-xs text-slate-500 uppercase tracking-widest font-mono">Risk &amp; exit signal monitoring</p>
+          <h1 className="text-xl font-semibold text-[#E6EDF3] tracking-tight">Dump Detector</h1>
+          <p className="text-xs text-[#484F58] uppercase tracking-[0.12em] font-mono">Risk &amp; exit signal monitoring</p>
         </div>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* LEFT: Search + Analysis */}
         <div className="space-y-4">
           <form onSubmit={analyzeToken} className="flex gap-2">
             <div className="relative flex-1">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8B949E]" />
               <input
                 type="text"
                 value={tokenInput}
                 onChange={e => setTokenInput(e.target.value)}
                 placeholder="Token address or symbol…"
-                className="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 pl-9 pr-4 text-sm focus:outline-none focus:border-red-500/40 transition-all placeholder:text-slate-600"
+                className="w-full bg-slate-900/50 border border-[#21262D] rounded-xl py-3 pl-9 pr-4 text-sm focus:outline-none focus:border-red-500/40 transition-all placeholder:text-[#484F58]"
               />
             </div>
             <button
@@ -204,88 +209,91 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-slate-900/60 border border-slate-700 rounded-2xl overflow-hidden"
+              className="bg-[#0D1117] border border-[#21262D] rounded-xl overflow-hidden"
             >
               {/* Token Identity */}
-              <div className="px-5 py-4 border-b border-slate-700/50 flex items-center justify-between">
+              <div className="px-5 py-4 border-b border-[#21262D] flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-bold text-white">
                   <span className="text-primary">${analysis.symbol}</span>
-                  <span className="text-slate-600">•</span>
-                  <span className="text-slate-400">{analysis.chain}</span>
-                  <span className="text-slate-600">•</span>
-                  <span className="text-slate-400">{analysis.mcap} MC</span>
+                  <span className="text-[#484F58]">•</span>
+                  <span className="text-[#8B949E]">{analysis.chain}</span>
+                  <span className="text-[#484F58]">•</span>
+                  <span className="text-[#8B949E]">{analysis.mcap} MC</span>
                 </div>
               </div>
 
               {/* Risk Score */}
-              <div className="px-5 py-4 border-b border-slate-700/50">
+              <div className="px-5 py-4 border-b border-[#21262D]">
                 <div className="flex items-center justify-between mb-2">
                   <div className="space-y-2">
-                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dump Risk</div>
+                    <div className="text-[10px] font-semibold text-[#484F58] uppercase tracking-[0.12em]">Dump Risk</div>
                     <div className={cn('text-sm font-bold uppercase tracking-wide', riskInfo?.cls)}>{riskInfo?.label}</div>
                     {/* Distribution State Badge */}
                     <DistributionStateBadge state={getDumpDistState(analysis.dumpRisk)} size="lg" />
                     {/* Price/Flow Divergence warning */}
                     {analysis.dumpRisk > 60 && analysis.trend === 'increasing' && (
-                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border bg-orange-900/20 border-orange-500/30 text-orange-400 text-[10px] font-bold uppercase tracking-wide">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border bg-amber-500/10 border-amber-500/30 text-amber-400 text-[10px] font-bold uppercase tracking-wide">
                         ⚡ Price/Flow Divergence
                       </div>
                     )}
                   </div>
                   <div className="text-right">
-                    <div className={cn('text-3xl font-display font-bold', riskInfo?.cls)}>{analysis.dumpRisk}</div>
-                    <div className="text-[10px] text-slate-600">
+                    <div className={cn('text-3xl font-mono font-bold', riskInfo?.cls)}>{analysis.dumpRisk}</div>
+                    <div className="text-[10px] text-[#484F58]">
                       {analysis.trend === 'increasing' ? '↑ Increasing' : analysis.trend === 'decreasing' ? '↓ Decreasing' : '→ Stable'}
                     </div>
                   </div>
                 </div>
-                <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-3 bg-[#1C2128] rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${analysis.dumpRisk}%` }}
                     transition={{ duration: 0.7, ease: 'easeOut' }}
-                    className={cn('h-full rounded-full', getRiskBarColor(analysis.dumpRisk), analysis.dumpRisk > 80 && 'animate-pulse')}
+                    className="h-full rounded-full"
+                    style={{
+                      background: `linear-gradient(to right, #10B981, #F59E0B ${Math.min(analysis.dumpRisk * 0.6, 50)}%, #EF4444)`,
+                    }}
                   />
                 </div>
               </div>
 
               {/* Distribution Checklist */}
-              <div className="px-5 py-3 border-b border-slate-700/50">
-                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">DISTRIBUTION FACTORS</div>
-                <div className="space-y-1.5">
+              <div className="px-5 py-3 border-b border-[#21262D]">
+                <div className="text-[10px] font-semibold text-[#484F58] uppercase tracking-[0.12em] mb-2">DISTRIBUTION FACTORS</div>
+                <div className="space-y-2">
                   {MOCK_DIST_FACTORS.map((f, fi) => (
-                    <div key={fi} className="flex items-center justify-between text-xs">
-                      <span className="flex items-center gap-1.5 text-slate-400">
+                    <div key={fi} className="flex items-center justify-between py-1 border-b border-[#21262D]/50 last:border-0">
+                      <span className="flex items-center gap-2 text-xs text-[#8B949E]">
                         <span>{FACTOR_ICON[f.status]}</span>
                         {f.label}
                       </span>
-                      <span className={cn('font-bold text-[10px]', FACTOR_TEXT[f.status])}>{f.detail}</span>
+                      <span className={cn('font-bold text-[10px] font-mono', FACTOR_TEXT[f.status])}>{f.detail}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Summary */}
-              <div className="px-5 py-3 border-b border-slate-700/50 bg-slate-950/30">
-                <p className="text-xs font-bold text-slate-300 mb-1">"{analysis.summary}"</p>
+              <div className="px-5 py-3 border-b border-[#21262D] bg-[#080B11]/50">
+                <p className="text-xs font-bold text-[#E6EDF3] mb-1">"{analysis.summary}"</p>
                 {analysis.bullets.map((b, i) => (
-                  <div key={i} className="text-[11px] text-slate-500 font-mono flex items-start gap-1.5 mt-1">
-                    <span className="text-slate-600 mt-0.5">›</span> {b}
+                  <div key={i} className="text-[11px] text-[#8B949E] font-mono flex items-start gap-1.5 mt-1">
+                    <span className="text-[#484F58] mt-0.5">›</span> {b}
                   </div>
                 ))}
               </div>
 
               {/* Signals */}
               <div className="px-5 py-4 space-y-2">
-                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">SIGNALS</div>
+                <div className="text-[10px] font-bold text-[#8B949E] uppercase tracking-widest mb-2">SIGNALS</div>
                 {analysis.signals.map(sig => (
                   <div key={sig.id} className="flex items-center gap-3 text-xs">
                     <span>{SIGNAL_EMOJIS[sig.type]}</span>
-                    <span className="font-bold text-slate-300 font-mono">{sig.type}</span>
-                    <span className="text-slate-500">
+                    <span className="font-bold text-[#E6EDF3] font-mono">{sig.type}</span>
+                    <span className="text-[#8B949E]">
                       {sig.amount ?? sig.change}
                     </span>
-                    <span className="ml-auto text-slate-600 text-[10px]">{sig.timeAgo}</span>
+                    <span className="ml-auto text-[#484F58] text-[10px]">{sig.timeAgo}</span>
                   </div>
                 ))}
               </div>
@@ -320,23 +328,23 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
           )}
 
           {!analysis && !loading && (
-            <div className="border border-dashed border-slate-700 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3">
+            <div className="border border-dashed border-[#21262D] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3">
               <AlertTriangle size={32} className="text-slate-700" />
-              <p className="text-sm text-slate-600">Enter a token address or symbol to analyze dump risk</p>
+              <p className="text-sm text-[#484F58]">Enter a token address or symbol to analyze dump risk</p>
             </div>
           )}
         </div>
 
         {/* RIGHT: Live Risk Feed */}
-        <div className="bg-slate-900/50 border border-slate-700 rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-700 flex items-center justify-between">
+        <div className="bg-slate-900/50 border border-[#21262D] rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-[#21262D] flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
               <span className="text-sm font-bold text-white">Live Risk Feed</span>
             </div>
             <button
               onClick={refreshFeed}
-              className="text-slate-500 hover:text-slate-300 transition-colors"
+              className="text-[#8B949E] hover:text-[#E6EDF3] transition-colors"
             >
               <RefreshCw size={13} className={feedLoading ? 'animate-spin' : ''} />
             </button>
@@ -349,24 +357,24 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
                   setTokenInput(sig.token.replace('$', ''));
                   setAnalysis({ ...MOCK_TOKEN_ANALYSIS, symbol: sig.token.replace('$', '') });
                 }}
-                className="w-full px-5 py-3 flex items-center gap-3 text-left hover:bg-slate-800/50 transition-colors group"
+                className="w-full px-5 py-3 flex items-center gap-3 text-left hover:bg-[#161B22]/50 transition-colors group"
               >
                 <span className="text-base">{SIGNAL_EMOJIS[sig.type]}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-white">{sig.token}</span>
-                    <span className="text-[9px] text-slate-600 font-mono uppercase">{sig.type}</span>
+                    <span className="text-[9px] text-[#484F58] font-mono uppercase">{sig.type}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 truncate">{sig.description}</p>
+                  <p className="text-[11px] text-[#8B949E] truncate">{sig.description}</p>
                 </div>
-                <div className="text-[10px] text-slate-600 font-mono whitespace-nowrap flex items-center gap-1">
+                <div className="text-[10px] text-[#484F58] font-mono whitespace-nowrap flex items-center gap-1">
                   <Clock size={9} />
                   {sig.timeAgo}
                 </div>
               </button>
             ))}
           </div>
-          <div className="px-5 py-3 border-t border-slate-700 text-[10px] text-slate-600 font-mono">
+          <div className="px-5 py-3 border-t border-[#21262D] text-[10px] text-[#484F58] font-mono">
             Auto-refreshes every 30s
           </div>
         </div>
