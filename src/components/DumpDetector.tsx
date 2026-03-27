@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AlertTriangle, Search, RefreshCw, Loader2, TrendingDown, Clock } from 'lucide-react';
+import { AlertTriangle, Search, RefreshCw, Loader2, TrendingDown } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
-import { DistributionStateBadge, DistributionState } from './ui/DistributionStateBadge';
-import { InsightCard } from './ui/InsightCard';
 
 interface DumpSignal {
   id: string;
@@ -23,17 +21,9 @@ interface TokenDumpAnalysis {
   dumpRisk: number;
   trend: 'increasing' | 'stable' | 'decreasing';
   summary: string;
-  bullets: string[];
+  recommendation: string;
   signals: DumpSignal[];
 }
-
-const SIGNAL_EMOJIS: Record<DumpSignal['type'], string> = {
-  DEV_SELL:    '🚨',
-  WHALE_EXIT:  '⚠️',
-  VOLUME_DROP: '⚠️',
-  HOLDER_DROP: '⚠️',
-  SNIPER_EXIT: '🚨',
-};
 
 const MOCK_LIVE_FEED: DumpSignal[] = [
   { id: '1', token: '$RUGME', type: 'DEV_SELL',    description: 'Dev transferred $12K to fresh wallet', amount: '$12K',  timeAgo: '3m ago',  severity: 'critical' },
@@ -52,12 +42,8 @@ const MOCK_TOKEN_ANALYSIS: TokenDumpAnalysis = {
   mcap: '$234K',
   dumpRisk: 78,
   trend: 'increasing',
-  summary: 'High risk of coordinated sell-off',
-  bullets: [
-    'Dev transferred $8K to fresh wallet 2h ago',
-    'Top 3 holders reduced positions by 18%',
-    'Volume trending down after initial pump',
-  ],
+  summary: 'Dev sold $8K into price strength. Top 3 holders reducing. Volume declining 67%.',
+  recommendation: 'Consider Exit',
   signals: [
     { id: 's1', token: '$EXAMPLE', type: 'DEV_SELL',    description: 'Dev wallet activity', amount: '$8.2K', timeAgo: '2h ago', severity: 'critical' },
     { id: 's2', token: '$EXAMPLE', type: 'WHALE_EXIT',  description: 'Top holders reducing', change: '-18%', timeAgo: '4h ago', severity: 'high' },
@@ -65,52 +51,37 @@ const MOCK_TOKEN_ANALYSIS: TokenDumpAnalysis = {
   ],
 };
 
-const getDumpDistState = (score: number): DistributionState => {
-  if (score > 85) return 'BROKEN_STRUCTURE';
-  if (score > 70) return 'HIGH_DUMP_RISK';
-  if (score > 55) return 'ACTIVE_DISTRIBUTION';
-  if (score > 40) return 'EARLY_DISTRIBUTION';
-  return 'QUIET';
-};
-
-interface DistFactor {
-  label: string;
-  status: 'ok' | 'warn' | 'danger';
-  detail: string;
-}
-
-const MOCK_DIST_FACTORS: DistFactor[] = [
-  { label: 'Top holders',     status: 'ok',     detail: 'Neutral' },
-  { label: 'Smart wallets',   status: 'warn',   detail: 'Distributing' },
-  { label: 'Dev activity',    status: 'danger',  detail: 'Suspicious' },
-  { label: 'Volume',          status: 'ok',     detail: 'Stable' },
-  { label: 'Buy/Sell ratio',  status: 'warn',   detail: '0.38' },
+const MOCK_DIST_FACTORS = [
+  { label: 'Sniper concentration', value: '42%',        status: 'warn' as const },
+  { label: 'Bundle wallets',       value: 'Active',     status: 'danger' as const },
+  { label: 'Whale holdings',       value: '-18%',       status: 'warn' as const },
+  { label: 'Dev activity',         value: 'Suspicious', status: 'danger' as const },
+  { label: 'Buy/Sell ratio',       value: '0.38',       status: 'danger' as const },
+  { label: 'Liquidity vs MC',      value: '4.2%',       status: 'warn' as const },
 ];
 
-const FACTOR_ICON: Record<DistFactor['status'], string> = {
-  ok:     '✅',
-  warn:   '⚠️',
-  danger: '🔴',
+const STATUS_ICON: Record<string, string> = { ok: '✓', warn: '⚠', danger: '●' };
+const STATUS_COLOR: Record<string, string> = { ok: 'text-green-400', warn: 'text-amber-400', danger: 'text-red-400' };
+
+const getRiskColor = (score: number) => {
+  if (score > 80) return 'text-red-400';
+  if (score > 60) return 'text-amber-400';
+  if (score > 30) return 'text-amber-400';
+  return 'text-green-400';
 };
 
-const FACTOR_TEXT: Record<DistFactor['status'], string> = {
-  ok:     'text-emerald-400',
-  warn:   'text-amber-400',
-  danger: 'text-red-400',
+const getRiskLabel = (score: number) => {
+  if (score > 80) return 'CRITICAL';
+  if (score > 60) return 'HIGH RISK';
+  if (score > 30) return 'ELEVATED';
+  return 'LOW RISK';
 };
 
 const getRiskBarColor = (score: number) => {
   if (score > 80) return 'bg-red-500';
-  if (score > 60) return 'bg-orange-500';
+  if (score > 60) return 'bg-amber-500';
   if (score > 30) return 'bg-amber-400';
-  return 'bg-emerald-500';
-};
-
-const getRiskLabel = (score: number) => {
-  if (score > 80) return { label: 'CRITICAL', cls: 'text-red-400' };
-  if (score > 60) return { label: 'HIGH RISK', cls: 'text-orange-400' };
-  if (score > 30) return { label: 'ELEVATED', cls: 'text-amber-400' };
-  return { label: 'LOW RISK', cls: 'text-emerald-400' };
+  return 'bg-green-500';
 };
 
 interface DumpDetectorProps {
@@ -133,7 +104,6 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
       const data = await res.json();
       setLiveFeed(data);
     } catch {
-      // keep mock data, shuffle to simulate refresh
       setLiveFeed(prev => [...prev].sort(() => Math.random() - 0.5));
     } finally {
       setFeedLoading(false);
@@ -161,195 +131,149 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
     }
   };
 
-  const riskInfo = analysis ? getRiskLabel(analysis.dumpRisk) : null;
-
   return (
-    <div className="p-6 space-y-6 min-h-screen">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+      className="p-6 space-y-4"
+    >
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className="flex items-center gap-3"
-      >
-        <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center">
-          <AlertTriangle size={20} />
-        </div>
-        <div>
-          <h1 className="text-xl font-semibold text-[#E6EDF3] tracking-tight">Dump Detector</h1>
-          <p className="text-xs text-[#484F58] uppercase tracking-[0.12em] font-mono">Risk &amp; exit signal monitoring</p>
-        </div>
-      </motion.div>
+      <div className="flex items-center gap-2">
+        <AlertTriangle size={16} className="text-[#94A3B8]" />
+        <h1 className="text-base font-semibold text-[#F1F5F9]">Dump Detector</h1>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* LEFT: Search + Analysis */}
         <div className="space-y-4">
           <form onSubmit={analyzeToken} className="flex gap-2">
             <div className="relative flex-1">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8B949E]" />
+              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#475569]" />
               <input
                 type="text"
                 value={tokenInput}
                 onChange={e => setTokenInput(e.target.value)}
-                placeholder="Token address or symbol…"
-                className="w-full bg-slate-900/50 border border-[#21262D] rounded-xl py-3 pl-9 pr-4 text-sm focus:outline-none focus:border-red-500/40 transition-all placeholder:text-[#484F58]"
+                placeholder="Token address or symbol..."
+                className="w-full bg-[#111827] border border-[#1E2A3A] rounded-lg py-2 pl-9 pr-4 text-sm text-[#F1F5F9] placeholder:text-[#475569] focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
             <button
               type="submit"
               disabled={loading || !tokenInput.trim()}
-              className="px-5 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl text-xs font-bold hover:bg-red-500/30 transition-all disabled:opacity-50 flex items-center gap-2"
+              className="px-4 bg-[#111827] border border-[#1E2A3A] text-[#94A3B8] rounded-lg text-xs font-medium hover:text-[#F1F5F9] hover:border-[#2D3748] transition-all disabled:opacity-40 flex items-center gap-1.5"
             >
-              {loading ? <Loader2 size={13} className="animate-spin" /> : <TrendingDown size={13} />}
-              ANALYZE
+              {loading ? <Loader2 size={12} className="animate-spin" /> : <TrendingDown size={12} />}
+              Analyze
             </button>
           </form>
 
           {analysis && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-[#0D1117] border border-[#21262D] rounded-xl overflow-hidden"
+              className="bg-[#111827] border border-[#1E2A3A] rounded-lg overflow-hidden"
             >
-              {/* Token Identity */}
-              <div className="px-5 py-4 border-b border-[#21262D] flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm font-bold text-white">
-                  <span className="text-primary">${analysis.symbol}</span>
-                  <span className="text-[#484F58]">•</span>
-                  <span className="text-[#8B949E]">{analysis.chain}</span>
-                  <span className="text-[#484F58]">•</span>
-                  <span className="text-[#8B949E]">{analysis.mcap} MC</span>
-                </div>
+              {/* Token identity */}
+              <div className="px-4 py-3 border-b border-[#1E2A3A] flex items-center gap-2 text-sm">
+                <span className="font-bold text-blue-400">${analysis.symbol}</span>
+                <span className="text-[#475569]">·</span>
+                <span className="text-[#94A3B8]">{analysis.chain}</span>
+                <span className="text-[#475569]">·</span>
+                <span className="text-[#94A3B8]">{analysis.mcap} MC</span>
               </div>
 
-              {/* Risk Score */}
-              <div className="px-5 py-4 border-b border-[#21262D]">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="space-y-2">
-                    <div className="text-[10px] font-semibold text-[#484F58] uppercase tracking-[0.12em]">Dump Risk</div>
-                    <div className={cn('text-sm font-bold uppercase tracking-wide', riskInfo?.cls)}>{riskInfo?.label}</div>
-                    {/* Distribution State Badge */}
-                    <DistributionStateBadge state={getDumpDistState(analysis.dumpRisk)} size="lg" />
-                    {/* Price/Flow Divergence warning */}
-                    {analysis.dumpRisk > 60 && analysis.trend === 'increasing' && (
-                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border bg-amber-500/10 border-amber-500/30 text-amber-400 text-[10px] font-bold uppercase tracking-wide">
-                        ⚡ Price/Flow Divergence
-                      </div>
-                    )}
+              {/* Risk score */}
+              <div className="px-4 py-4 border-b border-[#1E2A3A]">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <div className="text-[10px] text-[#475569] uppercase tracking-wide mb-0.5">Dump Risk</div>
+                    <div className={cn('text-xs font-bold', getRiskColor(analysis.dumpRisk))}>
+                      {getRiskLabel(analysis.dumpRisk)}
+                    </div>
                   </div>
                   <div className="text-right">
-                    <div className={cn('text-3xl font-mono font-bold', riskInfo?.cls)}>{analysis.dumpRisk}</div>
-                    <div className="text-[10px] text-[#484F58]">
+                    <div className={cn('text-3xl font-mono font-bold num', getRiskColor(analysis.dumpRisk))}>
+                      {analysis.dumpRisk}
+                    </div>
+                    <div className="text-[10px] text-[#475569]">
                       {analysis.trend === 'increasing' ? '↑ Increasing' : analysis.trend === 'decreasing' ? '↓ Decreasing' : '→ Stable'}
                     </div>
                   </div>
                 </div>
-                <div className="h-3 bg-[#1C2128] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-[#1A2234] rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${analysis.dumpRisk}%` }}
-                    transition={{ duration: 0.7, ease: 'easeOut' }}
-                    className="h-full rounded-full"
-                    style={{
-                      background: `linear-gradient(to right, #10B981, #F59E0B ${Math.min(analysis.dumpRisk * 0.6, 50)}%, #EF4444)`,
-                    }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className={cn('h-full rounded-full', getRiskBarColor(analysis.dumpRisk))}
                   />
                 </div>
               </div>
 
-              {/* Distribution Checklist */}
-              <div className="px-5 py-3 border-b border-[#21262D]">
-                <div className="text-[10px] font-semibold text-[#484F58] uppercase tracking-[0.12em] mb-2">DISTRIBUTION FACTORS</div>
-                <div className="space-y-2">
-                  {MOCK_DIST_FACTORS.map((f, fi) => (
-                    <div key={fi} className="flex items-center justify-between py-1 border-b border-[#21262D]/50 last:border-0">
-                      <span className="flex items-center gap-2 text-xs text-[#8B949E]">
-                        <span>{FACTOR_ICON[f.status]}</span>
-                        {f.label}
-                      </span>
-                      <span className={cn('font-bold text-[10px] font-mono', FACTOR_TEXT[f.status])}>{f.detail}</span>
+              {/* Summary */}
+              <div className="px-4 py-3 border-b border-[#1E2A3A]">
+                <span className="text-[10px] text-[#475569] uppercase tracking-wide mr-1">Summary:</span>
+                <span className="text-xs text-[#94A3B8]">{analysis.summary}</span>
+                <span className="text-[10px] text-[#475569] ml-2">Recommended:</span>
+                <span className={cn('text-xs font-medium ml-1', getRiskColor(analysis.dumpRisk))}>{analysis.recommendation}</span>
+              </div>
+
+              {/* Distribution factors grid */}
+              <div className="px-4 py-3 border-b border-[#1E2A3A]">
+                <div className="text-[10px] text-[#475569] uppercase tracking-wide mb-2">Distribution Factors</div>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
+                  {MOCK_DIST_FACTORS.map((f, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <span className="text-xs text-[#94A3B8]">{f.label}</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs font-mono text-[#F1F5F9]">{f.value}</span>
+                        <span className={cn('text-[10px]', STATUS_COLOR[f.status])}>{STATUS_ICON[f.status]}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Summary */}
-              <div className="px-5 py-3 border-b border-[#21262D] bg-[#080B11]/50">
-                <p className="text-xs font-bold text-[#E6EDF3] mb-1">"{analysis.summary}"</p>
-                {analysis.bullets.map((b, i) => (
-                  <div key={i} className="text-[11px] text-[#8B949E] font-mono flex items-start gap-1.5 mt-1">
-                    <span className="text-[#484F58] mt-0.5">›</span> {b}
-                  </div>
-                ))}
-              </div>
-
-              {/* Signals */}
-              <div className="px-5 py-4 space-y-2">
-                <div className="text-[10px] font-bold text-[#8B949E] uppercase tracking-widest mb-2">SIGNALS</div>
-                {analysis.signals.map(sig => (
-                  <div key={sig.id} className="flex items-center gap-3 text-xs">
-                    <span>{SIGNAL_EMOJIS[sig.type]}</span>
-                    <span className="font-bold text-[#E6EDF3] font-mono">{sig.type}</span>
-                    <span className="text-[#8B949E]">
-                      {sig.amount ?? sig.change}
-                    </span>
-                    <span className="ml-auto text-[#484F58] text-[10px]">{sig.timeAgo}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* InsightCard */}
-              <div className="px-5 pb-5">
-                <InsightCard
-                  whatHappening={
-                    analysis.dumpRisk > 70
-                      ? 'Dev and whale wallets are actively distributing'
-                      : analysis.dumpRisk > 40
-                      ? 'Early distribution signals detected from smart wallets'
-                      : 'No significant distribution signals detected'
-                  }
-                  whyMatters={
-                    analysis.dumpRisk > 70
-                      ? `Dump risk at ${analysis.dumpRisk}/100 — coordinated exit likely`
-                      : `Risk is ${analysis.dumpRisk > 40 ? 'elevated' : 'low'} — monitor for changes`
-                  }
-                  suggestedAction={
-                    analysis.dumpRisk > 70
-                      ? 'Reduce or exit position before liquidity drops'
-                      : analysis.dumpRisk > 40
-                      ? 'Set alerts and monitor key holders closely'
-                      : 'No action required — hold or accumulate'
-                  }
-                  actionType={analysis.dumpRisk > 70 ? 'exit' : analysis.dumpRisk > 40 ? 'watch' : 'entry'}
-                  confidence={analysis.dumpRisk > 70 ? 88 : analysis.dumpRisk > 40 ? 65 : 78}
-                />
+              {/* Active signals */}
+              <div className="px-4 py-3">
+                <div className="text-[10px] text-[#475569] uppercase tracking-wide mb-2">Active Signals</div>
+                <div className="space-y-1.5">
+                  {analysis.signals.map(sig => (
+                    <div key={sig.id} className="flex items-center gap-2 text-xs">
+                      <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', sig.severity === 'critical' ? 'bg-red-400' : sig.severity === 'high' ? 'bg-amber-400' : 'bg-[#475569]')} />
+                      <span className="text-[#94A3B8] flex-1">{sig.description}</span>
+                      <span className="text-[#475569] font-mono">{sig.timeAgo}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </motion.div>
           )}
 
           {!analysis && !loading && (
-            <div className="border border-dashed border-[#21262D] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3">
-              <AlertTriangle size={32} className="text-slate-700" />
-              <p className="text-sm text-[#484F58]">Enter a token address or symbol to analyze dump risk</p>
+            <div className="border border-dashed border-[#1E2A3A] rounded-lg p-10 text-center">
+              <AlertTriangle size={24} className="text-[#2D3748] mx-auto mb-2" />
+              <p className="text-sm text-[#475569]">Enter a token to analyze dump risk</p>
             </div>
           )}
         </div>
 
         {/* RIGHT: Live Risk Feed */}
-        <div className="bg-slate-900/50 border border-[#21262D] rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-[#21262D] flex items-center justify-between">
+        <div className="bg-[#111827] border border-[#1E2A3A] rounded-lg overflow-hidden flex flex-col">
+          <div className="px-4 py-3 border-b border-[#1E2A3A] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-sm font-bold text-white">Live Risk Feed</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-live" />
+              <span className="text-sm font-medium text-[#F1F5F9]">Live Risk Feed</span>
             </div>
             <button
               onClick={refreshFeed}
-              className="text-[#8B949E] hover:text-[#E6EDF3] transition-colors"
+              className="text-[#475569] hover:text-[#94A3B8] transition-colors"
             >
-              <RefreshCw size={13} className={feedLoading ? 'animate-spin' : ''} />
+              <RefreshCw size={12} className={feedLoading ? 'animate-spin' : ''} />
             </button>
           </div>
-          <div className="overflow-y-auto max-h-[500px] divide-y divide-slate-700/30">
+          <div className="overflow-y-auto flex-1 max-h-[480px] divide-y divide-[#1E2A3A]">
             {liveFeed.map(sig => (
               <button
                 key={sig.id}
@@ -357,29 +281,23 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
                   setTokenInput(sig.token.replace('$', ''));
                   setAnalysis({ ...MOCK_TOKEN_ANALYSIS, symbol: sig.token.replace('$', '') });
                 }}
-                className="w-full px-5 py-3 flex items-center gap-3 text-left hover:bg-[#161B22]/50 transition-colors group"
+                className="w-full px-4 py-2.5 flex items-center gap-3 text-left hover:bg-[#1A2234] transition-colors"
               >
-                <span className="text-base">{SIGNAL_EMOJIS[sig.type]}</span>
+                <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', sig.severity === 'critical' ? 'bg-red-400' : sig.severity === 'high' ? 'bg-amber-400' : 'bg-[#475569]')} />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-white">{sig.token}</span>
-                    <span className="text-[9px] text-[#484F58] font-mono uppercase">{sig.type}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-[#F1F5F9]">{sig.token}</span>
+                    <span className="text-[10px] text-[#475569] font-mono uppercase">{sig.type.replace('_', ' ')}</span>
                   </div>
-                  <p className="text-[11px] text-[#8B949E] truncate">{sig.description}</p>
+                  <p className="text-[11px] text-[#94A3B8] truncate">{sig.description}</p>
                 </div>
-                <div className="text-[10px] text-[#484F58] font-mono whitespace-nowrap flex items-center gap-1">
-                  <Clock size={9} />
-                  {sig.timeAgo}
-                </div>
+                <span className="text-[10px] text-[#475569] font-mono whitespace-nowrap shrink-0">{sig.timeAgo}</span>
               </button>
             ))}
           </div>
-          <div className="px-5 py-3 border-t border-[#21262D] text-[10px] text-[#484F58] font-mono">
-            Auto-refreshes every 30s
-          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

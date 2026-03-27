@@ -1,13 +1,12 @@
 import React from 'react';
-import { 
+import {
   Home,
-  Globe, 
-  Bell, 
-  Search, 
-  History, 
-  FileText, 
+  Globe,
+  Bell,
+  Search,
+  History,
+  FileText,
   MessageSquare,
-  ShieldAlert,
   Settings,
   Zap,
   Wallet,
@@ -17,11 +16,11 @@ import {
   Flame,
   AlertTriangle,
   Radio,
-  Waves
+  Waves,
+  LogOut
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { ViewId } from '../types';
-import { motion } from 'motion/react';
 
 interface SidebarProps {
   activeView: ViewId;
@@ -31,43 +30,43 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) => {
   const categories = [
     {
-      title: 'OVERVIEW',
+      title: 'Overview',
       items: [
         { id: 'home', label: 'Home', icon: Home },
       ]
     },
     {
-      title: 'MACRO TERMINAL',
+      title: 'Macro Terminal',
       items: [
-        { id: 'market-overview', label: 'Global State', icon: Globe },
-        { id: 'attention-feed', label: 'Attention Feed', icon: Bell },
-        { id: 'narrative-monitor', label: 'Narrative Intensity', icon: MessageSquare },
+        { id: 'market-overview',   label: 'Global State',       icon: Globe },
+        { id: 'attention-feed',    label: 'Attention Feed',     icon: Bell },
+        { id: 'narrative-monitor', label: 'Narrative Intensity',icon: MessageSquare },
       ]
     },
     {
-      title: 'ALPHA SUITE',
+      title: 'Alpha Suite',
       items: [
-        { id: 'alpha-hunter',  label: 'Alpha Hunter',     icon: Flame },
-        { id: 'dump-detector', label: 'Dump Detector',    icon: AlertTriangle },
-        { id: 'signal-feed',   label: 'Signal Feed',      icon: Radio },
-        { id: 'wallet-ranking',label: 'Wallet Rankings',  icon: Trophy },
+        { id: 'alpha-hunter',   label: 'Alpha Hunter',   icon: Flame },
+        { id: 'dump-detector',  label: 'Dump Detector',  icon: AlertTriangle },
+        { id: 'signal-feed',    label: 'Signal Feed',    icon: Radio },
+        { id: 'wallet-ranking', label: 'Wallet Rankings',icon: Trophy },
       ]
     },
     {
-      title: 'INSTITUTIONAL TOOLS',
+      title: 'Institutional',
       items: [
-        { id: 'investigation-gateway', label: 'Investigation', icon: Search },
-        { id: 'archive', label: 'Analyst Archive', icon: History },
-        { id: 'token-analysis', label: 'Reports', icon: FileText },
-        { id: 'solana-intel', label: 'Solana Intel', icon: Zap },
-        { id: 'hunter-feed', label: 'Hunter Scanner', icon: Radar },
-        { id: 'smart-money', label: 'Smart Money', icon: Trophy },
-        { id: 'wallet-behavior', label: 'Wallet Behavior', icon: Wallet },
-        { id: 'liquidity-intel', label: 'Liquidity Intel', icon: Droplets },
+        { id: 'investigation-gateway', label: 'Investigation',  icon: Search },
+        { id: 'archive',               label: 'Analyst Archive',icon: History },
+        { id: 'token-analysis',        label: 'Reports',        icon: FileText },
+        { id: 'solana-intel',          label: 'Solana Intel',   icon: Zap },
+        { id: 'hunter-feed',           label: 'Hunter Scanner', icon: Radar },
+        { id: 'smart-money',           label: 'Smart Money',    icon: Trophy },
+        { id: 'wallet-behavior',       label: 'Wallet Behavior',icon: Wallet },
+        { id: 'liquidity-intel',       label: 'Liquidity Intel',icon: Droplets },
       ]
     },
     {
-      title: 'SYSTEM',
+      title: 'System',
       items: [
         { id: 'settings', label: 'Settings', icon: Settings },
       ]
@@ -75,68 +74,61 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
   ];
 
   return (
-    <div className="w-60 h-screen bg-[#080B11] border-r border-[#21262D] flex flex-col shrink-0">
-      {/* Logo area */}
-      <div className="px-5 py-5 border-b border-[#21262D]">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#00D2FF]/10 border border-[#00D2FF]/30 flex items-center justify-center">
-            <Waves size={18} className="text-[#00D2FF]" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm tracking-tight leading-none text-[#E6EDF3]">SPLASH SIGNAL</span>
-            <div className="mt-1 text-[10px] text-[#00D2FF] font-mono tracking-widest uppercase">Intelligence I.O.</div>
-          </div>
+    <div className="w-[220px] h-screen bg-[#0A0E17] border-r border-[#1E2A3A] flex flex-col shrink-0">
+      {/* Logo */}
+      <div className="px-4 py-5">
+        <div className="flex items-center gap-2.5">
+          <Waves size={18} className="text-blue-500 shrink-0" />
+          <span>
+            <span className="font-semibold text-sm text-[#F1F5F9]">Splash</span>
+            <span className="text-sm text-[#475569]">Signal</span>
+          </span>
         </div>
       </div>
 
       {/* Nav */}
-      <div className="flex-1 overflow-y-auto py-4 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto py-2 scrollbar-hide">
         {categories.map((cat, idx) => (
-          <div key={idx} className="mb-5">
-            <div className="px-5 mb-2 text-[10px] font-semibold text-[#484F58] tracking-[0.12em] uppercase">
+          <div key={idx} className="mb-4">
+            <div className="px-3 mb-1 text-[11px] font-medium text-[#475569] uppercase tracking-[0.08em]">
               {cat.title}
             </div>
             {cat.items.map((item) => {
               const isActive = activeView === item.id;
               return (
-                <motion.button
+                <button
                   key={item.id}
                   onClick={() => onViewChange(item.id as ViewId)}
-                  whileHover={{ x: isActive ? 0 : 2 }}
-                  transition={{ duration: 0.15 }}
                   className={cn(
-                    "w-full px-5 py-2.5 flex items-center gap-3 text-sm transition-colors focus:outline-none",
+                    'w-full px-3 py-1.5 flex items-center gap-2.5 text-sm rounded-md transition-colors focus:outline-none',
                     isActive
-                      ? "border-l-2 border-[#00D2FF] bg-[#161B22] text-[#E6EDF3] font-medium"
-                      : "border-l-2 border-transparent text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#0D1117]"
+                      ? 'text-[#F1F5F9] bg-[#1A2234]'
+                      : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A2234]'
                   )}
                 >
                   <item.icon
-                    size={16}
-                    className={isActive ? 'text-[#00D2FF]' : 'text-[#484F58] group-hover:text-[#8B949E]'}
+                    size={14}
+                    className={isActive ? 'text-[#F1F5F9]' : 'text-[#94A3B8]'}
                   />
-                  <span className="font-medium">{item.label}</span>
-                </motion.button>
+                  <span>{item.label}</span>
+                </button>
               );
             })}
           </div>
         ))}
       </div>
 
-      {/* User area */}
-      <div className="p-4 border-t border-[#21262D]">
-        <div className="flex items-center gap-3 p-2.5 rounded-xl bg-[#0D1117] border border-[#21262D]">
-          <div className="w-8 h-8 rounded-full bg-[#161B22] border border-[#00D2FF]/30 flex items-center justify-center shrink-0">
-            <ShieldAlert size={15} className="text-[#00D2FF]" />
+      {/* Footer */}
+      <div className="p-3 border-t border-[#1E2A3A] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-[#1A2234] flex items-center justify-center text-xs text-[#94A3B8] font-medium">
+            Z
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold truncate text-[#E6EDF3]">PUBLIC_ACCESS</div>
-            <div className="text-[10px] text-[#484F58] font-mono">SECURE_TERMINAL</div>
-          </div>
-          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 shrink-0">
-            PRO
-          </span>
+          <span className="text-xs text-[#475569]">v2.1</span>
         </div>
+        <button className="text-[#475569] hover:text-[#94A3B8] transition-colors">
+          <LogOut size={13} />
+        </button>
       </div>
     </div>
   );
