@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Waves,
   Zap,
@@ -15,7 +15,8 @@ import {
   Monitor,
   Flame,
   AlertTriangle,
-  Radio
+  Radio,
+  RefreshCw
 } from 'lucide-react';
 import { ViewId } from '../types';
 import { cn } from '../lib/utils';
@@ -23,11 +24,123 @@ import { DexTrendingFeed } from './DexTrendingFeed';
 import { Button, Card, Badge } from './ui';
 import { PageShell, Section } from './layout';
 
-interface HomeScreenProps {
-  onNavigate: (view: ViewId) => void;
+type AlertSeverity = 'entry' | 'exit' | 'watch' | 'warning';
+type SuggestedAction = 'ENTRY' | 'EXIT' | 'WATCH' | 'HOLD';
+
+interface NowPanelItem {
+  emoji: string;
+  headline: string;
+  token: string;
+  timeAgo: string;
+  action: SuggestedAction;
+  severity: AlertSeverity;
+  address?: string;
 }
 
-export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
+const SEVERITY_STYLES: Record<AlertSeverity, string> = {
+  entry:   'border-emerald-500/30 bg-emerald-900/20 hover:border-emerald-500/50',
+  exit:    'border-red-500/30 bg-red-900/20 hover:border-red-500/50',
+  watch:   'border-amber-500/30 bg-amber-900/20 hover:border-amber-500/50',
+  warning: 'border-orange-500/30 bg-orange-900/20 hover:border-orange-500/50',
+};
+
+const ACTION_COLOR: Record<SuggestedAction, string> = {
+  ENTRY: 'text-emerald-400',
+  EXIT:  'text-red-400',
+  WATCH: 'text-amber-400',
+  HOLD:  'text-blue-400',
+};
+
+const MOCK_NOW_ITEMS: NowPanelItem[] = [
+  { emoji: '🔥', headline: 'Smart wallets entering + vol +847%', token: '$PEPE2', timeAgo: '2m ago', action: 'ENTRY', severity: 'entry', address: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU' },
+  { emoji: '🚨', headline: 'Dev sold $12K — dump risk rising fast', token: '$RUGME', timeAgo: '5m ago', action: 'EXIT', severity: 'exit', address: '3mNqXvK8wP2sLjF5dTaBcRy7hUoEpGnZqM1iAsDfKL4' },
+  { emoji: '👀', headline: 'Whale reduced 23% — watch for follow-through', token: '$MOON', timeAgo: '12m ago', action: 'WATCH', severity: 'watch', address: '9nKmPoq4XwZtLrB2vYsCdEfHuiJ3OpNqGaWxTkMsVb8' },
+];
+
+const NowPanel: React.FC<{ onNavigate: (view: ViewId) => void; onSelectToken?: (view: string, addr: string) => void }> = ({ onNavigate, onSelectToken }) => {
+  const [items, setItems] = useState<NowPanelItem[]>(MOCK_NOW_ITEMS);
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setLastRefresh(new Date());
+    }, 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  const entryCount = items.filter(i => i.action === 'ENTRY').length;
+  const exitCount  = items.filter(i => i.action === 'EXIT').length;
+
+  return (
+    <div className="bg-slate-900/70 border border-slate-700 rounded-2xl overflow-hidden">
+      {/* Panel header */}
+      <div className="px-5 py-3 border-b border-slate-700 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="text-sm font-bold text-white">What's happening now</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            {entryCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-emerald-900/30 border border-emerald-600/30 text-emerald-400 text-[9px] font-bold uppercase">
+                {entryCount} entry {entryCount === 1 ? 'signal' : 'signals'}
+              </span>
+            )}
+            {exitCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-red-900/30 border border-red-600/30 text-red-400 text-[9px] font-bold uppercase">
+                {exitCount} exit {exitCount === 1 ? 'risk' : 'risks'}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[9px] text-slate-600 font-mono">auto-refresh 60s</span>
+          <button onClick={() => onNavigate('signal-feed' as ViewId)} className="text-[9px] font-bold text-primary hover:underline">
+            View all →
+          </button>
+        </div>
+      </div>
+
+      {/* Cards — horizontal scroll on mobile, 3-col on desktop */}
+      <div className="p-4">
+        <div className="flex gap-3 overflow-x-auto md:grid md:grid-cols-3 pb-1 md:pb-0 snap-x md:snap-none">
+          {items.map((item, i) => (
+            <button
+              key={i}
+              onClick={() => item.address && onSelectToken?.('solana-intel', item.address)}
+              className={cn(
+                'flex-shrink-0 snap-start w-72 md:w-auto rounded-xl border p-4 text-left transition-all group',
+                SEVERITY_STYLES[item.severity]
+              )}
+            >
+              <div className="flex items-start justify-between mb-2">
+                <span className="text-xl">{item.emoji}</span>
+                <span className={cn('text-[9px] font-bold uppercase tracking-widest', ACTION_COLOR[item.action])}>
+                  {item.action}
+                </span>
+              </div>
+              <div className="text-xs font-bold text-white mb-1 leading-snug">{item.headline}</div>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-sm font-bold text-primary">{item.token}</span>
+                <span className="text-[9px] text-slate-500 font-mono">{item.timeAgo}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface HomeScreenProps {
+  onNavigate: (view: ViewId) => void;
+  onSelectToken?: (view: string, address: string) => void;
+}
+
+export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate, onSelectToken }) => {
   const primaryTools = [
     {
       id: 'market-overview',
@@ -140,6 +253,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
               </Button>
             </div>
           </div>
+        </Section>
+
+        {/* Now Panel */}
+        <Section>
+          <NowPanel onNavigate={onNavigate} onSelectToken={onSelectToken} />
         </Section>
 
         {/* Quick Access — Alpha Suite */}

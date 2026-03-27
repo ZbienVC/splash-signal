@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, Eye, TrendingUp, Shield, Zap, Copy, Check, RefreshCw } from 'lucide-react';
+import { Flame, Eye, TrendingUp, Shield, Zap, Copy, Check, RefreshCw, SortAsc } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { ScorePill } from './ui/ScorePill';
+import { DistributionStateBadge, DistributionState } from './ui/DistributionStateBadge';
+import { TrendArrow } from './ui/TrendArrow';
 
 interface AlphaToken {
   symbol: string;
@@ -18,96 +21,53 @@ interface AlphaToken {
   holders: number;
   holderChange: string;
   smartWallets: number;
+  distributionState?: DistributionState;
 }
+
+const deriveDistState = (token: AlphaToken): DistributionState => {
+  if (token.riskScore > 80) return 'HIGH_DUMP_RISK';
+  if (token.riskScore > 65) return 'ACTIVE_DISTRIBUTION';
+  if (token.riskScore > 50) return 'EARLY_DISTRIBUTION';
+  if (token.alphaScore > 65) return 'HEALTHY_ACCUMULATION';
+  if (token.alphaScore > 45) return 'WATCH_FOR_ROTATION';
+  return 'QUIET';
+};
+
+const volumeDirection = (change: string): 'up' | 'down' | 'flat' | 'accelerating' => {
+  const n = parseFloat(change);
+  if (n > 300) return 'accelerating';
+  if (n > 0)   return 'up';
+  if (n < 0)   return 'down';
+  return 'flat';
+};
 
 const MOCK_ALPHA_TOKENS: AlphaToken[] = [
   {
-    symbol: 'PEPE2',
-    name: 'Pepe The Second',
-    address: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
-    chain: 'SOL',
-    age: '2h old',
-    alphaScore: 87,
-    riskScore: 34,
-    signal: 'ENTRY',
-    mcap: '$89K',
-    volume1h: '$234K',
-    volumeChange: '+847%',
-    holders: 342,
-    holderChange: '+67 in 1h',
-    smartWallets: 3,
+    symbol: 'PEPE2', name: 'Pepe The Second', address: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU', chain: 'SOL',
+    age: '2h old', alphaScore: 87, riskScore: 34, signal: 'ENTRY', mcap: '$89K', volume1h: '$234K', volumeChange: '+847%',
+    holders: 342, holderChange: '+67 in 1h', smartWallets: 3,
   },
   {
-    symbol: 'MOON9',
-    name: 'MoonBase Nine',
-    address: '3mNqXvK8wP2sLjF5dTaBcRy7hUoEpGnZqM1iAsDfKL4',
-    chain: 'SOL',
-    age: '5h old',
-    alphaScore: 74,
-    riskScore: 41,
-    signal: 'ENTRY',
-    mcap: '$142K',
-    volume1h: '$98K',
-    volumeChange: '+312%',
-    holders: 512,
-    holderChange: '+48 in 1h',
-    smartWallets: 2,
+    symbol: 'MOON9', name: 'MoonBase Nine', address: '3mNqXvK8wP2sLjF5dTaBcRy7hUoEpGnZqM1iAsDfKL4', chain: 'SOL',
+    age: '5h old', alphaScore: 74, riskScore: 41, signal: 'ENTRY', mcap: '$142K', volume1h: '$98K', volumeChange: '+312%',
+    holders: 512, holderChange: '+48 in 1h', smartWallets: 2,
   },
   {
-    symbol: 'DOGE2',
-    name: 'Doge Reborn',
-    address: '9nKmPoq4XwZtLrB2vYsCdEfHuiJ3OpNqGaWxTkMsVb8',
-    chain: 'SOL',
-    age: '1d old',
-    alphaScore: 61,
-    riskScore: 55,
-    signal: 'HOLD',
-    mcap: '$567K',
-    volume1h: '$45K',
-    volumeChange: '+78%',
-    holders: 1204,
-    holderChange: '+12 in 1h',
-    smartWallets: 1,
+    symbol: 'DOGE2', name: 'Doge Reborn', address: '9nKmPoq4XwZtLrB2vYsCdEfHuiJ3OpNqGaWxTkMsVb8', chain: 'SOL',
+    age: '1d old', alphaScore: 61, riskScore: 55, signal: 'HOLD', mcap: '$567K', volume1h: '$45K', volumeChange: '+78%',
+    holders: 1204, holderChange: '+12 in 1h', smartWallets: 1,
   },
   {
-    symbol: 'FROG',
-    name: 'Frog Capital',
-    address: '5bJxKqNmRvPwQoE8yFhT1cDgZiLaS7HuXnApCdMeRt2',
-    chain: 'SOL',
-    age: '3h old',
-    alphaScore: 43,
-    riskScore: 72,
-    signal: 'WATCH',
-    mcap: '$34K',
-    volume1h: '$19K',
-    volumeChange: '+145%',
-    holders: 189,
-    holderChange: '+23 in 1h',
-    smartWallets: 0,
+    symbol: 'FROG', name: 'Frog Capital', address: '5bJxKqNmRvPwQoE8yFhT1cDgZiLaS7HuXnApCdMeRt2', chain: 'SOL',
+    age: '3h old', alphaScore: 43, riskScore: 72, signal: 'WATCH', mcap: '$34K', volume1h: '$19K', volumeChange: '+145%',
+    holders: 189, holderChange: '+23 in 1h', smartWallets: 0,
   },
   {
-    symbol: 'WIF2',
-    name: 'Dog Wif Hat 2',
-    address: '2pQsJaXkYnMvBrDo9uFhN6cLgPwRiT4kZmEsAqVoCb7',
-    chain: 'SOL',
-    age: '4h old',
-    alphaScore: 79,
-    riskScore: 29,
-    signal: 'ENTRY',
-    mcap: '$211K',
-    volume1h: '$312K',
-    volumeChange: '+524%',
-    holders: 876,
-    holderChange: '+94 in 1h',
-    smartWallets: 4,
+    symbol: 'WIF2', name: 'Dog Wif Hat 2', address: '2pQsJaXkYnMvBrDo9uFhN6cLgPwRiT4kZmEsAqVoCb7', chain: 'SOL',
+    age: '4h old', alphaScore: 79, riskScore: 29, signal: 'ENTRY', mcap: '$211K', volume1h: '$312K', volumeChange: '+524%',
+    holders: 876, holderChange: '+94 in 1h', smartWallets: 4,
   },
 ];
-
-const getAlphaColor = (score: number) =>
-  score > 70 ? 'text-emerald-400' : score > 40 ? 'text-amber-400' : 'text-red-400';
-
-const getRiskColor = (score: number) =>
-  score > 70 ? 'text-red-400' : score > 40 ? 'text-amber-400' : 'text-emerald-400';
 
 const SIGNAL_CONFIG = {
   ENTRY: { emoji: '🔥', label: 'ENTRY', cls: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
@@ -121,6 +81,8 @@ const CHAIN_COLORS: Record<string, string> = {
   ETH: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
   BSC: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
 };
+
+type SortMode = 'alpha' | 'risk' | 'volume';
 
 interface AlphaHunterProps {
   onSelectToken?: (view: string, address: string) => void;
@@ -149,6 +111,8 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
   const [timeFilter, setTimeFilter] = useState<'5m' | '1h' | '6h' | '24h'>('1h');
   const [minAlpha, setMinAlpha] = useState(40);
   const [chainFilter, setChainFilter] = useState<'ALL' | 'SOL' | 'ETH' | 'BSC'>('ALL');
+  const [sortMode, setSortMode] = useState<SortMode>('alpha');
+  const [isLive, setIsLive] = useState(true);
 
   const fetchTokens = async () => {
     setLoading(true);
@@ -166,10 +130,21 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
 
   useEffect(() => { fetchTokens(); }, [minAlpha]);
 
+  // Simulate live refresh
+  useEffect(() => {
+    if (!isLive) return;
+    const id = setInterval(() => { /* in real app: fetchTokens() */ }, 30000);
+    return () => clearInterval(id);
+  }, [isLive]);
+
   const filtered = tokens
     .filter(t => t.alphaScore >= minAlpha)
     .filter(t => chainFilter === 'ALL' || t.chain === chainFilter)
-    .sort((a, b) => b.alphaScore - a.alphaScore);
+    .sort((a, b) => {
+      if (sortMode === 'risk')   return b.riskScore   - a.riskScore;
+      if (sortMode === 'volume') return parseFloat(b.volumeChange) - parseFloat(a.volumeChange);
+      return b.alphaScore - a.alphaScore;
+    });
 
   return (
     <div className="p-6 space-y-6 min-h-screen">
@@ -181,7 +156,22 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
               <Flame size={22} />
             </div>
             <div>
-              <h1 className="text-2xl font-display font-bold text-white">Alpha Hunter</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-display font-bold text-white">Alpha Hunter</h1>
+                {/* Live indicator */}
+                <button
+                  onClick={() => setIsLive(p => !p)}
+                  className={cn(
+                    'flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest border transition-all',
+                    isLive
+                      ? 'bg-emerald-900/30 border-emerald-600/30 text-emerald-400'
+                      : 'bg-slate-800 border-slate-700 text-slate-500'
+                  )}
+                >
+                  <span className={cn('w-1.5 h-1.5 rounded-full', isLive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500')} />
+                  {isLive ? 'LIVE' : 'PAUSED'}
+                </button>
+              </div>
               <p className="text-xs text-slate-500 uppercase tracking-widest font-mono">Early momentum detection</p>
             </div>
           </div>
@@ -219,15 +209,11 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
         <div className="flex items-center gap-3">
           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">Min Alpha</span>
           <input
-            type="range"
-            min={0}
-            max={90}
-            step={5}
-            value={minAlpha}
+            type="range" min={0} max={90} step={5} value={minAlpha}
             onChange={e => setMinAlpha(Number(e.target.value))}
             className="w-28 accent-primary"
           />
-          <span className={cn('text-sm font-bold font-mono', getAlphaColor(minAlpha))}>{minAlpha}</span>
+          <span className="text-sm font-bold font-mono text-emerald-400">{minAlpha}</span>
         </div>
 
         <div className="h-5 w-px bg-slate-700" />
@@ -248,6 +234,25 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
           ))}
         </div>
 
+        <div className="h-5 w-px bg-slate-700" />
+
+        {/* Sort Mode */}
+        <div className="flex items-center gap-1">
+          <SortAsc size={12} className="text-slate-500" />
+          {(['alpha', 'risk', 'volume'] as SortMode[]).map(s => (
+            <button
+              key={s}
+              onClick={() => setSortMode(s)}
+              className={cn(
+                'px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all',
+                sortMode === s ? 'bg-primary/20 text-primary border border-primary/30' : 'text-slate-500 hover:text-slate-300'
+              )}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+
         <div className="ml-auto text-[10px] font-mono text-slate-500">
           {filtered.length} tokens
         </div>
@@ -260,10 +265,25 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
             <div key={i} className="h-48 bg-slate-800/50 rounded-2xl animate-pulse border border-slate-700" />
           ))}
         </div>
+      ) : filtered.length === 0 ? (
+        <div className="border border-dashed border-slate-700 rounded-2xl p-12 flex flex-col items-center justify-center text-center space-y-3">
+          <Flame size={36} className="text-slate-700" />
+          <p className="text-sm font-bold text-slate-500">No tokens match your filters</p>
+          <p className="text-xs text-slate-600">Try lowering the Min Alpha threshold or changing the chain filter</p>
+          <button
+            onClick={() => { setMinAlpha(0); setChainFilter('ALL'); }}
+            className="mt-2 px-4 py-2 bg-primary/20 border border-primary/30 text-primary rounded-xl text-xs font-bold"
+          >
+            Reset Filters
+          </button>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map((token, i) => {
             const sig = SIGNAL_CONFIG[token.signal];
+            const distState = deriveDistState(token);
+            const volDir = volumeDirection(token.volumeChange);
+
             return (
               <motion.div
                 key={token.address}
@@ -292,20 +312,15 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
                   </span>
                 </div>
 
-                {/* Alpha + Risk Scores */}
+                {/* Alpha + Risk ScorePills */}
                 <div className="grid grid-cols-2 gap-3 mb-3">
-                  <div className="bg-black/20 rounded-xl p-3 text-center">
-                    <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Alpha Score</div>
-                    <div className={cn('text-2xl font-display font-bold', getAlphaColor(token.alphaScore))}>
-                      {token.alphaScore}
-                    </div>
-                  </div>
-                  <div className="bg-black/20 rounded-xl p-3 text-center">
-                    <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Risk Score</div>
-                    <div className={cn('text-2xl font-display font-bold', getRiskColor(token.riskScore))}>
-                      {token.riskScore}
-                    </div>
-                  </div>
+                  <ScorePill label="Alpha Score" score={token.alphaScore} type="alpha" size="md" />
+                  <ScorePill label="Risk Score"  score={token.riskScore}  type="risk"  size="md" />
+                </div>
+
+                {/* Distribution State */}
+                <div className="mb-3">
+                  <DistributionStateBadge state={distState} size="sm" />
                 </div>
 
                 {/* Key Metrics */}
@@ -320,7 +335,7 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
                   </div>
                   <div>
                     <div className="text-[9px] text-slate-600 uppercase tracking-wide">Vol Δ</div>
-                    <div className="text-xs font-bold text-emerald-400">{token.volumeChange}</div>
+                    <TrendArrow direction={volDir} value={token.volumeChange} size="sm" />
                   </div>
                 </div>
 

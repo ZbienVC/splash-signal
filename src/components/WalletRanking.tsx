@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Trophy, Copy, Check, ChevronDown, ChevronUp, Wallet } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { WalletBadge, WalletClassification } from './ui/WalletBadge';
+import { ScorePill } from './ui/ScorePill';
 
 interface RecentTrade {
   token: string;
@@ -14,17 +16,21 @@ interface RecentTrade {
 interface WalletEntry {
   rank: number;
   address: string;
-  classification: 'SMART_MONEY' | 'WHALE' | 'SNIPER';
+  classification: WalletClassification;
   score: number;
   winRate: number;
   avgMultiple: number;
   trades: number;
   recentTrades: RecentTrade[];
+  streak?: number;        // consecutive wins
+  newEntry?: boolean;     // entered a token in last hour
+  perfHistory?: number[]; // 5 recent P&L values for sparkline (normalized 0-100)
 }
 
 const MOCK_WALLETS: WalletEntry[] = [
   {
     rank: 1, address: '9x4KWqPmR7sLjF2dTaBcZy8hUoEpGnZqM3iAsDfKL9x', classification: 'SMART_MONEY', score: 94, winRate: 87, avgMultiple: 12.4, trades: 47,
+    streak: 5, newEntry: true, perfHistory: [40, 60, 55, 75, 90],
     recentTrades: [
       { token: '$PEPE2', action: 'BUY',  mcAtEntry: '$45K',  pnl: '+$12.4K', pnlPositive: true  },
       { token: '$WIF2',  action: 'BUY',  mcAtEntry: '$89K',  pnl: '+$8.1K',  pnlPositive: true  },
@@ -35,6 +41,7 @@ const MOCK_WALLETS: WalletEntry[] = [
   },
   {
     rank: 2, address: '4mRpXvK8wQ3sLjF5dTaBcRy6hUoEpGnZqM2iAsDfKL4', classification: 'SMART_MONEY', score: 91, winRate: 83, avgMultiple: 9.7, trades: 62,
+    streak: 3, newEntry: false, perfHistory: [50, 65, 70, 60, 80],
     recentTrades: [
       { token: '$FOMO',  action: 'BUY',  mcAtEntry: '$31K',  pnl: '+$9.3K', pnlPositive: true },
       { token: '$SOG',   action: 'SELL', mcAtEntry: '$145K', pnl: '+$3.2K', pnlPositive: true },
@@ -45,6 +52,7 @@ const MOCK_WALLETS: WalletEntry[] = [
   },
   {
     rank: 3, address: '7bJxNqL9xR2tMmD4eUbFy5hViJkOpNqGbWzTlMtPa8b', classification: 'WHALE', score: 88, winRate: 79, avgMultiple: 7.2, trades: 28,
+    streak: 2, newEntry: false, perfHistory: [35, 55, 45, 65, 75],
     recentTrades: [
       { token: '$DOGE2', action: 'BUY',  mcAtEntry: '$120K', pnl: '+$18K',  pnlPositive: true  },
       { token: '$FROG',  action: 'BUY',  mcAtEntry: '$28K',  pnl: '+$4.4K', pnlPositive: true  },
@@ -55,6 +63,7 @@ const MOCK_WALLETS: WalletEntry[] = [
   },
   {
     rank: 4, address: '2cQtKpM8wP1sNjG5eFaBcRy4hUoEpGnZqM9iAsDfKL2', classification: 'SNIPER', score: 85, winRate: 76, avgMultiple: 15.3, trades: 91,
+    streak: 7, newEntry: true, perfHistory: [60, 70, 80, 85, 95],
     recentTrades: [
       { token: '$PEPE2', action: 'BUY',  mcAtEntry: '$12K',  pnl: '+$23.1K', pnlPositive: true  },
       { token: '$WIF2',  action: 'BUY',  mcAtEntry: '$18K',  pnl: '+$14.7K', pnlPositive: true  },
@@ -65,6 +74,7 @@ const MOCK_WALLETS: WalletEntry[] = [
   },
   {
     rank: 5, address: '8dSuLqN7vO4tMmE3eVbFy9hWiKlRpOqGcXzUmNuQb6d', classification: 'SMART_MONEY', score: 82, winRate: 74, avgMultiple: 6.8, trades: 38,
+    streak: 1, newEntry: false, perfHistory: [30, 50, 40, 55, 65],
     recentTrades: [
       { token: '$MOON',  action: 'BUY',  mcAtEntry: '$56K',  pnl: '+$7.3K', pnlPositive: true  },
       { token: '$FROG',  action: 'BUY',  mcAtEntry: '$18K',  pnl: '+$3.8K', pnlPositive: true  },
@@ -73,65 +83,31 @@ const MOCK_WALLETS: WalletEntry[] = [
       { token: '$RUGME', action: 'BUY',  mcAtEntry: '$45K',  pnl: '-$1.8K', pnlPositive: false },
     ],
   },
-  {
-    rank: 6, address: '3eRvMrK6uN5sMnF4fWcGz7iXjLmSpPrHdYaVnOvRc5e', classification: 'WHALE', score: 79, winRate: 71, avgMultiple: 5.4, trades: 19,
-    recentTrades: [
-      { token: '$DOGE2', action: 'BUY',  mcAtEntry: '$200K', pnl: '+$12.4K', pnlPositive: true  },
-      { token: '$FOMO',  action: 'BUY',  mcAtEntry: '$47K',  pnl: '+$5.7K',  pnlPositive: true  },
-      { token: '$MOON',  action: 'SELL', mcAtEntry: '$580K', pnl: '+$7.2K',  pnlPositive: true  },
-      { token: '$SOG',   action: 'BUY',  mcAtEntry: '$23K',  pnl: '-$3.1K',  pnlPositive: false },
-      { token: '$PEPE2', action: 'SELL', mcAtEntry: '$120K', pnl: '+$4.5K',  pnlPositive: true  },
-    ],
-  },
-  {
-    rank: 7, address: '6fTwNsL5tM6rNoG7gXdHz4jYkMnTqQsIeZbWpPwSd8f', classification: 'SNIPER', score: 76, winRate: 68, avgMultiple: 11.2, trades: 104,
-    recentTrades: [
-      { token: '$WIF2',  action: 'BUY',  mcAtEntry: '$8K',   pnl: '+$18.3K', pnlPositive: true  },
-      { token: '$FROG',  action: 'BUY',  mcAtEntry: '$7K',   pnl: '+$8.9K',  pnlPositive: true  },
-      { token: '$RUGME', action: 'SELL', mcAtEntry: '$92K',  pnl: '-$4.2K',  pnlPositive: false },
-      { token: '$PEPE2', action: 'BUY',  mcAtEntry: '$24K',  pnl: '+$11.1K', pnlPositive: true  },
-      { token: '$DOGE2', action: 'SELL', mcAtEntry: '$440K', pnl: '+$6.4K',  pnlPositive: true  },
-    ],
-  },
-  {
-    rank: 8, address: '1gUxOpM4uL7sOpH8hYeIa5kZlNoUrRtJfAcXqQxTe3g', classification: 'SMART_MONEY', score: 73, winRate: 65, avgMultiple: 5.9, trades: 53,
-    recentTrades: [
-      { token: '$MOON',  action: 'BUY',  mcAtEntry: '$78K',  pnl: '+$5.1K', pnlPositive: true  },
-      { token: '$FOMO',  action: 'SELL', mcAtEntry: '$198K', pnl: '+$3.4K', pnlPositive: true  },
-      { token: '$SOG',   action: 'BUY',  mcAtEntry: '$34K',  pnl: '+$2.8K', pnlPositive: true  },
-      { token: '$WIF2',  action: 'SELL', mcAtEntry: '$512K', pnl: '+$4.7K', pnlPositive: true  },
-      { token: '$FROG',  action: 'BUY',  mcAtEntry: '$41K',  pnl: '-$1.1K', pnlPositive: false },
-    ],
-  },
-  {
-    rank: 9, address: '5hVyPqN3tK8tPqI9iZfJb6lAmOpVsSuKgBdYrRyUf9h', classification: 'WHALE', score: 70, winRate: 62, avgMultiple: 4.3, trades: 14,
-    recentTrades: [
-      { token: '$PEPE2', action: 'BUY',  mcAtEntry: '$340K', pnl: '+$9.2K',  pnlPositive: true  },
-      { token: '$DOGE2', action: 'BUY',  mcAtEntry: '$290K', pnl: '+$6.1K',  pnlPositive: true  },
-      { token: '$RUGME', action: 'SELL', mcAtEntry: '$120K', pnl: '-$7.8K',  pnlPositive: false },
-      { token: '$MOON',  action: 'BUY',  mcAtEntry: '$410K', pnl: '+$4.3K',  pnlPositive: true  },
-      { token: '$FOMO',  action: 'SELL', mcAtEntry: '$298K', pnl: '+$3.9K',  pnlPositive: true  },
-    ],
-  },
-  {
-    rank: 10, address: '4iWzQrO2sJ9uQrJ0jAgKc7mBnPqWtTvLhCeZsSwVg2i', classification: 'SNIPER', score: 67, winRate: 59, avgMultiple: 8.1, trades: 78,
-    recentTrades: [
-      { token: '$SOG',   action: 'BUY',  mcAtEntry: '$6K',   pnl: '+$14.7K', pnlPositive: true  },
-      { token: '$FROG',  action: 'SELL', mcAtEntry: '$67K',  pnl: '+$3.2K',  pnlPositive: true  },
-      { token: '$MOON',  action: 'BUY',  mcAtEntry: '$12K',  pnl: '+$9.8K',  pnlPositive: true  },
-      { token: '$WIF2',  action: 'SELL', mcAtEntry: '$89K',  pnl: '-$2.3K',  pnlPositive: false },
-      { token: '$PEPE2', action: 'BUY',  mcAtEntry: '$19K',  pnl: '+$7.4K',  pnlPositive: true  },
-    ],
-  },
 ];
 
-const CLASS_BADGE: Record<string, string> = {
-  SMART_MONEY: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  WHALE:       'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  SNIPER:      'bg-orange-500/20 text-orange-400 border-orange-500/30',
-};
-
 const RANK_TROPHY: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
+
+// Simple SVG sparkline from an array of 5 values (0-100)
+const Sparkline: React.FC<{ values: number[]; positive?: boolean }> = ({ values, positive = true }) => {
+  const W = 56, H = 24;
+  const pts = values.map((v, i) => {
+    const x = (i / (values.length - 1)) * W;
+    const y = H - (v / 100) * H;
+    return `${x},${y}`;
+  }).join(' ');
+  return (
+    <svg width={W} height={H} className="shrink-0">
+      <polyline
+        points={pts}
+        fill="none"
+        stroke={positive ? '#10b981' : '#ef4444'}
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
 
 const CopyButton: React.FC<{ address: string }> = ({ address }) => {
   const [copied, setCopied] = useState(false);
@@ -212,30 +188,42 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
                 <CopyButton address={wallet.address} />
               </div>
 
-              {/* Class */}
-              <div className="w-32 shrink-0">
-                <span className={cn('px-2 py-0.5 rounded border text-[9px] font-bold uppercase tracking-wide', CLASS_BADGE[wallet.classification])}>
-                  {wallet.classification.replace('_', ' ')}
-                </span>
+              {/* Class — using WalletBadge */}
+              <div className="w-32 shrink-0 flex items-center gap-2">
+                <WalletBadge classification={wallet.classification} size="md" />
+                {wallet.newEntry && (
+                  <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-900/30 border border-emerald-600/30 text-emerald-400 text-[8px] font-bold animate-pulse">
+                    NEW
+                  </span>
+                )}
               </div>
 
               {/* Stats */}
-              <div className="flex-1 grid grid-cols-4 gap-4 text-center">
-                <div>
-                  <div className="text-[9px] text-slate-600 uppercase tracking-wide">Score</div>
-                  <div className={cn('text-sm font-bold', scoreColor(wallet.score))}>{wallet.score}</div>
+              <div className="flex-1 grid grid-cols-5 gap-2 items-center">
+                {/* ScorePill for wallet score */}
+                <div className="flex justify-center">
+                  <ScorePill label="Score" score={wallet.score} type="wallet" size="sm" />
                 </div>
-                <div>
+                <div className="text-center">
                   <div className="text-[9px] text-slate-600 uppercase tracking-wide">Win Rate</div>
                   <div className="text-sm font-bold text-white">{wallet.winRate}%</div>
                 </div>
-                <div>
+                <div className="text-center">
                   <div className="text-[9px] text-slate-600 uppercase tracking-wide">Avg Mult</div>
                   <div className="text-sm font-bold text-primary">{wallet.avgMultiple}x</div>
                 </div>
-                <div>
+                <div className="text-center">
                   <div className="text-[9px] text-slate-600 uppercase tracking-wide">Trades</div>
                   <div className="text-sm font-bold text-white">{wallet.trades}</div>
+                </div>
+                {/* Sparkline + streak */}
+                <div className="flex flex-col items-center gap-1">
+                  {wallet.perfHistory && (
+                    <Sparkline values={wallet.perfHistory} positive={wallet.winRate >= 60} />
+                  )}
+                  {wallet.streak && wallet.streak >= 2 && (
+                    <span className="text-[9px] text-amber-400 font-bold">🔥 {wallet.streak}W</span>
+                  )}
                 </div>
               </div>
 

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AlertTriangle, Search, RefreshCw, Loader2, TrendingDown, Clock } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { DistributionStateBadge, DistributionState } from './ui/DistributionStateBadge';
+import { InsightCard } from './ui/InsightCard';
 
 interface DumpSignal {
   id: string;
@@ -61,6 +63,40 @@ const MOCK_TOKEN_ANALYSIS: TokenDumpAnalysis = {
     { id: 's2', token: '$EXAMPLE', type: 'WHALE_EXIT',  description: 'Top holders reducing', change: '-18%', timeAgo: '4h ago', severity: 'high' },
     { id: 's3', token: '$EXAMPLE', type: 'VOLUME_DROP', description: 'Volume dropped sharply', change: '-67%', timeAgo: '6h ago', severity: 'high' },
   ],
+};
+
+const getDumpDistState = (score: number): DistributionState => {
+  if (score > 85) return 'BROKEN_STRUCTURE';
+  if (score > 70) return 'HIGH_DUMP_RISK';
+  if (score > 55) return 'ACTIVE_DISTRIBUTION';
+  if (score > 40) return 'EARLY_DISTRIBUTION';
+  return 'QUIET';
+};
+
+interface DistFactor {
+  label: string;
+  status: 'ok' | 'warn' | 'danger';
+  detail: string;
+}
+
+const MOCK_DIST_FACTORS: DistFactor[] = [
+  { label: 'Top holders',     status: 'ok',     detail: 'Neutral' },
+  { label: 'Smart wallets',   status: 'warn',   detail: 'Distributing' },
+  { label: 'Dev activity',    status: 'danger',  detail: 'Suspicious' },
+  { label: 'Volume',          status: 'ok',     detail: 'Stable' },
+  { label: 'Buy/Sell ratio',  status: 'warn',   detail: '0.38' },
+];
+
+const FACTOR_ICON: Record<DistFactor['status'], string> = {
+  ok:     '✅',
+  warn:   '⚠️',
+  danger: '🔴',
+};
+
+const FACTOR_TEXT: Record<DistFactor['status'], string> = {
+  ok:     'text-emerald-400',
+  warn:   'text-amber-400',
+  danger: 'text-red-400',
 };
 
 const getRiskBarColor = (score: number) => {
@@ -184,9 +220,17 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
               {/* Risk Score */}
               <div className="px-5 py-4 border-b border-slate-700/50">
                 <div className="flex items-center justify-between mb-2">
-                  <div>
+                  <div className="space-y-2">
                     <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dump Risk</div>
                     <div className={cn('text-sm font-bold uppercase tracking-wide', riskInfo?.cls)}>{riskInfo?.label}</div>
+                    {/* Distribution State Badge */}
+                    <DistributionStateBadge state={getDumpDistState(analysis.dumpRisk)} size="lg" />
+                    {/* Price/Flow Divergence warning */}
+                    {analysis.dumpRisk > 60 && analysis.trend === 'increasing' && (
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border bg-orange-900/20 border-orange-500/30 text-orange-400 text-[10px] font-bold uppercase tracking-wide">
+                        ⚡ Price/Flow Divergence
+                      </div>
+                    )}
                   </div>
                   <div className="text-right">
                     <div className={cn('text-3xl font-display font-bold', riskInfo?.cls)}>{analysis.dumpRisk}</div>
@@ -202,6 +246,22 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
                     transition={{ duration: 0.7, ease: 'easeOut' }}
                     className={cn('h-full rounded-full', getRiskBarColor(analysis.dumpRisk), analysis.dumpRisk > 80 && 'animate-pulse')}
                   />
+                </div>
+              </div>
+
+              {/* Distribution Checklist */}
+              <div className="px-5 py-3 border-b border-slate-700/50">
+                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">DISTRIBUTION FACTORS</div>
+                <div className="space-y-1.5">
+                  {MOCK_DIST_FACTORS.map((f, fi) => (
+                    <div key={fi} className="flex items-center justify-between text-xs">
+                      <span className="flex items-center gap-1.5 text-slate-400">
+                        <span>{FACTOR_ICON[f.status]}</span>
+                        {f.label}
+                      </span>
+                      <span className={cn('font-bold text-[10px]', FACTOR_TEXT[f.status])}>{f.detail}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -228,6 +288,33 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken }) => 
                     <span className="ml-auto text-slate-600 text-[10px]">{sig.timeAgo}</span>
                   </div>
                 ))}
+              </div>
+
+              {/* InsightCard */}
+              <div className="px-5 pb-5">
+                <InsightCard
+                  whatHappening={
+                    analysis.dumpRisk > 70
+                      ? 'Dev and whale wallets are actively distributing'
+                      : analysis.dumpRisk > 40
+                      ? 'Early distribution signals detected from smart wallets'
+                      : 'No significant distribution signals detected'
+                  }
+                  whyMatters={
+                    analysis.dumpRisk > 70
+                      ? `Dump risk at ${analysis.dumpRisk}/100 — coordinated exit likely`
+                      : `Risk is ${analysis.dumpRisk > 40 ? 'elevated' : 'low'} — monitor for changes`
+                  }
+                  suggestedAction={
+                    analysis.dumpRisk > 70
+                      ? 'Reduce or exit position before liquidity drops'
+                      : analysis.dumpRisk > 40
+                      ? 'Set alerts and monitor key holders closely'
+                      : 'No action required — hold or accumulate'
+                  }
+                  actionType={analysis.dumpRisk > 70 ? 'exit' : analysis.dumpRisk > 40 ? 'watch' : 'entry'}
+                  confidence={analysis.dumpRisk > 70 ? 88 : analysis.dumpRisk > 40 ? 65 : 78}
+                />
               </div>
             </motion.div>
           )}
