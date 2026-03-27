@@ -173,7 +173,7 @@ export const TokenIntelligenceTerminal: React.FC = () => {
                 "flex items-center gap-2 px-4 py-2 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all",
                 deepMode 
                   ? "bg-primary/20 border-primary text-primary shadow-lg shadow-primary/20" 
-                  : "bg-slate-panel border-slate-border text-slate-500 hover:text-slate-300"
+                  : "bg-slate-panel border-slate-border text-slate-500 hover:text-slate-600"
               )}
             >
               <Shield size={14} className={cn(deepMode && "animate-pulse")} />
@@ -196,7 +196,7 @@ export const TokenIntelligenceTerminal: React.FC = () => {
           <button 
             type="submit"
             disabled={loading || !mint.trim()}
-            className="absolute right-3 top-3 bottom-3 px-8 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-primary/20"
+            className="absolute right-3 top-3 bottom-3 px-8 bg-primary text-slate-900 rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-primary/20"
           >
             {loading ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} />}
             ANALYZE
@@ -254,7 +254,7 @@ export const TokenIntelligenceTerminal: React.FC = () => {
               </div>
             </div>
             <div className="text-center">
-              <p className="text-lg font-display font-bold text-white">INITIALIZING FORENSIC SCAN</p>
+              <p className="text-lg font-display font-bold text-slate-900">INITIALIZING FORENSIC SCAN</p>
               <p className="text-xs font-mono text-slate-500 uppercase tracking-[0.2em] mt-2">Synchronizing with Solana RPC Cluster...</p>
             </div>
           </motion.div>
@@ -345,15 +345,15 @@ export const TokenIntelligenceTerminal: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-white/5">
                       <span className="text-xs text-slate-500 uppercase font-bold">Market Cap</span>
-                      <span className="text-sm font-display font-bold text-white">${(intel.pair.fdv || 0).toLocaleString()}</span>
+                      <span className="text-sm font-display font-bold text-slate-900">${(intel.pair.fdv || 0).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-white/5">
                       <span className="text-xs text-slate-500 uppercase font-bold">24H Volume</span>
-                      <span className="text-sm font-display font-bold text-white">${(intel.pair.volume.h24 || 0).toLocaleString()}</span>
+                      <span className="text-sm font-display font-bold text-slate-900">${(intel.pair.volume.h24 || 0).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-white/5">
                       <span className="text-xs text-slate-500 uppercase font-bold">Liquidity</span>
-                      <span className="text-sm font-display font-bold text-white">${(intel.pair.liquidity.usd || 0).toLocaleString()}</span>
+                      <span className="text-sm font-display font-bold text-slate-900">${(intel.pair.liquidity.usd || 0).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-white/5">
                       <span className="text-xs text-slate-500 uppercase font-bold">Launchpad</span>

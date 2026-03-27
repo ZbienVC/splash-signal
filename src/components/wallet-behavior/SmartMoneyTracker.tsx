@@ -64,12 +64,12 @@ const SmartMoneyTracker: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between bg-slate-900/50 p-1 rounded-2xl border border-white/5 w-fit mx-auto">
+      <div className="flex items-center justify-between bg-white/50 p-1 rounded-2xl border border-white/5 w-fit mx-auto">
         <button
           onClick={() => setActiveTab('leaderboard')}
           className={cn(
             "px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2",
-            activeTab === 'leaderboard' ? "bg-primary text-black shadow-lg shadow-primary/20" : "text-slate-500 hover:text-white"
+            activeTab === 'leaderboard' ? "bg-primary text-black shadow-lg shadow-primary/20" : "text-slate-500 hover:text-slate-900"
           )}
         >
           <Trophy size={14} />
@@ -79,7 +79,7 @@ const SmartMoneyTracker: React.FC = () => {
           onClick={() => setActiveTab('activity')}
           className={cn(
             "px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2",
-            activeTab === 'activity' ? "bg-primary text-black shadow-lg shadow-primary/20" : "text-slate-500 hover:text-white"
+            activeTab === 'activity' ? "bg-primary text-black shadow-lg shadow-primary/20" : "text-slate-500 hover:text-slate-900"
           )}
         >
           <Activity size={14} />
@@ -97,7 +97,7 @@ const SmartMoneyTracker: React.FC = () => {
             className="bg-slate-panel border border-slate-border rounded-[32px] overflow-hidden shadow-2xl"
           >
             <div className="p-6 border-b border-white/5 bg-black/20">
-              <h2 className="text-xl font-display font-bold text-white flex items-center gap-2">
+              <h2 className="text-xl font-display font-bold text-slate-900 flex items-center gap-2">
                 <Shield className="text-primary" size={20} />
                 Smart Money Leaderboard
               </h2>
@@ -129,10 +129,10 @@ const SmartMoneyTracker: React.FC = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-mono text-slate-600 w-4">{idx + 1}</span>
-                          <div className="w-8 h-8 rounded-lg bg-slate-800 border border-white/10 flex items-center justify-center">
-                            <Wallet size={14} className="text-slate-400" />
+                          <div className="w-8 h-8 rounded-lg bg-slate-100 border border-white/10 flex items-center justify-center">
+                            <Wallet size={14} className="text-slate-500" />
                           </div>
-                          <div className="text-sm font-mono text-white group-hover:text-primary transition-colors cursor-pointer flex items-center gap-1">
+                          <div className="text-sm font-mono text-slate-900 group-hover:text-primary transition-colors cursor-pointer flex items-center gap-1">
                             {formatAddress(wallet.address)}
                             <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                           </div>
@@ -145,12 +145,12 @@ const SmartMoneyTracker: React.FC = () => {
                         <div className="text-sm font-mono font-bold text-emerald-400">{wallet.win_rate.toFixed(1)}%</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm font-mono font-bold text-slate-300">{formatUSD(wallet.pnl_usd)}</div>
+                        <div className="text-sm font-mono font-bold text-slate-600">{formatUSD(wallet.pnl_usd)}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1.5">
                           <Zap size={12} className="text-amber-400" />
-                          <span className="text-sm font-mono font-bold text-slate-300">{wallet.early_entries}</span>
+                          <span className="text-sm font-mono font-bold text-slate-600">{wallet.early_entries}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -158,7 +158,7 @@ const SmartMoneyTracker: React.FC = () => {
                           "px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-tighter",
                           wallet.tier === 'Legend' ? "bg-amber-400 text-black" :
                           wallet.tier === 'Smart' ? "bg-primary text-black" :
-                          "bg-slate-800 text-slate-400"
+                          "bg-slate-100 text-slate-500"
                         )}>
                           {wallet.tier}
                         </span>
@@ -197,16 +197,16 @@ const SmartMoneyTracker: React.FC = () => {
                       <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
                         {item.type === 'BUY' ? 'Bought' : 'Sold'}
                       </span>
-                      <span className="text-sm font-bold text-white">${item.token_symbol}</span>
+                      <span className="text-sm font-bold text-slate-900">${item.token_symbol}</span>
                     </div>
                     <div className="text-[10px] text-slate-500 mt-1 flex items-center gap-3">
                       <span className="flex items-center gap-1">
                         <TrendingUp size={10} className="text-slate-600" />
-                        MC at event: <span className="text-slate-300">{formatMC(item.market_cap_at_event)}</span>
+                        MC at event: <span className="text-slate-600">{formatMC(item.market_cap_at_event)}</span>
                       </span>
                       <span className="flex items-center gap-1">
                         <Zap size={10} className="text-slate-600" />
-                        Value: <span className="text-slate-300">{formatUSD(item.amount_usd)}</span>
+                        Value: <span className="text-slate-600">{formatUSD(item.amount_usd)}</span>
                       </span>
                     </div>
                   </div>

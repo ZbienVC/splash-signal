@@ -69,14 +69,14 @@ export const NarrativeIntelligencePanel: React.FC<NarrativeIntelligencePanelProp
             <Globe className="text-indigo-400" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-display font-bold text-white">Narrative Intelligence Feed</h3>
+            <h3 className="text-lg font-display font-bold text-slate-900">Narrative Intelligence Feed</h3>
             <p className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">Cross-Source Trend Detection & Token Matching</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 px-3 py-1 bg-black/40 border border-white/10 rounded-lg">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-mono text-slate-400 uppercase">Live Pipeline</span>
+            <span className="text-[10px] font-mono text-slate-500 uppercase">Live Pipeline</span>
           </div>
           <button 
             onClick={fetchIntelligence}
@@ -103,7 +103,7 @@ export const NarrativeIntelligencePanel: React.FC<NarrativeIntelligencePanelProp
                 )}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors">{signal.name}</span>
+                  <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-300 transition-colors">{signal.name}</span>
                   <div className={cn(
                     "px-1.5 py-0.5 rounded text-[8px] font-bold uppercase",
                     signal.momentumScore === 'High' ? "bg-emerald-500/20 text-emerald-500" :
@@ -143,8 +143,8 @@ export const NarrativeIntelligencePanel: React.FC<NarrativeIntelligencePanelProp
             <div className="p-6">
               <div className="flex justify-between items-start mb-8">
                 <div>
-                  <h2 className="text-2xl font-display font-bold text-white mb-2">{selectedNarrative.name}</h2>
-                  <p className="text-xs text-slate-400 max-w-xl leading-relaxed">
+                  <h2 className="text-2xl font-display font-bold text-slate-900 mb-2">{selectedNarrative.name}</h2>
+                  <p className="text-xs text-slate-500 max-w-xl leading-relaxed">
                     {selectedNarrative.description}
                   </p>
                 </div>
@@ -169,14 +169,14 @@ export const NarrativeIntelligencePanel: React.FC<NarrativeIntelligencePanelProp
                     <Activity size={14} />
                     <span className="text-[10px] font-bold uppercase tracking-wider">Social Velocity</span>
                   </div>
-                  <div className="text-xl font-display font-bold text-white">+{selectedNarrative.momentumValue * 4}% <span className="text-[10px] text-emerald-500 font-mono ml-1">SPIKE</span></div>
+                  <div className="text-xl font-display font-bold text-slate-900">+{selectedNarrative.momentumValue * 4}% <span className="text-[10px] text-emerald-500 font-mono ml-1">SPIKE</span></div>
                 </div>
                 <div className="p-4 bg-black/20 border border-white/5 rounded-2xl">
                   <div className="flex items-center gap-2 text-slate-500 mb-2">
                     <Zap size={14} />
                     <span className="text-[10px] font-bold uppercase tracking-wider">Token Correlation</span>
                   </div>
-                  <div className="text-xl font-display font-bold text-white">{associatedTokens.length} Detected</div>
+                  <div className="text-xl font-display font-bold text-slate-900">{associatedTokens.length} Detected</div>
                 </div>
               </div>
 
@@ -194,12 +194,12 @@ export const NarrativeIntelligencePanel: React.FC<NarrativeIntelligencePanelProp
                         className="group p-4 bg-black/30 border border-white/5 rounded-xl hover:border-indigo-500/30 transition-all flex items-center justify-between"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-lg font-bold text-white border border-white/10 group-hover:border-indigo-500/20 transition-colors">
+                          <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-lg font-bold text-slate-900 border border-white/10 group-hover:border-indigo-500/20 transition-colors">
                             {token.symbol[0]}
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-white">{token.name}</span>
+                              <span className="font-bold text-slate-900">{token.name}</span>
                               <span className="text-[10px] font-mono text-slate-500">{token.symbol}</span>
                             </div>
                             <div className="flex items-center gap-3 mt-1">
@@ -236,7 +236,7 @@ export const NarrativeIntelligencePanel: React.FC<NarrativeIntelligencePanelProp
                             href={token.link} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="p-2 bg-white/5 hover:bg-indigo-500/20 text-slate-400 hover:text-indigo-400 rounded-lg transition-all"
+                            className="p-2 bg-white/5 hover:bg-indigo-500/20 text-slate-500 hover:text-indigo-400 rounded-lg transition-all"
                           >
                             <ExternalLink size={14} />
                           </a>
@@ -255,7 +255,7 @@ export const NarrativeIntelligencePanel: React.FC<NarrativeIntelligencePanelProp
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center p-12">
               <Globe className="text-slate-800 mb-4 animate-pulse" size={48} />
-              <h3 className="text-lg font-display font-bold text-slate-400 mb-2">Select a Narrative Vector</h3>
+              <h3 className="text-lg font-display font-bold text-slate-500 mb-2">Select a Narrative Vector</h3>
               <p className="text-xs text-slate-600 max-w-xs leading-relaxed">
                 Choose a detected trend from the sidebar to analyze associated token launches and market sentiment.
               </p>

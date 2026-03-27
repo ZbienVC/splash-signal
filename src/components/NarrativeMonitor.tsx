@@ -240,7 +240,7 @@ export const NarrativeMonitor: React.FC = () => {
               <button 
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-12 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                className="absolute right-12 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600 transition-colors"
               >
                 <Zap size={12} className="rotate-45" />
               </button>
@@ -267,8 +267,8 @@ export const NarrativeMonitor: React.FC = () => {
                 className={cn(
                   "px-4 py-1.5 rounded-full text-[10px] font-bold border transition-all whitespace-nowrap",
                   currentNarrative === n.id 
-                    ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
-                    : "bg-black/20 border-slate-border text-slate-400 hover:border-slate-500 hover:text-slate-300"
+                    ? "bg-primary border-primary text-slate-900 shadow-lg shadow-primary/20" 
+                    : "bg-black/20 border-slate-border text-slate-500 hover:border-slate-500 hover:text-slate-600"
                 )}
               >
                 {n.id}
@@ -301,7 +301,7 @@ export const NarrativeMonitor: React.FC = () => {
           </div>
           <div className="max-w-lg space-y-3">
             <h2 className="text-3xl font-display font-bold tracking-tight">Narrative Intelligence Monitor</h2>
-            <p className="text-slate-400 text-base leading-relaxed">
+            <p className="text-slate-500 text-base leading-relaxed">
               Unlock deep-sea insights into crypto market trends. Search any narrative to analyze cross-platform amplification, bot density, and organic resonance in real-time.
             </p>
           </div>
@@ -340,7 +340,7 @@ export const NarrativeMonitor: React.FC = () => {
                   <button
                     key={i}
                     onClick={() => performSearch(q)}
-                    className="px-4 py-2 rounded-xl bg-slate-panel border border-slate-border text-xs text-slate-400 hover:border-primary hover:text-primary transition-all flex items-center gap-2"
+                    className="px-4 py-2 rounded-xl bg-slate-panel border border-slate-border text-xs text-slate-500 hover:border-primary hover:text-primary transition-all flex items-center gap-2"
                   >
                     <Search size={12} />
                     {q}
@@ -364,7 +364,7 @@ export const NarrativeMonitor: React.FC = () => {
               <p className="text-slate-500">Monitoring cross-platform amplification and organic resonance</p>
             </div>
             <div className="flex gap-2">
-              <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400"><Share2 size={20} /></button>
+              <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500"><Share2 size={20} /></button>
               <button className="px-4 py-2 bg-slate-panel border border-slate-border rounded-lg text-xs font-bold hover:bg-white/5 transition-all">EXPORT DATA</button>
             </div>
           </div>
@@ -377,7 +377,7 @@ export const NarrativeMonitor: React.FC = () => {
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{stat.label}</span>
                     <Tooltip content={stat.description}>
-                      <Info size={10} className="text-slate-600 cursor-help hover:text-slate-400 transition-colors" />
+                      <Info size={10} className="text-slate-600 cursor-help hover:text-slate-500 transition-colors" />
                     </Tooltip>
                   </div>
                   <div className="flex items-center gap-2">
@@ -462,16 +462,16 @@ export const NarrativeMonitor: React.FC = () => {
                     "px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-tighter",
                     strengthScore > 300 ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" :
                     strengthScore > 200 ? "bg-blue-500/20 text-blue-400 border border-blue-500/30" :
-                    "bg-slate-500/20 text-slate-400 border border-slate-500/30"
+                    "bg-slate-500/20 text-slate-500 border border-slate-500/30"
                   )}>
                     {marketSignal || (strengthScore > 300 ? "Dominant Narrative" : 
                      strengthScore > 200 ? "Emerging Trend" : "Niche Discussion")}
                   </div>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-500 leading-relaxed">
                   {signalDescription || (
                     <>
-                      This narrative has a strength score of <span className="text-white font-bold">{strengthScore.toFixed(0)}</span>. 
+                      This narrative has a strength score of <span className="text-slate-900 font-bold">{strengthScore.toFixed(0)}</span>. 
                       {strengthScore > 300 ? 
                         " It is currently dominating market attention with high social velocity and significant trading volume." :
                         strengthScore > 200 ?
@@ -497,7 +497,7 @@ export const NarrativeMonitor: React.FC = () => {
                   <div key={i} className="group relative">
                     <div className="flex justify-between text-xs mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-slate-400">{item.label}</span>
+                        <span className="text-slate-500">{item.label}</span>
                         <Tooltip content={item.description}>
                           <Info size={10} className="text-slate-600 cursor-help" />
                         </Tooltip>
@@ -518,7 +518,7 @@ export const NarrativeMonitor: React.FC = () => {
                 <div className="flex items-center gap-2 text-primary font-bold text-xs mb-2 uppercase tracking-widest">
                   <ShieldAlert size={14} /> AI Risk Assessment
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-slate-500 leading-relaxed">
                   {riskAssessment}
                 </p>
                 <div className="mt-3 flex items-center gap-2 text-[10px] font-bold text-amber-500 uppercase">
@@ -556,7 +556,7 @@ export const NarrativeMonitor: React.FC = () => {
               </div>
               <ul className="space-y-3">
                 {keyDrivers.map((driver, i) => (
-                  <li key={i} className="flex gap-3 text-xs text-slate-400 leading-relaxed">
+                  <li key={i} className="flex gap-3 text-xs text-slate-500 leading-relaxed">
                     <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500/40 shrink-0" />
                     {driver}
                   </li>
@@ -571,7 +571,7 @@ export const NarrativeMonitor: React.FC = () => {
               </div>
               <ul className="space-y-3">
                 {recentDevelopments.map((dev, i) => (
-                  <li key={i} className="flex gap-3 text-xs text-slate-400 leading-relaxed">
+                  <li key={i} className="flex gap-3 text-xs text-slate-500 leading-relaxed">
                     <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500/40 shrink-0" />
                     {dev}
                   </li>
@@ -589,7 +589,7 @@ export const NarrativeMonitor: React.FC = () => {
                   <button
                     key={i}
                     onClick={() => performSearch(narrative)}
-                    className="px-3 py-1.5 rounded-lg bg-black/20 border border-slate-border text-[10px] font-bold text-slate-400 hover:border-primary hover:text-primary transition-all uppercase tracking-wider"
+                    className="px-3 py-1.5 rounded-lg bg-black/20 border border-slate-border text-[10px] font-bold text-slate-500 hover:border-primary hover:text-primary transition-all uppercase tracking-wider"
                   >
                     {narrative}
                   </button>

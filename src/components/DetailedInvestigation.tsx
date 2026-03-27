@@ -81,7 +81,7 @@ export const WalletIntelligence: React.FC<{ target?: string; onBack: () => void 
       <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={onBack}
-          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400 hover:text-white"
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft size={20} />
         </button>
@@ -102,10 +102,10 @@ export const WalletIntelligence: React.FC<{ target?: string; onBack: () => void 
       <div className="grid grid-cols-4 gap-6">
         {/* Identity Card */}
         <div className="col-span-1 bg-slate-panel border border-slate-border rounded-2xl p-6 flex flex-col items-center text-center">
-          <div className="w-24 h-24 rounded-full bg-slate-800 border-4 border-slate-border overflow-hidden mb-4 relative group">
+          <div className="w-24 h-24 rounded-full bg-slate-100 border-4 border-slate-border overflow-hidden mb-4 relative group">
             <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${displayTarget}`} alt="Avatar" />
             <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <Fingerprint size={32} className="text-white" />
+              <Fingerprint size={32} className="text-slate-900" />
             </div>
           </div>
           <h3 className="text-lg font-bold mb-1">{walletData?.classification || 'Unknown Actor'}</h3>
@@ -121,17 +121,17 @@ export const WalletIntelligence: React.FC<{ target?: string; onBack: () => void 
 
           <div className="w-full space-y-3">
             <div className="flex justify-between text-xs">
-              <span className="text-slate-400">Total Value</span>
+              <span className="text-slate-500">Total Value</span>
               <span className="font-mono font-bold">${walletData?.totalValue?.toLocaleString() || '0'}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-slate-400">Estimated PnL</span>
+              <span className="text-slate-500">Estimated PnL</span>
               <span className={cn("font-mono font-bold", (walletData?.pnl || 0) > 0 ? "text-emerald-500" : "text-red-500")}>
                 {walletData?.pnl > 0 ? '+' : ''}${walletData?.pnl?.toLocaleString() || '0'}
               </span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-slate-400">Win Rate</span>
+              <span className="text-slate-500">Win Rate</span>
               <span className="font-mono font-bold text-primary">{walletData?.winRate || 0}%</span>
             </div>
           </div>
@@ -201,7 +201,7 @@ export const WalletIntelligence: React.FC<{ target?: string; onBack: () => void 
                 <div className="flex items-center gap-4">
                   <div className={cn(
                     "w-10 h-10 rounded-lg flex items-center justify-center shrink-0",
-                    item.risk === 'High' ? "bg-red-500/10 text-red-500" : "bg-slate-700/30 text-slate-400"
+                    item.risk === 'High' ? "bg-red-500/10 text-red-500" : "bg-blue-100/30 text-slate-500"
                   )}>
                     <Zap size={18} />
                   </div>
@@ -250,7 +250,7 @@ export const WalletIntelligence: React.FC<{ target?: string; onBack: () => void 
               </div>
             ))}
           </div>
-          <button className="w-full mt-6 py-2 text-xs font-bold text-slate-400 hover:text-white border border-slate-border rounded-lg hover:bg-white/5 transition-all">
+          <button className="w-full mt-6 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 border border-slate-border rounded-lg hover:bg-white/5 transition-all">
             FULL PORTFOLIO
           </button>
         </div>
@@ -263,8 +263,8 @@ export const WalletIntelligence: React.FC<{ target?: string; onBack: () => void 
           <div className="space-y-4">
             <div className="p-3 rounded-xl bg-black/20 border border-white/5">
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-slate-400">Avg Holding Time</span>
-                <span className="font-bold text-white">{walletData?.avgHoldingTime || 'N/A'}</span>
+                <span className="text-slate-500">Avg Holding Time</span>
+                <span className="font-bold text-slate-900">{walletData?.avgHoldingTime || 'N/A'}</span>
               </div>
               <div className="text-[10px] text-slate-500 leading-tight">
                 Indicates a long-term accumulation strategy rather than high-frequency trading.
@@ -272,8 +272,8 @@ export const WalletIntelligence: React.FC<{ target?: string; onBack: () => void 
             </div>
             <div className="p-3 rounded-xl bg-black/20 border border-white/5">
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-slate-400">DEX Preference</span>
-                <span className="font-bold text-white">Uniswap (82%)</span>
+                <span className="text-slate-500">DEX Preference</span>
+                <span className="font-bold text-slate-900">Uniswap (82%)</span>
               </div>
               <div className="text-[10px] text-slate-500 leading-tight">
                 Primary liquidity interaction is concentrated on Ethereum mainnet DEXs.
@@ -288,7 +288,7 @@ export const WalletIntelligence: React.FC<{ target?: string; onBack: () => void 
           <div className="grid grid-cols-2 gap-4">
             {walletData?.correlatedActors?.map((actor: any, i: number) => (
               <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-black/20 border border-white/5 hover:border-primary/30 transition-all cursor-pointer group">
-                <div className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden shrink-0 border-2 border-transparent group-hover:border-primary/50 transition-all">
+                <div className="w-10 h-10 rounded-full bg-blue-100 overflow-hidden shrink-0 border-2 border-transparent group-hover:border-primary/50 transition-all">
                   <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${actor.address}`} alt="Actor" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -304,7 +304,7 @@ export const WalletIntelligence: React.FC<{ target?: string; onBack: () => void 
               </div>
             ))}
           </div>
-          <button className="w-full mt-6 py-2 text-xs font-bold text-slate-400 hover:text-white border border-slate-border rounded-lg hover:bg-white/5 transition-all">
+          <button className="w-full mt-6 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 border border-slate-border rounded-lg hover:bg-white/5 transition-all">
             EXPAND CO-OCCURRENCE NETWORK
           </button>
         </div>

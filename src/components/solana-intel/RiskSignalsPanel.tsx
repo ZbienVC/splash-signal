@@ -27,7 +27,7 @@ export const RiskSignalsPanel: React.FC<{ signals: RiskSignal[] }> = ({ signals 
         </div>
         <div className="flex items-center gap-2">
           <Shield size={14} className="text-slate-500" />
-          <span className="text-xs font-bold text-slate-400">{signals.length} SIGNALS</span>
+          <span className="text-xs font-bold text-slate-500">{signals.length} SIGNALS</span>
         </div>
       </div>
 
@@ -37,14 +37,14 @@ export const RiskSignalsPanel: React.FC<{ signals: RiskSignal[] }> = ({ signals 
             "p-4 rounded-xl border transition-all group relative overflow-hidden",
             signal.status === 'critical' ? "bg-red-500/10 border-red-500/30" : 
             signal.status === 'high' ? "bg-amber-500/10 border-amber-500/30" : 
-            signal.status === 'medium' ? "bg-blue-500/10 border-blue-500/30" : "bg-slate-700/10 border-white/5"
+            signal.status === 'medium' ? "bg-blue-500/10 border-blue-500/30" : "bg-blue-100/10 border-white/5"
           )}>
             <div className="flex items-center gap-3 mb-2">
               <div className={cn(
                 "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
                 signal.status === 'critical' ? "bg-red-500/20 text-red-500" : 
                 signal.status === 'high' ? "bg-amber-500/20 text-amber-500" : 
-                signal.status === 'medium' ? "bg-blue-500/20 text-blue-500" : "bg-slate-700/30 text-slate-400"
+                signal.status === 'medium' ? "bg-blue-500/20 text-blue-500" : "bg-blue-100/30 text-slate-500"
               )}>
                 {signal.status === 'critical' ? <AlertTriangle size={18} /> : 
                  signal.status === 'high' ? <AlertCircle size={18} /> : 
@@ -52,7 +52,7 @@ export const RiskSignalsPanel: React.FC<{ signals: RiskSignal[] }> = ({ signals 
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <div className="text-sm font-bold text-white group-hover:text-primary transition-colors uppercase tracking-tight">{signal.label}</div>
+                  <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors uppercase tracking-tight">{signal.label}</div>
                   <SourceChip evidence={signal.sourcedEvidence || { sources: [] }} title={signal.label} />
                 </div>
                 <div className="text-[10px] text-slate-500 font-mono uppercase tracking-widest flex items-center gap-1">
@@ -60,7 +60,7 @@ export const RiskSignalsPanel: React.FC<{ signals: RiskSignal[] }> = ({ signals 
                 </div>
               </div>
             </div>
-            <div className="text-[11px] text-slate-400 leading-relaxed font-mono">
+            <div className="text-[11px] text-slate-500 leading-relaxed font-mono">
               {signal.evidence}
             </div>
           </div>

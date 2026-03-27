@@ -62,7 +62,7 @@ export const WalletBehavioralIntelligence: React.FC<WalletBehavioralIntelligence
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             {onBack && (
-              <button onClick={onBack} className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
+              <button onClick={onBack} className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500">
                 <ArrowLeft size={20} />
               </button>
             )}
@@ -89,7 +89,7 @@ export const WalletBehavioralIntelligence: React.FC<WalletBehavioralIntelligence
           <button 
             type="submit"
             disabled={loading || !searchQuery}
-            className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-1.5 bg-primary text-slate-900 text-xs font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {loading ? <Loader2 size={14} className="animate-spin" /> : 'ANALYZE'}
           </button>

@@ -70,15 +70,15 @@ export const SmartAlertCard: React.FC<SmartAlertCardProps> = ({ alert }) => {
           <div className="flex items-center gap-2">
             <span className={cn(
               "text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest",
-              alert.severity === 'critical' ? "bg-red-500 text-white" : 
+              alert.severity === 'critical' ? "bg-red-500 text-slate-900" : 
               alert.severity === 'high' ? "bg-amber-500 text-black" : 
-              "bg-primary text-white"
+              "bg-primary text-slate-900"
             )}>
               {alert.type}
             </span>
             <SourceChip evidence={alert.evidence || { sources: [] }} title={alert.type} />
             {alert.targetAsset && (
-              <span className="text-[10px] font-mono font-bold text-slate-300 bg-black/40 px-2 py-0.5 rounded border border-white/5">
+              <span className="text-[10px] font-mono font-bold text-slate-600 bg-black/40 px-2 py-0.5 rounded border border-white/5">
                 ${alert.targetAsset}
               </span>
             )}
@@ -101,7 +101,7 @@ export const SmartAlertCard: React.FC<SmartAlertCardProps> = ({ alert }) => {
           <div className="p-2 rounded-lg bg-black/30 border border-white/5">
             <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Confidence</div>
             <div className="flex items-center gap-2">
-              <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
+              <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
                 <div 
                   className={cn(
                     "h-full rounded-full",
@@ -110,7 +110,7 @@ export const SmartAlertCard: React.FC<SmartAlertCardProps> = ({ alert }) => {
                   style={{ width: `${alert.confidence}%` }}
                 />
               </div>
-              <span className="text-[10px] font-mono font-bold text-slate-300">{alert.confidence}%</span>
+              <span className="text-[10px] font-mono font-bold text-slate-600">{alert.confidence}%</span>
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ export const SmartAlertCard: React.FC<SmartAlertCardProps> = ({ alert }) => {
             <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             <span className="text-[9px] font-bold text-primary uppercase tracking-widest">Smart Alert Engine Active</span>
           </div>
-          <button className="text-[10px] font-bold text-slate-400 hover:text-primary transition-colors flex items-center gap-1">
+          <button className="text-[10px] font-bold text-slate-500 hover:text-primary transition-colors flex items-center gap-1">
             VIEW FORENSICS <ArrowUpRight size={12} />
           </button>
         </div>

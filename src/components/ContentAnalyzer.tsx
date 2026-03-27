@@ -74,7 +74,7 @@ export const ContentAnalyzer: React.FC<{ id?: string; onBack: () => void }> = ({
       <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={onBack}
-          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400 hover:text-white"
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft size={20} />
         </button>
@@ -86,7 +86,7 @@ export const ContentAnalyzer: React.FC<{ id?: string; onBack: () => void }> = ({
           <p className="text-slate-500 text-sm">Linguistic Fingerprinting & Persuasion Intensity Analysis</p>
         </div>
         <div className="ml-auto flex gap-3">
-          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
+          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500">
             <Share2 size={20} />
           </button>
           <button className="px-4 py-2 bg-slate-panel border border-slate-border rounded-lg text-xs font-bold hover:bg-white/5 transition-all">VIEW SOURCE</button>
@@ -108,7 +108,7 @@ export const ContentAnalyzer: React.FC<{ id?: string; onBack: () => void }> = ({
             {(contentData?.credibilityScore || 0) < 40 ? <AlertTriangle size={14} /> : <CheckCircle2 size={14} />}
             {contentData?.credibilityLabel || 'Unknown Credibility'}
           </div>
-          <p className="mt-6 text-xs text-slate-400 leading-relaxed">
+          <p className="mt-6 text-xs text-slate-500 leading-relaxed">
             {contentData?.verdictDescription || 'No description available for this analysis.'}
           </p>
         </div>

@@ -44,7 +44,7 @@ export const TrustHistory: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={onBack}
-          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400 hover:text-white"
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft size={20} />
         </button>
@@ -59,7 +59,7 @@ export const TrustHistory: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           <button className="px-4 py-2 bg-slate-panel border border-slate-border rounded-lg text-xs font-bold hover:bg-white/5 transition-all flex items-center gap-2">
             <ExternalLink size={14} /> VIEW PROFILE
           </button>
-          <button className="px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+          <button className="px-4 py-2 bg-primary text-slate-900 rounded-lg text-xs font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
             ENDORSE ENTITY
           </button>
         </div>
@@ -73,7 +73,7 @@ export const TrustHistory: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-widest">
             <ShieldCheck size={14} /> Highly Reliable
           </div>
-          <p className="mt-6 text-xs text-slate-400 leading-relaxed">
+          <p className="mt-6 text-xs text-slate-500 leading-relaxed">
             Entity demonstrates consistent accuracy and high factual density across 42 verified investigations.
           </p>
         </div>
@@ -127,7 +127,7 @@ export const TrustHistory: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               {['6M', '1Y', 'ALL'].map(t => (
                 <button key={t} className={cn(
                   "px-3 py-1 text-[10px] font-bold rounded border transition-all",
-                  t === 'ALL' ? "bg-primary border-primary text-white" : "border-slate-border text-slate-500 hover:text-slate-300"
+                  t === 'ALL' ? "bg-primary border-primary text-slate-900" : "border-slate-border text-slate-500 hover:text-slate-600"
                 )}>{t}</button>
               ))}
             </div>
@@ -170,7 +170,7 @@ export const TrustHistory: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               </div>
             ))}
           </div>
-          <button className="mt-6 w-full py-2 text-xs font-bold text-slate-400 hover:text-white border border-slate-border rounded-lg hover:bg-white/5 transition-all">
+          <button className="mt-6 w-full py-2 text-xs font-bold text-slate-500 hover:text-slate-900 border border-slate-border rounded-lg hover:bg-white/5 transition-all">
             VIEW ALL EVENTS
           </button>
         </div>

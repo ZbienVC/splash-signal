@@ -152,20 +152,20 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
       case 'S': return 'bg-amber-400/5 border-amber-400/30 shadow-amber-400/5';
       case 'A': return 'bg-emerald-500/5 border-emerald-500/30 shadow-emerald-500/5';
       case 'B': return 'bg-blue-500/5 border-blue-500/30 shadow-blue-500/5';
-      case 'C': return 'bg-slate-800/40 border-slate-700/50';
-      case 'D': return 'bg-slate-900/20 border-slate-800/50 opacity-60 grayscale-[0.5]';
-      default: return 'bg-slate-900/40 border-slate-800';
+      case 'C': return 'bg-slate-100/40 border-slate-200/50';
+      case 'D': return 'bg-white/20 border-slate-200/50 opacity-60 grayscale-[0.5]';
+      default: return 'bg-white/40 border-slate-200';
     }
   };
 
   const getRatingBadge = (label?: string) => {
     switch (label) {
       case 'S': return 'bg-amber-400 text-black';
-      case 'A': return 'bg-emerald-500 text-white';
-      case 'B': return 'bg-blue-500 text-white';
-      case 'C': return 'bg-slate-600 text-white';
-      case 'D': return 'bg-red-600 text-white';
-      default: return 'bg-slate-700 text-slate-300';
+      case 'A': return 'bg-emerald-500 text-slate-900';
+      case 'B': return 'bg-blue-500 text-slate-900';
+      case 'C': return 'bg-slate-600 text-slate-900';
+      case 'D': return 'bg-red-600 text-slate-900';
+      default: return 'bg-blue-100 text-slate-600';
     }
   };
 
@@ -214,7 +214,7 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
       )}
       {/* New Badge */}
       {isJustLaunched && (
-        <div className="absolute -top-2 -left-2 px-2 py-0.5 bg-primary text-white text-[9px] font-black uppercase rounded-full shadow-lg z-20 animate-pulse">
+        <div className="absolute -top-2 -left-2 px-2 py-0.5 bg-primary text-slate-900 text-[9px] font-black uppercase rounded-full shadow-lg z-20 animate-pulse">
           New
         </div>
       )}
@@ -229,7 +229,7 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
 
       <div className="flex items-start gap-4 mb-4">
         <div className="relative shrink-0">
-          <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-primary font-display font-bold text-2xl border border-white/10 overflow-hidden shadow-inner">
+          <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-primary font-display font-bold text-2xl border border-white/10 overflow-hidden shadow-inner">
             {token.image ? (
               <img src={token.image} alt={token.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             ) : (
@@ -252,7 +252,7 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
             <span className="text-[10px] font-mono text-slate-600">•</span>
             <button
               onClick={copyToClipboard}
-              className="flex items-center gap-1 text-[10px] font-mono text-slate-500 hover:text-white transition-colors"
+              className="flex items-center gap-1 text-[10px] font-mono text-slate-500 hover:text-slate-900 transition-colors"
             >
               {token.mint.slice(0, 6)}...{token.mint.slice(-4)}
               {copied ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
@@ -260,7 +260,7 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
           </div>
           {/* Price + Risk badge row */}
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-sm font-mono font-bold text-white">{fmtPrice(token.market?.priceUsd ?? 0)}</span>
+            <span className="text-sm font-mono font-bold text-slate-900">{fmtPrice(token.market?.priceUsd ?? 0)}</span>
             {token.risk?.score !== undefined && <RiskBadge score={100 - (token.risk.score ?? 50)} />}
           </div>
         </div>
@@ -277,11 +277,11 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
       <div className="mb-4 space-y-1">
         <div className="flex justify-between text-[8px] font-bold uppercase tracking-widest text-slate-500">
           <span>Bonding Curve</span>
-          <span className={cn(bondingProgress >= 100 ? "text-emerald-400" : "text-slate-300")}>
+          <span className={cn(bondingProgress >= 100 ? "text-emerald-400" : "text-slate-600")}>
             {bondingProgress.toFixed(1)}%
           </span>
         </div>
-        <div className="h-1.5 w-full bg-slate-800/50 rounded-full overflow-hidden border border-white/5">
+        <div className="h-1.5 w-full bg-slate-100/50 rounded-full overflow-hidden border border-white/5">
           <motion.div 
             initial={{ width: 0 }}
             animate={{ width: `${Math.min(100, bondingProgress)}%` }}
@@ -308,13 +308,13 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
               {hasRecentActivity && <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />}
             </div>
           </div>
-          <div className="text-sm font-mono font-bold text-white leading-none">
+          <div className="text-sm font-mono font-bold text-slate-900 leading-none">
             <SmoothCounter value={mc} prefix="$" />
           </div>
         </div>
         <div className="bg-black/40 rounded-2xl p-3 border border-white/5 flex flex-col justify-center">
           <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Liquidity</div>
-          <div className="text-sm font-mono font-bold text-slate-300 leading-none">
+          <div className="text-sm font-mono font-bold text-slate-600 leading-none">
             <SmoothCounter value={liq} prefix="$" />
           </div>
         </div>
@@ -328,13 +328,13 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
 
       {/* Pump Probability & Intelligence */}
       <div className="grid grid-cols-2 gap-3 mb-5">
-        <div className="bg-slate-900/50 rounded-xl p-2 border border-white/5">
+        <div className="bg-white/50 rounded-xl p-2 border border-white/5">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Pump Score</span>
             <Flame size={10} className={cn(pumpScore > 70 ? "text-orange-500" : "text-slate-600")} />
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
+            <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
               <div 
                 className={cn(
                   "h-full transition-all duration-1000",
@@ -343,10 +343,10 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
                 style={{ width: `${pumpScore}%` }} 
               />
             </div>
-            <span className="text-[10px] font-mono font-bold text-white">{pumpScore}</span>
+            <span className="text-[10px] font-mono font-bold text-slate-900">{pumpScore}</span>
           </div>
         </div>
-        <div className="bg-slate-900/50 rounded-xl p-2 border border-white/5 flex flex-col justify-center">
+        <div className="bg-white/50 rounded-xl p-2 border border-white/5 flex flex-col justify-center">
           <div className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mb-1">Developer</div>
           <div className="flex items-center gap-1">
             <UserCheck size={10} className={cn(
@@ -358,7 +358,7 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
               "text-[10px] font-bold truncate",
               token.devReputation?.label === 'Trusted' ? "text-emerald-500" : 
               token.devReputation?.label === 'Suspicious' ? "text-amber-400" :
-              token.devReputation?.label === 'Rugger' ? "text-red-500" : "text-white"
+              token.devReputation?.label === 'Rugger' ? "text-red-500" : "text-slate-900"
             )}>
               {token.devReputation?.label || 'Neutral'}
             </span>
@@ -407,7 +407,7 @@ const TokenCard: React.FC<{ token: HunterToken; isHighConviction?: boolean; isNe
           <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest flex items-center gap-1">
             <Clock size={8} /> {updateMs < 5000 ? 'Live' : updateMs < 60000 ? `${Math.floor(updateMs / 1000)}s` : `${Math.floor(updateMs / 60000)}m`}
           </span>
-          <div className="text-[10px] font-mono text-slate-400">
+          <div className="text-[10px] font-mono text-slate-500">
             {token.createdAt < Date.now() - 3600000 ? `${Math.floor(ageMs / 3600000)}h ago` : `${Math.floor(ageMs / 60000)}m ago`}
           </div>
         </div>
@@ -442,7 +442,7 @@ const AlphaRankingLeaderboard: React.FC<{ tokens: HunterToken[] }> = ({ tokens }
     <div className="bg-slate-panel border border-slate-border rounded-[32px] overflow-hidden shadow-2xl">
       <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
         <div>
-          <h2 className="text-xl font-display font-bold text-white flex items-center gap-2">
+          <h2 className="text-xl font-display font-bold text-slate-900 flex items-center gap-2">
             <Trophy className="text-amber-400" size={20} />
             Alpha Ranking Engine
           </h2>
@@ -471,7 +471,7 @@ const AlphaRankingLeaderboard: React.FC<{ tokens: HunterToken[] }> = ({ tokens }
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-mono text-slate-600 w-4">{idx + 1}</span>
-                    <div className="w-10 h-10 rounded-xl bg-slate-800 border border-white/10 overflow-hidden shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 border border-white/10 overflow-hidden shrink-0">
                       {token.image ? (
                         <img src={token.image} alt={token.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       ) : (
@@ -479,13 +479,13 @@ const AlphaRankingLeaderboard: React.FC<{ tokens: HunterToken[] }> = ({ tokens }
                       )}
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white group-hover:text-primary transition-colors">{token.name}</div>
+                      <div className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">{token.name}</div>
                       <div className="text-[10px] font-mono text-slate-500 tracking-tight">${token.symbol}</div>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm font-mono font-bold text-slate-300">
+                  <div className="text-sm font-mono font-bold text-slate-600">
                     <SmoothCounter value={token.market?.fdv || 0} prefix="$" />
                   </div>
                 </td>
@@ -498,7 +498,7 @@ const AlphaRankingLeaderboard: React.FC<{ tokens: HunterToken[] }> = ({ tokens }
                   <div className="inline-flex flex-col items-center">
                     <div className={cn(
                       "text-lg font-display font-black leading-none",
-                      (token.alphaRating?.score || 0) > 75 ? "text-amber-400" : (token.alphaRating?.score || 0) > 50 ? "text-emerald-400" : "text-slate-400"
+                      (token.alphaRating?.score || 0) > 75 ? "text-amber-400" : (token.alphaRating?.score || 0) > 50 ? "text-emerald-400" : "text-slate-500"
                     )}>
                       {token.alphaRating?.score || 0}
                     </div>
@@ -808,7 +808,7 @@ export const HunterFeed: React.FC = () => {
                 "flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-[9px] font-bold uppercase tracking-wider",
                 isPaused 
                   ? "bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20" 
-                  : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"
+                  : "bg-white/5 border-white/10 text-slate-500 hover:bg-white/10"
               )}
             >
               {isPaused ? <><Play size={10} /> Resume Feed ({buffer.length})</> : <><Pause size={10} /> Pause Feed</>}
@@ -825,7 +825,7 @@ export const HunterFeed: React.FC = () => {
               {(['age', 'risk', 'volume', 'liquidity'] as SortKey[]).map((s) => (
                 <button key={s} onClick={() => setSortKey(s)}
                   className={cn("px-2 py-1 text-[9px] font-bold uppercase rounded transition-all",
-                    sortKey === s ? "bg-primary text-white" : "text-slate-500 hover:text-slate-300")}>
+                    sortKey === s ? "bg-primary text-slate-900" : "text-slate-500 hover:text-slate-600")}>
                   {s}
                 </button>
               ))}
@@ -842,7 +842,7 @@ export const HunterFeed: React.FC = () => {
               ] as [FilterKey, string][]).map(([key, label]) => (
                 <button key={key} onClick={() => setFilter(key)}
                   className={cn("px-2.5 py-1.5 text-[9px] font-bold uppercase rounded-md transition-all duration-300",
-                    filter === key ? "bg-primary text-white shadow-lg" : "text-slate-500 hover:text-slate-300 hover:bg-white/5")}>
+                    filter === key ? "bg-primary text-slate-900 shadow-lg" : "text-slate-500 hover:text-slate-600 hover:bg-white/5")}>
                   {label}
                 </button>
               ))}
@@ -886,10 +886,10 @@ export const HunterFeed: React.FC = () => {
 
       {filteredTokens.length === 0 && (
         <div className="text-center py-32 bg-slate-panel/20 border-2 border-dashed border-slate-border rounded-[40px] animate-in fade-in zoom-in duration-500">
-          <div className="w-20 h-20 rounded-full bg-slate-800/50 flex items-center justify-center mx-auto mb-6 text-slate-600">
+          <div className="w-20 h-20 rounded-full bg-slate-100/50 flex items-center justify-center mx-auto mb-6 text-slate-600">
             <Search size={40} />
           </div>
-          <h3 className="text-2xl font-display font-bold text-slate-400">No Alpha Detected</h3>
+          <h3 className="text-2xl font-display font-bold text-slate-500">No Alpha Detected</h3>
           <p className="text-slate-500 mt-2 max-w-sm mx-auto">
             {totalPool > 0 
               ? `Found ${totalPool} tokens in the pool, but none met the current filters. Try relaxing your criteria.`

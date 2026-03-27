@@ -213,10 +213,10 @@ export const ClusterIntelligenceSystem: React.FC<ClusterIntelligenceSystemProps>
                   </div>
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     <div className="text-[10px] text-slate-500">
-                      <span className="font-bold text-white">${(cluster.totalVolume / 1000).toFixed(1)}k</span> volume
+                      <span className="font-bold text-slate-900">${(cluster.totalVolume / 1000).toFixed(1)}k</span> volume
                     </div>
                     <div className="text-[10px] text-slate-500">
-                      <span className="font-bold text-white">{cluster.wallets.length}</span> wallets
+                      <span className="font-bold text-slate-900">{cluster.wallets.length}</span> wallets
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
@@ -244,7 +244,7 @@ export const ClusterIntelligenceSystem: React.FC<ClusterIntelligenceSystemProps>
                     {selectedCluster.clusterType}
                     <span className="text-xs font-mono text-slate-500 font-normal">ID: {selectedCluster.id.slice(0, 8)}</span>
                   </h2>
-                  <p className="text-slate-400 text-sm mt-1">{selectedCluster.interpretation}</p>
+                  <p className="text-slate-500 text-sm mt-1">{selectedCluster.interpretation}</p>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Confidence</div>
@@ -260,21 +260,21 @@ export const ClusterIntelligenceSystem: React.FC<ClusterIntelligenceSystemProps>
                       <DollarSign size={12} />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Total Volume</span>
                     </div>
-                    <div className="text-lg font-display font-bold text-white">${selectedCluster.totalVolume.toLocaleString()}</div>
+                    <div className="text-lg font-display font-bold text-slate-900">${selectedCluster.totalVolume.toLocaleString()}</div>
                   </div>
                   <div className="bg-black/20 rounded-xl p-3 border border-white/5">
                     <div className="flex items-center gap-2 text-slate-500 mb-1">
                       <Users size={12} />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Wallets</span>
                     </div>
-                    <div className="text-lg font-display font-bold text-white">{selectedCluster.wallets.length}</div>
+                    <div className="text-lg font-display font-bold text-slate-900">{selectedCluster.wallets.length}</div>
                   </div>
                   <div className="bg-black/20 rounded-xl p-3 border border-white/5">
                     <div className="flex items-center gap-2 text-slate-500 mb-1">
                       <Clock size={12} />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Duration</span>
                     </div>
-                    <div className="text-lg font-display font-bold text-white">
+                    <div className="text-lg font-display font-bold text-slate-900">
                       {Math.ceil((selectedCluster.endTime - selectedCluster.startTime) / 1000)}s
                     </div>
                   </div>
@@ -313,10 +313,10 @@ export const ClusterIntelligenceSystem: React.FC<ClusterIntelligenceSystemProps>
                           <tr key={i} className="group hover:bg-white/5 transition-colors">
                             <td className="py-3 pl-2">
                               <div className="flex items-center gap-2">
-                                <div className="w-5 h-5 rounded bg-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-400">
+                                <div className="w-5 h-5 rounded bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-500">
                                   {ev.wallet.slice(0, 2)}
                                 </div>
-                                <span className="text-xs font-mono text-slate-300 group-hover:text-white transition-colors">
+                                <span className="text-xs font-mono text-slate-600 group-hover:text-slate-900 transition-colors">
                                   {ev.wallet.slice(0, 4)}...{ev.wallet.slice(-4)}
                                 </span>
                               </div>
@@ -330,7 +330,7 @@ export const ClusterIntelligenceSystem: React.FC<ClusterIntelligenceSystemProps>
                               </span>
                             </td>
                             <td className="py-3">
-                              <span className="text-xs font-mono text-slate-400">${ev.usdValue.toLocaleString()}</span>
+                              <span className="text-xs font-mono text-slate-500">${ev.usdValue.toLocaleString()}</span>
                             </td>
                             <td className="py-3">
                               <span className="text-xs text-slate-500">{new Date(ev.timestamp).toLocaleTimeString([], { hour12: false })}</span>
@@ -355,10 +355,10 @@ export const ClusterIntelligenceSystem: React.FC<ClusterIntelligenceSystemProps>
             </div>
           ) : (
             <div className="h-full bg-slate-panel/30 border border-slate-border border-dashed rounded-2xl flex flex-col items-center justify-center text-center p-12">
-              <div className="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-600 mb-4">
+              <div className="w-16 h-16 rounded-full bg-slate-100/50 flex items-center justify-center text-slate-600 mb-4">
                 <AlertCircle size={32} />
               </div>
-              <h3 className="text-lg font-display font-bold text-slate-400 mb-2">No Cluster Selected</h3>
+              <h3 className="text-lg font-display font-bold text-slate-500 mb-2">No Cluster Selected</h3>
               <p className="text-sm text-slate-500 max-w-xs">
                 Click on a marker in the chart or a signal in the list to inspect the raw on-chain evidence.
               </p>

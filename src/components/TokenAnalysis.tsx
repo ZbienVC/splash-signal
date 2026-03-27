@@ -129,7 +129,7 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
     return (
       <div className="h-full flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-12 h-12 text-primary animate-spin" />
-        <div className="text-xl font-display font-bold text-white animate-pulse">CONDUCTING MULTI-LAYER INTEGRITY AUDIT...</div>
+        <div className="text-xl font-display font-bold text-slate-900 animate-pulse">CONDUCTING MULTI-LAYER INTEGRITY AUDIT...</div>
         <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">Scanning Smart Contracts & Liquidity Pools</p>
       </div>
     );
@@ -177,7 +177,7 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
       <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={onBack}
-          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400 hover:text-white"
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft size={20} />
         </button>
@@ -198,7 +198,7 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
             <button className="px-4 py-2 bg-slate-panel border border-slate-border rounded-lg text-xs font-bold hover:bg-white/5 transition-all flex items-center gap-2">
               <ExternalLink size={14} /> DEXSCREENER
             </button>
-            <button className="px-4 py-2 bg-emerald-500 text-white rounded-lg text-xs font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20">
+            <button className="px-4 py-2 bg-emerald-500 text-slate-900 rounded-lg text-xs font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20">
               DOWNLOAD REPORT
             </button>
           </div>
@@ -209,24 +209,24 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
       <div className="grid grid-cols-4 gap-4">
         <div className="bg-slate-panel/50 border border-slate-border rounded-2xl p-4">
           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Chain</div>
-          <div className="text-2xl font-display font-bold text-white capitalize">{metadata?.chain || 'N/A'}</div>
+          <div className="text-2xl font-display font-bold text-slate-900 capitalize">{metadata?.chain || 'N/A'}</div>
           <div className="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">NETWORK_ID</div>
         </div>
         <div className="bg-slate-panel/50 border border-slate-border rounded-2xl p-4">
           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Supply</div>
-          <div className="text-2xl font-display font-bold text-white">{(metadata?.totalSupply || 0).toLocaleString()}</div>
+          <div className="text-2xl font-display font-bold text-slate-900">{(metadata?.totalSupply || 0).toLocaleString()}</div>
           <div className="text-[10px] text-slate-500 font-mono mt-1">CIRCULATING_SUPPLY</div>
         </div>
         <div className="bg-slate-panel/50 border border-slate-border rounded-2xl p-4">
           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Liquidity Status</div>
-          <div className="text-2xl font-display font-bold text-white">{liquidity?.isLocked ? 'Locked' : 'Unlocked'}</div>
+          <div className="text-2xl font-display font-bold text-slate-900">{liquidity?.isLocked ? 'Locked' : 'Unlocked'}</div>
           <div className="text-[10px] text-slate-500 font-mono mt-1">
             {liquidity?.isLocked ? `DURATION: ${liquidity.lockDuration}` : 'POOLED_RESERVES'}
           </div>
         </div>
         <div className="bg-slate-panel/50 border border-slate-border rounded-2xl p-4">
           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Risk Level</div>
-          <div className="text-2xl font-display font-bold text-white">
+          <div className="text-2xl font-display font-bold text-slate-900">
             {integrityIndex}%
           </div>
           <div className="text-[10px] text-primary font-mono mt-1 uppercase tracking-widest">COMPOSITE_SCORE</div>
@@ -247,7 +247,7 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
               <span className="text-xs font-bold uppercase" style={{ color: getIntegrityColor(integrityIndex) }}>{getIntegrityLabel(integrityIndex)}</span>
             </div>
           </div>
-          <p className="text-xs text-slate-400 max-w-[200px]">
+          <p className="text-xs text-slate-500 max-w-[200px]">
             {integrityIndex < 40 ? 'No malicious signatures detected in latest audit.' : 'Potential vulnerabilities or centralization risks detected.'}
           </p>
         </div>
@@ -286,7 +286,7 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
                 <div key={i} className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
-                    <span className="text-slate-400">{item.name}</span>
+                    <span className="text-slate-500">{item.name}</span>
                   </div>
                   <span className="font-mono font-bold">{item.value.toFixed(1)}%</span>
                 </div>
@@ -310,7 +310,7 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
             {consistencyScores.map((item, i) => (
               <div key={i}>
                 <div className="flex justify-between text-xs mb-2">
-                  <span className="text-slate-300">{item.label}</span>
+                  <span className="text-slate-600">{item.label}</span>
                   <span className="font-mono text-primary">{item.value}%</span>
                 </div>
                 <div className="h-1.5 bg-black/20 rounded-full overflow-hidden">
@@ -362,7 +362,7 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
               {verdictSummary || 'AI-Powered Institutional Verdict'}
             </h3>
           </div>
-          <p className="text-slate-400 leading-relaxed italic">
+          <p className="text-slate-500 leading-relaxed italic">
             {verdictExplanation || 'Analyzing structural integrity and market coordination patterns...'}
           </p>
         </div>

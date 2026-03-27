@@ -92,12 +92,12 @@ export const AnalystArchive: React.FC<{ onItemSelected: (id: string) => void }> 
                   onClick={() => onItemSelected(item.id.toString())}
                   className="hover:bg-white/[0.02] transition-colors group cursor-pointer"
                 >
-                  <td className="px-6 py-4 font-mono text-xs text-slate-400">INV-{item.id}</td>
+                  <td className="px-6 py-4 font-mono text-xs text-slate-500">INV-{item.id}</td>
                   <td className="px-6 py-4">
                     <div className="text-sm font-bold group-hover:text-primary transition-colors truncate max-w-[200px]">{item.identifier}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-xs text-slate-400 capitalize">
+                    <div className="flex items-center gap-2 text-xs text-slate-500 capitalize">
                       <Shield size={12} />
                       {item.chain}
                     </div>
@@ -112,7 +112,7 @@ export const AnalystArchive: React.FC<{ onItemSelected: (id: string) => void }> 
                     )}>{item.status}</span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="p-2 text-slate-600 hover:text-white transition-colors">
+                    <button className="p-2 text-slate-600 hover:text-slate-900 transition-colors">
                       <MoreHorizontal size={16} />
                     </button>
                   </td>
@@ -128,7 +128,7 @@ export const AnalystArchive: React.FC<{ onItemSelected: (id: string) => void }> 
           <span>Showing {filteredItems.length} investigations</span>
           <div className="flex gap-2">
             <button className="px-3 py-1 border border-slate-border rounded hover:bg-white/5 disabled:opacity-50" disabled>PREV</button>
-            <button className="px-3 py-1 border border-slate-border rounded bg-primary border-primary text-white">1</button>
+            <button className="px-3 py-1 border border-slate-border rounded bg-primary border-primary text-slate-900">1</button>
             <button className="px-3 py-1 border border-slate-border rounded hover:bg-white/5 disabled:opacity-50" disabled>NEXT</button>
           </div>
         </div>

@@ -131,7 +131,7 @@ export const AttentionFeed: React.FC = () => {
             <div className="flex items-center gap-2 px-2">
               <ShieldAlert size={16} className="text-red-500" />
               <Tooltip content="Critical surges in social activity or volume detected in early-stage narratives.">
-                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest cursor-help">Early Narrative Alerts</h2>
+                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest cursor-help">Early Narrative Alerts</h2>
               </Tooltip>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -146,7 +146,7 @@ export const AttentionFeed: React.FC = () => {
                         <Flame className="text-red-500" size={16} />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-white uppercase">{alert.token.name}</div>
+                        <div className="text-xs font-bold text-slate-900 uppercase">{alert.token.name}</div>
                         <div className="text-[10px] text-red-500 font-mono font-bold">SURGE DETECTED</div>
                       </div>
                     </div>
@@ -154,7 +154,7 @@ export const AttentionFeed: React.FC = () => {
                       CRITICAL
                     </div>
                   </div>
-                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
                     {alert.description}
                   </p>
                   <div className="flex items-center justify-between mt-auto pt-2 border-t border-red-500/10">
@@ -163,7 +163,7 @@ export const AttentionFeed: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <ViewSource links={[{ label: 'DexScreener', url: alert.token.link }]} />
-                      <button className="text-[10px] font-bold text-red-500 hover:text-white flex items-center gap-1 transition-colors">
+                      <button className="text-[10px] font-bold text-red-500 hover:text-slate-900 flex items-center gap-1 transition-colors">
                         INVESTIGATE <ArrowUpRight size={12} />
                       </button>
                     </div>
@@ -181,7 +181,7 @@ export const AttentionFeed: React.FC = () => {
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <Globe size={16} className="text-primary" />
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Narrative Discovery</h2>
+              <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Narrative Discovery</h2>
             </div>
             <span className="text-[10px] font-mono text-slate-600">{intelligence?.signals.length} ACTIVE</span>
           </div>
@@ -209,7 +209,7 @@ export const AttentionFeed: React.FC = () => {
                   </div>
                 </div>
                 
-                <p className="text-xs text-slate-400 leading-relaxed mb-4 line-clamp-2">{signal.description}</p>
+                <p className="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-2">{signal.description}</p>
                 
                 <div className="grid grid-cols-3 gap-2 mb-4">
                   <div className="bg-black/20 rounded-lg p-2 border border-white/5">
@@ -230,7 +230,7 @@ export const AttentionFeed: React.FC = () => {
                     <div className="text-[8px] text-slate-500 uppercase font-bold mb-1">Tokens</div>
                     <div className="flex items-center gap-1">
                       <Coins size={10} className="text-primary" />
-                      <span className="text-[10px] font-mono font-bold text-white">{intelligence?.tokens.filter(t => t.narrativeId === signal.name).length}</span>
+                      <span className="text-[10px] font-mono font-bold text-slate-900">{intelligence?.tokens.filter(t => t.narrativeId === signal.name).length}</span>
                     </div>
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export const AttentionFeed: React.FC = () => {
                   </div>
                   <div className="flex -space-x-2">
                     {signal.sources.map((src, i) => (
-                      <div key={i} className="w-5 h-5 rounded-full bg-slate-800 border border-slate-border flex items-center justify-center text-[8px] font-bold text-slate-400" title={src.name}>
+                      <div key={i} className="w-5 h-5 rounded-full bg-slate-100 border border-slate-border flex items-center justify-center text-[8px] font-bold text-slate-500" title={src.name}>
                         {src.name[0]}
                       </div>
                     ))}
@@ -264,7 +264,7 @@ export const AttentionFeed: React.FC = () => {
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <Newspaper size={16} className="text-blue-500" />
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">News Intelligence</h2>
+              <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">News Intelligence</h2>
             </div>
           </div>
 
@@ -301,7 +301,7 @@ export const AttentionFeed: React.FC = () => {
                         href={news.link} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-[10px] font-bold text-blue-400 hover:text-white flex items-center gap-1 transition-colors"
+                        className="text-[10px] font-bold text-blue-400 hover:text-slate-900 flex items-center gap-1 transition-colors"
                       >
                         READ ARTICLE <ExternalLink size={10} />
                       </a>
@@ -317,7 +317,7 @@ export const AttentionFeed: React.FC = () => {
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <Coins size={16} className="text-primary" />
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Discovered Tokens</h2>
+              <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Discovered Tokens</h2>
             </div>
           </div>
 
@@ -357,15 +357,15 @@ export const AttentionFeed: React.FC = () => {
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div className="p-2 bg-black/20 rounded-lg border border-white/5">
                         <div className="text-[8px] text-slate-600 uppercase font-bold mb-1">Market Cap</div>
-                        <div className="text-[10px] font-mono text-slate-300">${(token.marketCap / 1000).toFixed(1)}K</div>
+                        <div className="text-[10px] font-mono text-slate-600">${(token.marketCap / 1000).toFixed(1)}K</div>
                       </div>
                       <div className="p-2 bg-black/20 rounded-lg border border-white/5">
                         <div className="text-[8px] text-slate-600 uppercase font-bold mb-1">Volume 24H</div>
-                        <div className="text-[10px] font-mono text-slate-300">${(token.volume24h / 1000).toFixed(1)}K</div>
+                        <div className="text-[10px] font-mono text-slate-600">${(token.volume24h / 1000).toFixed(1)}K</div>
                       </div>
                       <div className="p-2 bg-black/20 rounded-lg border border-white/5">
                         <div className="text-[8px] text-slate-600 uppercase font-bold mb-1">Liquidity</div>
-                        <div className="text-[10px] font-mono text-slate-300">${(token.liquidity / 1000).toFixed(1)}K</div>
+                        <div className="text-[10px] font-mono text-slate-600">${(token.liquidity / 1000).toFixed(1)}K</div>
                       </div>
                       <div className="p-2 bg-black/20 rounded-lg border border-white/5">
                         <div className="text-[8px] text-slate-600 uppercase font-bold mb-1">Launchpad</div>
@@ -375,7 +375,7 @@ export const AttentionFeed: React.FC = () => {
 
                     <div className="flex items-center gap-2 mb-4 p-2 bg-primary/5 rounded-lg border border-primary/10">
                       <Zap size={12} className="text-primary shrink-0" />
-                      <p className="text-[10px] text-slate-400 leading-tight">{token.matchReason}</p>
+                      <p className="text-[10px] text-slate-500 leading-tight">{token.matchReason}</p>
                     </div>
 
                     <div className="flex justify-between items-center">
@@ -389,7 +389,7 @@ export const AttentionFeed: React.FC = () => {
                         href={token.link} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-[10px] font-bold text-primary hover:text-white flex items-center gap-1 transition-colors"
+                        className="text-[10px] font-bold text-primary hover:text-slate-900 flex items-center gap-1 transition-colors"
                       >
                         VIEW TOKEN <ArrowUpRight size={12} />
                       </a>

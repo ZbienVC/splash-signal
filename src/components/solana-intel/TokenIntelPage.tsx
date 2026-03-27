@@ -165,7 +165,7 @@ const DataSourcesPanel: React.FC<{ sources: DataSource[] }> = ({ sources }) => (
         <div key={src.label} className="flex items-center gap-2">
           <StatusDot status={src.status} />
           <div>
-            <div className="text-[10px] font-bold text-slate-300">{src.label}</div>
+            <div className="text-[10px] font-bold text-slate-600">{src.label}</div>
             {src.note && <div className="text-[9px] text-slate-600">{src.note}</div>}
           </div>
         </div>
@@ -354,7 +354,7 @@ export const TokenIntelPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <div className={cn(
               "w-2 h-2 rounded-full",
-              activeMint ? "bg-emerald-500 animate-pulse" : "bg-slate-700"
+              activeMint ? "bg-emerald-500 animate-pulse" : "bg-blue-100"
             )} />
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
               {activeMint ? `Monitoring: ${activeMint.slice(0, 8)}...` : 'Terminal Standby'}
@@ -367,7 +367,7 @@ export const TokenIntelPage: React.FC = () => {
               "flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-widest transition-all",
               deepMode 
                 ? "bg-primary/20 border-primary text-primary shadow-lg shadow-primary/20" 
-                : "bg-slate-panel border-slate-border text-slate-500 hover:text-slate-300"
+                : "bg-slate-panel border-slate-border text-slate-500 hover:text-slate-600"
             )}
           >
             <Shield size={14} className={cn(deepMode && "animate-pulse")} />
@@ -389,7 +389,7 @@ export const TokenIntelPage: React.FC = () => {
           <button 
             type="submit"
             disabled={loading || !mint.trim()}
-            className="absolute right-2 top-2 bottom-2 px-6 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary/90 transition-all disabled:opacity-50 flex items-center gap-2"
+            className="absolute right-2 top-2 bottom-2 px-6 bg-primary text-slate-900 rounded-xl text-xs font-bold hover:bg-primary/90 transition-all disabled:opacity-50 flex items-center gap-2"
           >
             {loading ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
             ANALYZE
@@ -499,10 +499,10 @@ export const TokenIntelPage: React.FC = () => {
                       {allPairs.slice(0, 8).map((p: any, i: number) => (
                         <div key={i} className="flex items-center justify-between text-[10px]">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-white">{p.dexId}</span>
+                            <span className="font-bold text-slate-900">{p.dexId}</span>
                             <span className="text-slate-500">{p.quoteToken?.symbol}</span>
                           </div>
-                          <div className="flex items-center gap-3 text-slate-400">
+                          <div className="flex items-center gap-3 text-slate-500">
                             <span className="font-mono">${parseFloat(p.priceUsd ?? '0').toFixed(6)}</span>
                             <span className={cn("font-mono text-[9px]", (p.priceChange?.h24 ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400')}>
                               {(p.priceChange?.h24 ?? 0) >= 0 ? '+' : ''}{(p.priceChange?.h24 ?? 0).toFixed(1)}%

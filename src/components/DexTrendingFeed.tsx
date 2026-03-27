@@ -162,7 +162,7 @@ export const DexTrendingFeed: React.FC<Props> = ({ onNavigate }) => {
             <TrendingUp size={16} />
           </div>
           <div>
-            <h2 className="text-base font-display font-bold text-white">Trending on DexScreener</h2>
+            <h2 className="text-base font-display font-bold text-slate-900">Trending on DexScreener</h2>
             <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Top Boosted &amp; Featured Tokens</p>
           </div>
         </div>
@@ -175,7 +175,7 @@ export const DexTrendingFeed: React.FC<Props> = ({ onNavigate }) => {
           <button
             onClick={fetchTrending}
             disabled={loading}
-            className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-500 hover:text-white hover:bg-white/10 transition-all disabled:opacity-50"
+            className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-500 hover:text-slate-900 hover:bg-white/10 transition-all disabled:opacity-50"
           >
             <RefreshCw size={14} className={cn(loading && 'animate-spin')} />
           </button>
@@ -211,14 +211,14 @@ export const DexTrendingFeed: React.FC<Props> = ({ onNavigate }) => {
 
                 {/* Token identity */}
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-slate-800 border border-white/10 overflow-hidden shrink-0 flex items-center justify-center text-primary font-bold text-xs">
+                  <div className="w-8 h-8 rounded-xl bg-slate-100 border border-white/10 overflow-hidden shrink-0 flex items-center justify-center text-primary font-bold text-xs">
                     {token.icon ? (
                       <img src={token.icon} alt={token.symbol} className="w-full h-full object-cover" referrerPolicy="no-referrer"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                     ) : token.symbol[0]}
                   </div>
                   <div className="min-w-0">
-                    <div className="font-bold text-sm text-white group-hover:text-primary transition-colors truncate leading-tight">{token.name}</div>
+                    <div className="font-bold text-sm text-slate-900 group-hover:text-primary transition-colors truncate leading-tight">{token.name}</div>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <span className="text-[10px] font-mono text-primary">${token.symbol}</span>
                       <span className={cn(
@@ -226,7 +226,7 @@ export const DexTrendingFeed: React.FC<Props> = ({ onNavigate }) => {
                         isSolana ? 'bg-violet-500/20 text-violet-400' :
                         token.chainId === 'ethereum' ? 'bg-blue-500/20 text-blue-400' :
                         token.chainId === 'base' ? 'bg-sky-500/20 text-sky-400' :
-                        'bg-slate-700 text-slate-400'
+                        'bg-blue-100 text-slate-500'
                       )}>{chainLabel}</span>
                       {token.source === 'boost' && (
                         <span className="px-1 py-0.5 bg-amber-500/20 text-amber-400 text-[8px] font-bold rounded uppercase">
@@ -242,7 +242,7 @@ export const DexTrendingFeed: React.FC<Props> = ({ onNavigate }) => {
                   {token.priceUsd ? (
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Price</span>
-                      <span className="text-xs font-mono font-bold text-white">{fmtPrice(token.priceUsd)}</span>
+                      <span className="text-xs font-mono font-bold text-slate-900">{fmtPrice(token.priceUsd)}</span>
                     </div>
                   ) : null}
                   {token.priceChange24h !== undefined ? (
@@ -257,7 +257,7 @@ export const DexTrendingFeed: React.FC<Props> = ({ onNavigate }) => {
                   {token.volume24h ? (
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Vol</span>
-                      <span className="text-[10px] font-mono text-slate-300">{fmt(token.volume24h)}</span>
+                      <span className="text-[10px] font-mono text-slate-600">{fmt(token.volume24h)}</span>
                     </div>
                   ) : null}
                 </div>
@@ -265,7 +265,7 @@ export const DexTrendingFeed: React.FC<Props> = ({ onNavigate }) => {
                 {/* CTA */}
                 <div className={cn(
                   "mt-auto flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity",
-                  isSolana ? 'text-primary' : 'text-slate-400'
+                  isSolana ? 'text-primary' : 'text-slate-500'
                 )}>
                   {isSolana ? (
                     <><Zap size={10} /> Analyze</>

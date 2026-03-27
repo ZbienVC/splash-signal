@@ -74,7 +74,7 @@ export const ReasoningAudit: React.FC<{ target?: string; onBack: () => void }> =
       <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={onBack}
-          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400 hover:text-white"
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft size={20} />
         </button>
@@ -94,7 +94,7 @@ export const ReasoningAudit: React.FC<{ target?: string; onBack: () => void }> =
             <Cpu size={20} className="text-primary" /> Primary Decision Logic
           </h3>
           <div className="space-y-6">
-            <div className="p-4 rounded-xl bg-black/40 border border-white/5 font-mono text-sm leading-relaxed text-slate-300">
+            <div className="p-4 rounded-xl bg-black/40 border border-white/5 font-mono text-sm leading-relaxed text-slate-600">
               {auditData?.logic || (
                 <>
                   <span className="text-primary">IF</span> (temporal_sync {'>'} 0.92) <span className="text-primary">AND</span> (funding_source == shared_cex_sub) <span className="text-primary">THEN</span><br />
@@ -110,7 +110,7 @@ export const ReasoningAudit: React.FC<{ target?: string; onBack: () => void }> =
                 <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Model Inputs</h4>
                 <div className="space-y-2">
                   {(auditData?.inputs || ['On-chain Transaction Logs', 'CEX Deposit Metadata', 'Social Sentiment API', 'Historical Cluster DB']).map((input: string) => (
-                    <div key={input} className="flex items-center gap-2 text-xs text-slate-400">
+                    <div key={input} className="flex items-center gap-2 text-xs text-slate-500">
                       <Database size={12} className="text-slate-600" /> {input}
                     </div>
                   ))}
@@ -154,11 +154,11 @@ export const ReasoningAudit: React.FC<{ target?: string; onBack: () => void }> =
           <div className="mt-8 pt-6 border-t border-slate-border">
             <div className="flex justify-between text-[10px] font-mono text-slate-500 mb-2">
               <span>TOTAL_LATENCY</span>
-              <span className="text-white">{auditData?.totalLatency || '325ms'}</span>
+              <span className="text-slate-900">{auditData?.totalLatency || '325ms'}</span>
             </div>
             <div className="flex justify-between text-[10px] font-mono text-slate-500">
               <span>AUDIT_HASH</span>
-              <span className="text-white">0x{auditData?.hash || '882...F92'}</span>
+              <span className="text-slate-900">0x{auditData?.hash || '882...F92'}</span>
             </div>
           </div>
         </div>
@@ -168,8 +168,8 @@ export const ReasoningAudit: React.FC<{ target?: string; onBack: () => void }> =
       <div className="bg-black border border-slate-border rounded-2xl overflow-hidden">
         <div className="bg-slate-panel px-4 py-2 border-b border-slate-border flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Terminal size={14} className="text-slate-400" />
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Inference Log Stream</span>
+            <Terminal size={14} className="text-slate-500" />
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Inference Log Stream</span>
           </div>
           <div className="flex gap-1.5">
             <div className="w-2 h-2 rounded-full bg-red-500/50"></div>

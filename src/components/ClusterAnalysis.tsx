@@ -523,7 +523,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
       <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={onBack}
-          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400 hover:text-white"
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft size={20} />
         </button>
@@ -565,12 +565,12 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
             placeholder="Search Token or Address..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-black/20 border border-white/5 rounded-lg py-1.5 pl-9 pr-4 text-[11px] text-white focus:outline-none focus:border-primary/50 focus:bg-black/40 transition-all placeholder:text-slate-600"
+            className="w-full bg-black/20 border border-white/5 rounded-lg py-1.5 pl-9 pr-4 text-[11px] text-slate-900 focus:outline-none focus:border-primary/50 focus:bg-black/40 transition-all placeholder:text-slate-600"
           />
         </div>
 
         <div className="flex gap-3">
-          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
+          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500">
             <Share2 size={18} />
           </button>
         </div>
@@ -590,7 +590,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
               <Fingerprint className="absolute inset-0 m-auto w-6 h-6 text-primary/50" />
             </div>
             <div className="text-center">
-              <div className="text-xl font-display font-bold text-white mb-2">SCANNING NETWORK TOPOLOGY...</div>
+              <div className="text-xl font-display font-bold text-slate-900 mb-2">SCANNING NETWORK TOPOLOGY...</div>
               <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">Tracing wallet connections & funding lineage</p>
             </div>
           </motion.div>
@@ -622,7 +622,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                   {botRisk > 80 ? <AlertTriangle size={10} /> : <CheckCircle2 size={10} />}
                   {botRisk > 80 ? 'High Risk' : 'Organic'}
                 </div>
-                <p className="mt-3 text-[10px] text-slate-400 leading-tight px-2">
+                <p className="mt-3 text-[10px] text-slate-500 leading-tight px-2">
                   {botRisk > 80 
                     ? `Detected ${walletCount} wallets acting in sync. High probability of coordinated manipulation.`
                     : 'Wallets appear to be acting independently. Healthy organic growth signature.'}
@@ -665,12 +665,12 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                   <div className="text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-widest">Linked Accounts</div>
                   <div className="mt-4 flex -space-x-2">
                     {[...Array(Math.min(5, walletCount))].map((_, i) => (
-                      <div key={i} className="w-5 h-5 rounded-full border-2 border-slate-panel bg-slate-700 overflow-hidden">
+                      <div key={i} className="w-5 h-5 rounded-full border-2 border-slate-panel bg-blue-100 overflow-hidden">
                         <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=actor${i}${analysisId}`} alt="Actor" />
                       </div>
                     ))}
                     {walletCount > 5 && (
-                      <div className="w-5 h-5 rounded-full border-2 border-slate-panel bg-slate-800 flex items-center justify-center text-[8px] font-bold">
+                      <div className="w-5 h-5 rounded-full border-2 border-slate-panel bg-slate-100 flex items-center justify-center text-[8px] font-bold">
                         +{walletCount - 5}
                       </div>
                     )}
@@ -699,11 +699,11 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
               <div className="lg:col-span-3 bg-slate-panel border border-slate-border rounded-2xl p-6 relative min-h-[450px] overflow-hidden group">
                 {!analysisId && !loading ? (
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-12 space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-600">
+                    <div className="w-16 h-16 rounded-full bg-slate-100/50 flex items-center justify-center text-slate-600">
                       <Network size={32} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-display font-bold text-slate-400">Ready to Investigate</h3>
+                      <h3 className="text-lg font-display font-bold text-slate-500">Ready to Investigate</h3>
                       <p className="text-sm text-slate-500 max-w-xs mx-auto">Enter a token contract address above to visualize the wallet connection network.</p>
                     </div>
                   </div>
@@ -716,7 +716,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                       </div>
                       <button 
                         onClick={() => renderMap()}
-                        className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-slate-400 hover:text-white"
+                        className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-slate-900"
                         title="Refresh Map"
                       >
                         <Activity className="w-4 h-4" />
@@ -737,7 +737,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                       </div>
                     </div>
 
-                    <div className="absolute bottom-4 left-4 p-4 bg-black/60 backdrop-blur-xl rounded-2xl border border-white/10 text-[10px] text-slate-400 grid grid-cols-2 gap-x-6 gap-y-2">
+                    <div className="absolute bottom-4 left-4 p-4 bg-black/60 backdrop-blur-xl rounded-2xl border border-white/10 text-[10px] text-slate-500 grid grid-cols-2 gap-x-6 gap-y-2">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-[#3b82f6] shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
                         <span>Target Asset</span>
@@ -751,7 +751,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                         <span>Bot Activity</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-[#10b981] shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                        <div className="w-2 h-2 rounded-full bg-slate-50 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
                         <span>Top Holder</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -759,14 +759,14 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                         <span>Funding Cluster</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-[#06b6d4] shadow-[0_0_8px_rgba(6,182,212,0.5)]"></div>
+                        <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(6,182,212,0.5)]"></div>
                         <span>Timing Cluster</span>
                       </div>
                     </div>
 
                     <div className="absolute bottom-4 right-4 flex gap-2">
-                      <button className="p-2 bg-black/40 rounded-lg text-slate-400 hover:text-white transition-colors"><Search size={16} /></button>
-                      <button className="p-2 bg-black/40 rounded-lg text-slate-400 hover:text-white transition-colors"><Activity size={16} /></button>
+                      <button className="p-2 bg-black/40 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"><Search size={16} /></button>
+                      <button className="p-2 bg-black/40 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"><Activity size={16} /></button>
                     </div>
                   </>
                 )}
@@ -784,14 +784,14 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                       className="bg-slate-panel border border-primary/30 rounded-2xl p-6 flex flex-col relative overflow-hidden shadow-2xl shadow-primary/10"
                     >
                       <div className="absolute top-0 right-0 p-2">
-                        <button onClick={() => setSelectedWallet(null)} className="p-2 text-slate-500 hover:text-white transition-colors">×</button>
+                        <button onClick={() => setSelectedWallet(null)} className="p-2 text-slate-500 hover:text-slate-900 transition-colors">×</button>
                       </div>
                       <div className="flex items-center gap-3 mb-6">
                         <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/30">
                           <Fingerprint size={24} />
                         </div>
                         <div>
-                          <h3 className="text-sm font-bold font-mono text-white">
+                          <h3 className="text-sm font-bold font-mono text-slate-900">
                             {(selectedWallet.address || '').slice(0, 8)}...{(selectedWallet.address || '').slice(-4)}
                           </h3>
                           <div className="flex gap-1 mt-1">
@@ -848,9 +848,9 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                             <div className="text-[8px] font-bold text-slate-500 uppercase flex items-center gap-1">
                               <Activity size={8} /> Activity Score
                             </div>
-                            <div className="text-[10px] font-bold text-white">{selectedWallet.txCount || 0} TXs</div>
+                            <div className="text-[10px] font-bold text-slate-900">{selectedWallet.txCount || 0} TXs</div>
                           </div>
-                          <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                          <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
                             <div 
                               className="h-full bg-primary transition-all duration-1000" 
                               style={{ width: `${Math.min(100, (selectedWallet.txCount || 0) / 5)}%` }}
@@ -862,7 +862,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                           <div className="text-[8px] font-bold text-slate-500 uppercase mb-1 flex items-center gap-1">
                             <LinkIcon size={8} /> Funding Source
                           </div>
-                          <div className="text-xs font-mono truncate text-slate-300">{selectedWallet.fundingSource}</div>
+                          <div className="text-xs font-mono truncate text-slate-600">{selectedWallet.fundingSource}</div>
                         </div>
 
                         <div className="pt-4 border-t border-slate-border">
@@ -872,7 +872,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                               href={getExplorerUrl(selectedWallet.address)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white/5 text-[10px] text-slate-400 transition-colors"
+                              className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white/5 text-[10px] text-slate-500 transition-colors"
                             >
                               View on Explorer <ExternalLink size={10} />
                             </a>
@@ -880,7 +880,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                               href={getBubblemapsUrl(metadata?.address || searchQuery)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white/5 text-[10px] text-slate-400 transition-colors"
+                              className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white/5 text-[10px] text-slate-500 transition-colors"
                             >
                               Bubblemaps Profile <Target size={10} />
                             </a>
@@ -906,7 +906,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                               </div>
                             </div>
                             <div className="text-[11px] font-bold mb-0.5 group-hover:text-primary transition-colors uppercase">{log.type}</div>
-                            <p className="text-[10px] text-slate-400 leading-tight mb-2">{log.description}</p>
+                            <p className="text-[10px] text-slate-500 leading-tight mb-2">{log.description}</p>
                             <div className="flex justify-between items-center">
                               <span className="text-[9px] text-slate-600">{log.time}</span>
                               <button className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1">
@@ -916,7 +916,7 @@ export const ClusterAnalysis: React.FC<{ target?: string; onBack: () => void }> 
                           </div>
                         ))}
                       </div>
-                      <button className="mt-4 w-full py-1.5 text-[10px] font-bold text-slate-400 hover:text-white border border-slate-border rounded-lg hover:bg-white/5 transition-all">
+                      <button className="mt-4 w-full py-1.5 text-[10px] font-bold text-slate-500 hover:text-slate-900 border border-slate-border rounded-lg hover:bg-white/5 transition-all">
                         VIEW FULL FORENSIC LOG
                       </button>
                     </motion.div>
