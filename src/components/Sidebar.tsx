@@ -15,7 +15,10 @@ import {
   Wallet,
   Droplets,
   Trophy,
-  Radar
+  Radar,
+  Flame,
+  AlertTriangle,
+  Radio
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { ViewId } from '../types';
@@ -44,6 +47,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
       ]
     },
     {
+      title: 'ALPHA SUITE',
+      items: [
+        { id: 'alpha-hunter',  label: 'Alpha Hunter',     icon: Flame },
+        { id: 'dump-detector', label: 'Dump Detector',    icon: AlertTriangle },
+        { id: 'signal-feed',   label: 'Signal Feed',      icon: Radio },
+        { id: 'wallet-ranking',label: 'Wallet Rankings',  icon: Trophy },
+      ]
+    },
+    {
       title: 'INSTITUTIONAL TOOLS',
       items: [
         { id: 'investigation-gateway', label: 'Investigation', icon: Search },
@@ -52,8 +64,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
         { id: 'solana-intel', label: 'Solana Intel', icon: Zap },
         { id: 'hunter-feed', label: 'Hunter Scanner', icon: Radar },
         { id: 'smart-money', label: 'Smart Money', icon: Trophy },
-        { id: 'wallet-behavior', label: 'Wallet Behavior', icon: Wallet },
-        { id: 'liquidity-intel', label: 'Liquidity Intel', icon: Droplets },
+        { id: 'wallet-behavior', label: 'Wallet Behavior', icon: Wallet },        { id: 'liquidity-intel', label: 'Liquidity Intel', icon: Droplets },
       ]
     },
     {

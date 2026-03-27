@@ -12,7 +12,10 @@ import {
   Trophy,
   Wallet,
   Radar,
-  Monitor
+  Monitor,
+  Flame,
+  AlertTriangle,
+  Radio
 } from 'lucide-react';
 import { ViewId } from '../types';
 import { cn } from '../lib/utils';
@@ -136,6 +139,32 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
                 START INVESTIGATION
               </Button>
             </div>
+          </div>
+        </Section>
+
+        {/* Quick Access — Alpha Suite */}
+        <Section>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { id: 'alpha-hunter',  icon: Flame,         label: '🔥 Alpha Hunter',    desc: 'Early momentum detection — highest alpha tokens now', color: 'from-emerald-500/10 to-transparent border-emerald-500/20 hover:border-emerald-500/40' },
+              { id: 'dump-detector', icon: AlertTriangle,  label: '🚨 Dump Detector',   desc: 'Risk & exit signal monitoring — active dump threats',  color: 'from-red-500/10 to-transparent border-red-500/20 hover:border-red-500/40' },
+              { id: 'wallet-ranking',icon: Trophy,         label: '🏆 Wallet Rankings', desc: 'Top smart wallets by win rate and avg multiple',       color: 'from-amber-500/10 to-transparent border-amber-500/20 hover:border-amber-500/40' },
+            ].map(card => (
+              <button
+                key={card.id}
+                onClick={() => onNavigate(card.id as ViewId)}
+                className={cn(
+                  'bg-gradient-to-br rounded-2xl p-5 text-left border transition-all group',
+                  card.color
+                )}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-xl font-display font-bold text-white">{card.label}</span>
+                  <ArrowRight size={14} className="text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all ml-auto" />
+                </div>
+                <p className="text-xs text-slate-400">{card.desc}</p>
+              </button>
+            ))}
           </div>
         </Section>
 

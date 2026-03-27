@@ -21,6 +21,10 @@ import { HunterFeed } from './components/HunterFeed';
 import SmartMoneyTracker from './components/wallet-behavior/SmartMoneyTracker';
 import { WalletBehavioralIntelligence } from './components/wallet-behavior/WalletBehavioralIntelligence';
 import { LiquidityIntelligence } from './components/solana-intel/LiquidityIntelligence';
+import { AlphaHunter } from './components/AlphaHunter';
+import { DumpDetector } from './components/DumpDetector';
+import { SignalFeed } from './components/SignalFeed';
+import { WalletRanking } from './components/WalletRanking';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ViewId } from './types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -53,6 +57,14 @@ const AppContent: React.FC = () => {
         return <HunterFeed />;
       case 'smart-money':
         return <SmartMoneyTracker />;
+      case 'alpha-hunter':
+        return <AlphaHunter onSelectToken={handleModuleSelect} />;
+      case 'dump-detector':
+        return <DumpDetector />;
+      case 'signal-feed':
+        return <SignalFeed onSelectToken={handleModuleSelect} />;
+      case 'wallet-ranking':
+        return <WalletRanking onSelectWallet={handleModuleSelect} />;
       case 'wallet-behavior':
         return <WalletBehavioralIntelligence target={analysisTarget} onBack={() => setActiveView('investigation-gateway')} />;
       case 'liquidity-intel':

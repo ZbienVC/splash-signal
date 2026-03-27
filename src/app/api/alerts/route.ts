@@ -170,33 +170,44 @@ export async function GET(request: NextRequest) {
       prisma.alert.count({ where: { status: 'ACTIVE' } })
     ]);
 
-    // Format alerts for response
-    const formattedAlerts = alerts.map(alert => ({
-      id: alert.id,
-      type: alert.type,
-      severity: alert.severity,
-      category: alert.category,
-      token: {
-        address: alert.token.address,
-        symbol: alert.token.symbol,
-        name: alert.token.name,
-        price: alert.token.price,
-        marketCap: alert.token.marketCap
-      },
-      alert: {
-        title: alert.title,
-        message: alert.message,
-        confidence: alert.confidence,
-        timestamp: alert.createdAt.toISOString(),
-        expiresAt: alert.expiresAt?.toISOString() || null
-      },
-      data: alert.data,
-      metadata: {
-        triggeredBy: alert.triggeredBy,
-        age: formatTimeSince(alert.createdAt),
-        priority: getSeverityPriority(alert.severity)
-      }
-    }));
+    // Format alerts for response — now includes new Signal-format fields
+    const formattedAlerts = alerts.map(alert => {
+      const signal = alertToSignal(alert);
+      return {
+        id: alert.id,
+        type: alert.type,
+        severity: alert.severity,
+        category: alert.category,
+        // New Signal-format fields
+        signal: {
+          emoji: signal.emoji,
+          title: signal.title,
+          description: signal.description,
+          action: signal.action,
+          signalType: signal.type,
+        },
+        token: {
+          address: alert.token.address,
+          symbol: alert.token.symbol,
+          name: alert.token.name,
+          price: alert.token.price,
+          marketCap: alert.token.marketCap
+        },
+        alert: {
+          title: alert.title,
+          message: alert.message,
+          confidence: alert.confidence,
+          timestamp: alert.createdAt.toISOString(),
+          expiresAt: alert.expiresAt?.toISOString() || null
+        },
+        data: alert.data,
+        metadata: {
+          triggeredBy: alert.triggeredBy,
+          age: formatTimeSince(alert.createdAt),
+          priority: getSeverityPriority(alert.severity)
+        }
+      };
+    });
 
     const response: AlertsResponse = {
       alerts: formattedAlerts,
@@ -431,4 +442,32 @@ function getSeverityPriority(severity: string): number {
     'LOW': 5
   };
   return priorities[severity as keyof typeof priorities] || 5;
+}
+
+// Convert DB alert to new Signal format fields
+function alertToSignal(alert: any): { emoji: string; title: string; description: string; action: string; type: string } {
+  const severityToEmoji: Record<string, string> = {
+    EMERGENCY: '🚨',
+    CRITICAL: '🚨',
+    HIGH: '⚠️',
+    MEDIUM: '⚠️',
+    LOW: '✅',
+  };
+
+  const typeToAction: Record<string, string> = {
+    ENTRY_SIGNAL: 'BUY',
+    EXIT_SIGNAL: 'SELL',
+    RISK_WARNING: 'WATCH',
+  };
+
+  const dataAction = (alert.data as any)?.action;
+  const dataSignalType = (alert.data as any)?.signalType;
+
+  return {
+    emoji: severityToEmoji[alert.severity] || '✅',
+    title: alert.title || 'Signal',
+    description: alert.message || '',
+    action: dataAction || typeToAction[alert.type] || 'WATCH',
+    type: dataSignalType || alert.type || 'RISK_ALERT',
+  };
 }

@@ -4,6 +4,37 @@ import { Redis } from 'ioredis';
 import { Queue, Worker } from 'bullmq';
 import { AlphaScorer } from '../analysis/alphaScorer';
 import { RugScorer } from '../analysis/rugScorer';
+import { DumpScorer } from '../analysis/dumpScorer';
+import { SmartWalletEngine } from '../wallets/smartWalletEngine';
+
+// ============= NEW SIGNAL TYPES =============
+
+export type SignalType =
+  | 'ENTRY_OPPORTUNITY'
+  | 'EXIT_WARNING'
+  | 'RISK_ALERT'
+  // New types:
+  | 'DUMP_RISK_INCREASING'    // Risk score went up 15+ points in 1h
+  | 'ACTIVE_DISTRIBUTION'     // Multiple top holders reducing simultaneously
+  | 'EXIT_LIKELY'             // Smart wallets exiting + volume dropping
+  | 'SMART_MONEY_ENTRY'       // 2+ smart wallets entered in last 30min
+  | 'BUNDLE_EXIT_DETECTED';   // Coordinated sell detected
+
+export interface Signal {
+  id: string;
+  tokenAddress: string;
+  tokenSymbol: string;
+  type: SignalType;
+  severity: 'INFO' | 'WARNING' | 'CRITICAL';
+  emoji: string;           // 🔥 | ⚠️ | 🚨 | ✅
+  title: string;           // "Early Entry Signal"
+  description: string;     // "Smart money entering + volume accelerating"
+  action: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+  confidence: number;      // 0-1
+  expiresAt: Date;         // Signal expires after X minutes
+  triggeredAt: Date;
+  metadata: Record<string, any>;
+}
 
 interface AlertTrigger {
   tokenAddress: string;
@@ -36,6 +67,8 @@ export class SignalEngine {
   private redis: Redis;
   private alphaScorer: AlphaScorer;
   private rugScorer: RugScorer;
+  private dumpScorer: DumpScorer;
+  private smartWalletEngine: SmartWalletEngine;
   private signalQueue: Queue;
   private alertProcessorQueue: Queue;
   
@@ -63,6 +96,8 @@ export class SignalEngine {
     this.redis = new Redis(process.env.REDIS_URL!);
     this.alphaScorer = new AlphaScorer(this.prisma, this.redis);
     this.rugScorer = new RugScorer(this.prisma, this.redis);
+    this.dumpScorer = new DumpScorer(this.prisma, this.redis);
+    this.smartWalletEngine = new SmartWalletEngine(this.prisma, this.redis);
     
     // Initialize job queues
     this.signalQueue = new Queue('signal-processing', {
@@ -122,8 +157,60 @@ export class SignalEngine {
       // 5. Narrative Momentum
       await this.checkNarrativeMomentum(token);
 
+      // 6. NEW: Combined entry signal (alpha + volume + smart money + low dump risk)
+      await this.checkCombinedEntrySignal(token);
+
     } catch (error) {
       console.error(`Error detecting entry signals for ${tokenAddress}:`, error);
+    }
+  }
+
+  // NEW: Combined entry condition using DumpScorer + SmartWalletEngine
+  // ENTRY fires when ALL of:
+  // - Alpha score > 65
+  // - Volume up > 200% in 1h
+  // - At least 1 smart wallet entered in last 30min
+  // - Dump risk score < 50
+  private async checkCombinedEntrySignal(token: any): Promise<void> {
+    try {
+      const [alphaResult, dumpResult] = await Promise.all([
+        this.alphaScorer.calculateAlphaScore(token.address),
+        this.dumpScorer.calculateDumpScore(token.address),
+      ]);
+
+      const smartEntries = await this.smartWalletEngine.detectNewEntries(30);
+      const tokenSmartEntries = smartEntries.filter(a => a.tokenAddress === token.address);
+
+      const volumeGrowth1h = alphaResult.components.volumeGrowth?.signals?.includes('SUSTAINED_GROWTH_1H') ||
+        (alphaResult.components.volumeGrowth?.score || 0) >= 45;
+
+      const meetsAllConditions =
+        alphaResult.finalScore > 65 &&
+        volumeGrowth1h &&
+        tokenSmartEntries.length >= 1 &&
+        dumpResult.finalScore < 50;
+
+      if (meetsAllConditions) {
+        await this.generateAlert({
+          tokenAddress: token.address,
+          type: AlertType.ENTRY_SIGNAL,
+          severity: AlertSeverity.HIGH,
+          category: AlertCategory.ALPHA_SPIKE,
+          title: '🔥 Early Entry Signal',
+          message: `Smart money entering + volume accelerating (Alpha: ${alphaResult.finalScore}, Risk: ${dumpResult.finalScore})`,
+          data: {
+            alphaScore: alphaResult.finalScore,
+            dumpScore: dumpResult.finalScore,
+            smartWalletEntries: tokenSmartEntries.length,
+            signalType: 'SMART_MONEY_ENTRY',
+            action: 'BUY',
+          },
+          triggeredBy: 'combined_entry_signal_detector',
+          confidence: Math.min(0.95, alphaResult.confidence + 0.1),
+        });
+      }
+    } catch (err) {
+      console.warn('[SignalEngine] checkCombinedEntrySignal error:', err);
     }
   }
 
@@ -311,8 +398,139 @@ export class SignalEngine {
       // 5. Bot Selling Patterns
       await this.checkBotSelling(token);
 
+      // 6. NEW: Dump Score Rising
+      await this.checkDumpRiskRising(token);
+
+      // 7. NEW: Smart wallet exits
+      await this.checkSmartWalletExits(token);
+
     } catch (error) {
       console.error(`Error detecting exit signals for ${tokenAddress}:`, error);
+    }
+  }
+
+  // NEW: EXIT fires when dump score > 75 and INCREASING
+  private async checkDumpRiskRising(token: any): Promise<void> {
+    try {
+      const dumpResult = await this.dumpScorer.calculateDumpScore(token.address);
+
+      // Check if risk score increased significantly (trend = INCREASING)
+      if (dumpResult.finalScore > 75 && dumpResult.trend === 'INCREASING') {
+        await this.generateAlert({
+          tokenAddress: token.address,
+          type: AlertType.EXIT_SIGNAL,
+          severity: AlertSeverity.CRITICAL,
+          category: AlertCategory.RUG_WARNING,
+          title: '🚨 Dump Risk Critical & Rising',
+          message: dumpResult.humanReadable,
+          data: {
+            dumpScore: dumpResult.finalScore,
+            riskLevel: dumpResult.riskLevel,
+            trend: dumpResult.trend,
+            primaryRisk: dumpResult.primaryRisk,
+            signals: dumpResult.signals,
+            signalType: 'DUMP_RISK_INCREASING',
+            action: 'SELL',
+          },
+          triggeredBy: 'dump_risk_detector',
+          confidence: 0.88,
+        });
+      } else if (dumpResult.finalScore > 55 && dumpResult.trend === 'INCREASING') {
+        await this.generateAlert({
+          tokenAddress: token.address,
+          type: AlertType.RISK_WARNING,
+          severity: AlertSeverity.HIGH,
+          category: AlertCategory.RUG_WARNING,
+          title: '⚠️ Dump Risk Increasing',
+          message: `Risk score rising to ${dumpResult.finalScore}/100 — ${dumpResult.primaryRisk}`,
+          data: {
+            dumpScore: dumpResult.finalScore,
+            trend: dumpResult.trend,
+            primaryRisk: dumpResult.primaryRisk,
+            signalType: 'DUMP_RISK_INCREASING',
+            action: 'WATCH',
+          },
+          triggeredBy: 'dump_risk_detector',
+          confidence: 0.75,
+        });
+      }
+
+      // Active distribution signal
+      const hasActiveDistribution = dumpResult.signals.some(s =>
+        s.type === 'WHALE_DISTRIBUTION' && (s.severity === 'HIGH' || s.severity === 'CRITICAL')
+      );
+      if (hasActiveDistribution) {
+        await this.generateAlert({
+          tokenAddress: token.address,
+          type: AlertType.EXIT_SIGNAL,
+          severity: AlertSeverity.HIGH,
+          category: AlertCategory.WHALE_DUMP,
+          title: '⚠️ Active Distribution Detected',
+          message: 'Multiple top holders reducing positions simultaneously',
+          data: {
+            signals: dumpResult.signals.filter(s => s.type === 'WHALE_DISTRIBUTION'),
+            signalType: 'ACTIVE_DISTRIBUTION',
+            action: 'SELL',
+          },
+          triggeredBy: 'distribution_detector',
+          confidence: 0.8,
+        });
+      }
+
+      // Bundle exit
+      const hasBundleExit = dumpResult.signals.some(s => s.type === 'BUNDLE_SELLING');
+      if (hasBundleExit) {
+        await this.generateAlert({
+          tokenAddress: token.address,
+          type: AlertType.EXIT_SIGNAL,
+          severity: AlertSeverity.HIGH,
+          category: AlertCategory.BOT_SELLING,
+          title: '🚨 Bundle Exit Detected',
+          message: 'Coordinated sell by wallets that bought together',
+          data: {
+            signals: dumpResult.signals.filter(s => s.type === 'BUNDLE_SELLING'),
+            signalType: 'BUNDLE_EXIT_DETECTED',
+            action: 'SELL',
+          },
+          triggeredBy: 'bundle_exit_detector',
+          confidence: 0.85,
+        });
+      }
+    } catch (err) {
+      console.warn('[SignalEngine] checkDumpRiskRising error:', err);
+    }
+  }
+
+  // NEW: EXIT fires when 2+ smart wallets exiting same token
+  private async checkSmartWalletExits(token: any): Promise<void> {
+    try {
+      const exits = await this.smartWalletEngine.detectExits(token.address);
+      if (exits.length >= 2) {
+        const totalExitValue = exits.reduce((sum, e) => sum + (e.activity.amount || 0), 0);
+        await this.generateAlert({
+          tokenAddress: token.address,
+          type: AlertType.EXIT_SIGNAL,
+          severity: exits.length >= 3 ? AlertSeverity.CRITICAL : AlertSeverity.HIGH,
+          category: AlertCategory.WHALE_DUMP,
+          title: `🧠 Smart Money Exiting (${exits.length} wallets)`,
+          message: `${exits.length} smart wallets exiting — $${(totalExitValue / 1000).toFixed(0)}k leaving`,
+          data: {
+            walletCount: exits.length,
+            totalExitValue,
+            wallets: exits.map(e => ({
+              address: e.wallet.address,
+              score: e.wallet.score,
+              amount: e.activity.amount,
+            })),
+            signalType: 'EXIT_LIKELY',
+            action: 'SELL',
+          },
+          triggeredBy: 'smart_wallet_exit_detector',
+          confidence: 0.9,
+        });
+      }
+    } catch (err) {
+      console.warn('[SignalEngine] checkSmartWalletExits error:', err);
     }
   }
 
@@ -595,6 +813,7 @@ export class SignalEngine {
 
   private async checkRugRisk(token: any): Promise<void> {
     const rugResult = await this.rugScorer.calculateRugScore(token.address);
+    const dumpResult = await this.dumpScorer.calculateDumpScore(token.address);
     
     if (rugResult.finalScore >= this.conditions.rugScoreThreshold) {
       const severity = rugResult.finalScore >= 85 ? AlertSeverity.EMERGENCY : AlertSeverity.CRITICAL;
@@ -609,13 +828,34 @@ export class SignalEngine {
         data: {
           rugScore: rugResult.finalScore,
           riskLevel: rugResult.riskLevel,
+          dumpScore: dumpResult.finalScore,
+          dumpRiskLevel: dumpResult.riskLevel,
+          primaryRisk: dumpResult.primaryRisk,
           primaryFlags: Object.values(rugResult.components)
             .flatMap(component => component.flags)
-            .slice(0, 5), // Top 5 risk flags
+            .slice(0, 5),
           summary: rugResult.summary
         },
         triggeredBy: "rug_risk_detector",
         confidence: 0.9
+      });
+    } else if (dumpResult.finalScore >= 65) {
+      // Also alert on high dump risk even if rug score is OK
+      await this.generateAlert({
+        tokenAddress: token.address,
+        type: AlertType.RISK_WARNING,
+        severity: AlertSeverity.HIGH,
+        category: AlertCategory.RUG_WARNING,
+        title: '⚠️ High Dump Risk Detected',
+        message: dumpResult.humanReadable,
+        data: {
+          dumpScore: dumpResult.finalScore,
+          riskLevel: dumpResult.riskLevel,
+          primaryRisk: dumpResult.primaryRisk,
+          signals: dumpResult.signals,
+        },
+        triggeredBy: 'dump_score_risk_detector',
+        confidence: 0.85,
       });
     }
   }
@@ -831,6 +1071,54 @@ export class SignalEngine {
   async getRecentAlerts(limit: number = 20): Promise<any[]> {
     const alerts = await this.redis.lrange('recent_alerts', 0, limit - 1);
     return alerts.map(alert => JSON.parse(alert));
+  }
+
+  // Get alerts formatted as the new Signal interface
+  async getRecentSignals(limit: number = 20): Promise<Signal[]> {
+    const raw = await this.getRecentAlerts(limit);
+    return raw.map(a => this.alertToSignal(a));
+  }
+
+  private alertToSignal(alert: any): Signal {
+    const severityMap: Record<string, Signal['severity']> = {
+      EMERGENCY: 'CRITICAL',
+      CRITICAL: 'CRITICAL',
+      HIGH: 'WARNING',
+      MEDIUM: 'WARNING',
+      LOW: 'INFO',
+    };
+
+    const actionMap: Record<string, Signal['action']> = {
+      ENTRY_SIGNAL: 'BUY',
+      EXIT_SIGNAL: 'SELL',
+      RISK_WARNING: 'WATCH',
+    };
+
+    const emojiMap: Record<string, string> = {
+      CRITICAL: '🚨',
+      WARNING: '⚠️',
+      INFO: '✅',
+    };
+
+    const severity = severityMap[alert.severity] || 'INFO';
+    const action = (alert.data?.action as Signal['action']) || actionMap[alert.type] || 'WATCH';
+    const signalType = (alert.data?.signalType as SignalType) || 'RISK_ALERT';
+
+    return {
+      id: alert.id || `signal_${Date.now()}`,
+      tokenAddress: alert.tokenAddress || '',
+      tokenSymbol: alert.tokenSymbol || '',
+      type: signalType,
+      severity,
+      emoji: emojiMap[severity] || '✅',
+      title: alert.title || 'Signal',
+      description: alert.message || '',
+      action,
+      confidence: alert.confidence || 0.5,
+      expiresAt: alert.expiresAt ? new Date(alert.expiresAt) : new Date(Date.now() + 4 * 60 * 60 * 1000),
+      triggeredAt: alert.createdAt ? new Date(alert.createdAt) : new Date(),
+      metadata: alert.data || {},
+    };
   }
 
   async getTokenAlerts(tokenAddress: string, hours: number = 24): Promise<any[]> {

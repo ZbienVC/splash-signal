@@ -24,6 +24,100 @@ import { ClusterRelationshipView } from './ClusterRelationshipView';
 import { fetchForensicData, ForensicData } from '../../services/forensicService';
 import { cn } from '../../lib/utils';
 
+// ── Signal Banner ────────────────────────────────────────────────────────────
+const ScoreCard: React.FC<{ title: string; score: number; type: 'alpha' | 'risk' }> = ({ title, score, type }) => {
+  const color = type === 'alpha'
+    ? score > 70 ? 'text-emerald-400' : score > 40 ? 'text-amber-400' : 'text-red-400'
+    : score > 70 ? 'text-red-400' : score > 40 ? 'text-amber-400' : 'text-emerald-400';
+  return (
+    <div className="bg-slate-panel/50 border border-slate-border rounded-xl p-4 text-center">
+      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{title}</div>
+      <div className={cn('text-4xl font-display font-bold', color)}>{score}</div>
+      <div className="text-[10px] text-slate-600 mt-1">/100</div>
+    </div>
+  );
+};
+
+type IntelSignal = 'ENTRY' | 'EXIT' | 'HOLD' | 'WATCH' | null;
+
+const deriveSignal = (intel: SolanaTokenIntel): IntelSignal => {
+  const criticalSignals = intel.riskSignals?.filter((s: any) => s.status === 'critical') ?? [];
+  if (criticalSignals.length >= 2) return 'EXIT';
+  if (criticalSignals.length === 1) return 'WATCH';
+  const liqUsd = (intel as any).pair?.liquidity?.usd ?? 0;
+  const holders = (intel as any).holders?.holders?.length ?? 0;
+  if (liqUsd > 20000 && holders > 200) return 'ENTRY';
+  return 'HOLD';
+};
+
+const deriveDumpScore = (intel: SolanaTokenIntel): number => {
+  const signals = intel.riskSignals ?? [];
+  let score = 0;
+  signals.forEach((s: any) => {
+    if (s.status === 'critical') score += 30;
+    else if (s.status === 'high') score += 15;
+    else if (s.status === 'medium') score += 7;
+  });
+  return Math.min(100, score);
+};
+
+const deriveAlphaScore = (intel: SolanaTokenIntel): number => {
+  const liqUsd = (intel as any).pair?.liquidity?.usd ?? 0;
+  const holders = (intel as any).holders?.holders?.length ?? 0;
+  const dumpScore = deriveDumpScore(intel);
+  let score = 0;
+  if (liqUsd > 50000) score += 30;
+  else if (liqUsd > 10000) score += 15;
+  if (holders > 500) score += 25;
+  else if (holders > 100) score += 12;
+  score += Math.max(0, 45 - Math.round(dumpScore * 0.45));
+  return Math.min(100, score);
+};
+
+const SignalBanner: React.FC<{ intel: SolanaTokenIntel }> = ({ intel }) => {
+  const signal = deriveSignal(intel);
+  const alphaScore = deriveAlphaScore(intel);
+  const dumpScore = deriveDumpScore(intel);
+  return (
+    <div className="space-y-4">
+      <div>
+        {signal === 'ENTRY' && (
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 flex items-center gap-3">
+            <span className="text-xl">🔥</span>
+            <span className="text-green-400 font-bold uppercase tracking-wide">EARLY ENTRY SIGNAL</span>
+            <span className="text-gray-400 ml-2 text-sm">Smart money entering + volume accelerating</span>
+          </div>
+        )}
+        {signal === 'EXIT' && (
+          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-center gap-3 animate-pulse">
+            <span className="text-xl">🚨</span>
+            <span className="text-red-400 font-bold uppercase tracking-wide">EXIT SIGNAL</span>
+            <span className="text-gray-400 ml-2 text-sm">High dump risk detected — consider reducing position</span>
+          </div>
+        )}
+        {signal === 'WATCH' && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 flex items-center gap-3">
+            <span className="text-xl">👀</span>
+            <span className="text-amber-400 font-bold uppercase tracking-wide">WATCH SIGNAL</span>
+            <span className="text-gray-400 ml-2 text-sm">Risk indicators rising — monitor closely</span>
+          </div>
+        )}
+        {signal === 'HOLD' && (
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex items-center gap-3">
+            <span className="text-xl">✅</span>
+            <span className="text-blue-400 font-bold uppercase tracking-wide">HOLD SIGNAL</span>
+            <span className="text-gray-400 ml-2 text-sm">Stable conditions — no immediate action needed</span>
+          </div>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <ScoreCard title="Alpha Score" score={alphaScore} type="alpha" />
+        <ScoreCard title="Dump Risk" score={dumpScore} type="risk" />
+      </div>
+    </div>
+  );
+};
+
 // ── Data Sources Indicator ──────────────────────────────────────────────────
 type DataStatus = 'live' | 'estimated' | 'unavailable';
 interface DataSource { label: string; status: DataStatus; note?: string; }
@@ -321,6 +415,9 @@ export const TokenIntelPage: React.FC = () => {
           >
             {/* Top: Token Header */}
             <TokenHeader intel={intel} />
+
+            {/* Signal Panel */}
+            <SignalBanner intel={intel} />
 
             {deepMode && (
               <div className="grid grid-cols-12 gap-6 animate-in fade-in slide-in-from-top-4 duration-500">

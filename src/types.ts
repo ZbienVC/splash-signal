@@ -51,7 +51,15 @@ export type ViewId =
   | 'solana-intel'
   | 'hunter-feed'
   | 'smart-money'
-  | 'settings';
+  | 'alpha-hunter'
+  | 'dump-detector'
+  | 'signal-feed'
+  | 'wallet-ranking'
+  | 'settings'
+  | 'alpha-hunter'      // New Alpha Hunter view
+  | 'dump-detector'     // New Dump/Risk view
+  | 'wallet-ranking'    // New Wallet Ranking view
+  | 'signal-feed';      // New Signal Feed view
 
 export interface NavItem {
   id: ViewId;

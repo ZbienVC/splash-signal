@@ -4,6 +4,9 @@ import { PrismaClient } from '@prisma/client';
 import { Redis } from 'ioredis';
 import { AlphaScorer } from '@/lib/engines/analysis/alphaScorer';
 import { RugScorer } from '@/lib/engines/analysis/rugScorer';
+import { DumpScorer } from '@/lib/engines/analysis/dumpScorer';
+import { SmartWalletEngine } from '@/lib/engines/wallets/smartWalletEngine';
+import { SignalEngine } from '@/lib/engines/signals/signalEngine';
 
 const prisma = new PrismaClient();
 const redis = new Redis(process.env.REDIS_URL!);
@@ -28,8 +31,10 @@ interface TokenAnalysis {
   };
   
   analysis: {
-    alphaScore: any; // Full alpha score result
-    rugScore: any;   // Full rug score result
+    alphaScore: any;
+    rugScore: any;
+    dumpScore: any;    // NEW: Dump/sell-off risk analysis
+    signal: any;       // NEW: Current active signal (BUY/HOLD/SELL)
     recommendation: {
       action: string;
       reasoning: string;
@@ -113,6 +118,13 @@ interface TokenAnalysis {
     }>;
     activeCount: number;
   };
+
+  smartWalletActivity: Array<{   // NEW: Recent smart wallet moves on this token
+    walletAddress: string;
+    action: string;
+    amount: number;
+    timestamp: string;
+  }>;
 
   metadata: {
     lastUpdated: string;
@@ -204,12 +216,19 @@ export async function GET(
     }
 
     // Run analysis in parallel
-    console.log(`🔍 Running Alpha and Rug analysis for ${token.symbol}...`);
-    const [alphaResult, rugResult, recentAlerts] = await Promise.all([
+    console.log(`🔍 Running Alpha, Rug, and Dump analysis for ${token.symbol}...`);
+    const [alphaResult, rugResult, dumpResult, recentAlerts, smartWalletExits] = await Promise.all([
       new AlphaScorer(prisma, redis).calculateAlphaScore(tokenAddress),
       new RugScorer(prisma, redis).calculateRugScore(tokenAddress),
-      getRecentAlerts(tokenAddress)
+      new DumpScorer(prisma, redis).calculateDumpScore(tokenAddress),
+      getRecentAlerts(tokenAddress),
+      new SmartWalletEngine(prisma, redis).detectExits(tokenAddress).catch(() => []),
     ]);
+
+    // Get recent signals in new format
+    const signalEngine = new SignalEngine();
+    const recentSignals = await signalEngine.getRecentSignals(5).catch(() => []);
+    const tokenSignals = recentSignals.filter((s: any) => s.tokenAddress === tokenAddress);
 
     // Build comprehensive analysis
     const analysis: TokenAnalysis = {
@@ -234,7 +253,9 @@ export async function GET(
       analysis: {
         alphaScore: alphaResult,
         rugScore: rugResult,
-        recommendation: generateRecommendation(alphaResult, rugResult)
+        dumpScore: dumpResult,
+        signal: tokenSignals[0] || null,
+        recommendation: generateRecommendation(alphaResult, rugResult, dumpResult)
       },
 
       holders: analyzeHolders(token.wallets),
@@ -246,6 +267,15 @@ export async function GET(
           new Date(alert.timestamp) > new Date(Date.now() - 60 * 60 * 1000)
         ).length
       },
+
+      smartWalletActivity: smartWalletExits.map((e: any) => ({
+        walletAddress: e.wallet.address,
+        action: e.activity.action,
+        amount: e.activity.amount,
+        timestamp: e.activity.timestamp instanceof Date
+          ? e.activity.timestamp.toISOString()
+          : new Date(e.activity.timestamp).toISOString(),
+      })),
 
       metadata: {
         lastUpdated: new Date().toISOString(),
@@ -276,9 +306,10 @@ export async function GET(
   }
 }
 
-function generateRecommendation(alphaResult: any, rugResult: any) {
+function generateRecommendation(alphaResult: any, rugResult: any, dumpResult?: any) {
   const alpha = alphaResult.finalScore;
   const rug = rugResult.finalScore;
+  const dump = dumpResult?.finalScore ?? rug; // fallback to rug if no dump score
   const alphaConf = alphaResult.confidence;
 
   let action = 'MONITOR';
@@ -286,31 +317,31 @@ function generateRecommendation(alphaResult: any, rugResult: any) {
   let confidence = 0.5;
   let riskLevel = 'MEDIUM';
 
-  // High alpha + Low rug = Strong opportunity
-  if (alpha >= 75 && rug <= 25 && alphaConf >= 0.7) {
+  // High alpha + Low dump risk = Strong opportunity
+  if (alpha >= 75 && dump <= 25 && rug <= 30 && alphaConf >= 0.7) {
     action = 'STRONG_BUY';
-    reasoning = `Excellent opportunity: High alpha (${alpha}) with low risk (${rug}) and strong confidence`;
+    reasoning = `Excellent opportunity: High alpha (${alpha}) with low risk (dump:${dump}, rug:${rug}) and strong confidence`;
     confidence = Math.min(0.95, alphaConf + 0.2);
     riskLevel = 'LOW';
   }
-  // Good alpha + Acceptable rug = Buy
-  else if (alpha >= 65 && rug <= 40 && alphaConf >= 0.6) {
+  // Good alpha + Acceptable risk = Buy
+  else if (alpha >= 65 && dump <= 50 && rug <= 40 && alphaConf >= 0.6) {
     action = 'BUY';
-    reasoning = `Good opportunity: Solid alpha (${alpha}) with manageable risk (${rug})`;
+    reasoning = `Good opportunity: Solid alpha (${alpha}) with manageable risk (dump:${dump})`;
     confidence = alphaConf;
-    riskLevel = rug <= 30 ? 'LOW' : 'MEDIUM';
+    riskLevel = dump <= 30 ? 'LOW' : 'MEDIUM';
   }
-  // High alpha but high rug = Cautious
-  else if (alpha >= 65 && rug > 40) {
+  // High alpha but elevated dump risk = Cautious
+  else if (alpha >= 65 && dump > 50) {
     action = 'CAUTIOUS';
-    reasoning = `High potential (${alpha}) but significant risk (${rug}). Monitor closely.`;
+    reasoning = `High potential (${alpha}) but significant dump risk (${dump}). Monitor closely.`;
     confidence = Math.max(0.3, alphaConf - 0.3);
-    riskLevel = rug >= 70 ? 'HIGH' : 'MEDIUM';
+    riskLevel = dump >= 70 ? 'HIGH' : 'MEDIUM';
   }
-  // High rug regardless = Avoid
-  else if (rug >= 80) {
+  // High dump or rug risk = Avoid
+  else if (dump >= 75 || rug >= 80) {
     action = 'AVOID';
-    reasoning = `Very high rug risk (${rug}). Recommend avoiding.`;
+    reasoning = `Very high risk detected (dump:${dump}, rug:${rug}). Recommend avoiding.`;
     confidence = 0.9;
     riskLevel = 'CRITICAL';
   }
@@ -319,7 +350,7 @@ function generateRecommendation(alphaResult: any, rugResult: any) {
     action = 'PASS';
     reasoning = `Low alpha potential (${alpha}). Better opportunities likely available.`;
     confidence = 0.7;
-    riskLevel = rug >= 60 ? 'HIGH' : 'MEDIUM';
+    riskLevel = dump >= 60 ? 'HIGH' : 'MEDIUM';
   }
 
   return {

@@ -40,6 +40,7 @@ model Token {
   transactions Transaction[]
   liquidityPools LiquidityPool[]
   priceHistory PriceHistory[]
+  dumpScores  DumpScore[]
   
   @@map("tokens")
 }
@@ -212,4 +213,63 @@ enum JobStatus {
   COMPLETED
   FAILED
   RETRYING
+}
+
+// DUMP SCORE - Realistic sell-off risk detection
+model DumpScore {
+  id           String   @id @default(cuid())
+  tokenAddress String   @unique
+  score        Float
+  riskLevel    String
+  trend        String
+  primaryRisk  String
+  humanReadable String
+  components   Json
+  signals      Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  token        Token    @relation(fields: [tokenAddress], references: [address])
+
+  @@index([tokenAddress])
+  @@index([score])
+  @@map("dump_scores")
+}
+
+// SMART WALLET - Tracks known high-performing wallets
+model SmartWallet {
+  id             String   @id @default(cuid())
+  address        String   @unique
+  score          Float
+  classification String
+  winRate        Float
+  avgMultiple    Float
+  totalTrades    Int
+  avgEntryMcap   Float
+  rank           Int?
+  isTracked      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  activities     WalletActivity[]
+
+  @@index([score])
+  @@map("smart_wallets")
+}
+
+// WALLET ACTIVITY - Individual trade actions by smart wallets
+model WalletActivity {
+  id            String   @id @default(cuid())
+  walletAddress String
+  tokenAddress  String
+  tokenSymbol   String
+  action        String   // ENTER, ADD, EXIT, PARTIAL_EXIT
+  amountUsd     Float
+  mcapAtAction  Float
+  pnlEstimate   Float?
+  timestamp     DateTime
+  wallet        SmartWallet @relation(fields: [walletAddress], references: [address])
+
+  @@index([walletAddress])
+  @@index([tokenAddress])
+  @@index([timestamp])
+  @@map("wallet_activities")
 }
