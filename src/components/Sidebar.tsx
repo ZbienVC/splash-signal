@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { ViewId } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 interface SidebarProps {
   activeView: ViewId;
@@ -28,6 +29,8 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) => {
+  const { user, logout } = useAuth();
+
   const categories = [
     {
       title: 'Overview',
@@ -38,31 +41,31 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
     {
       title: 'Macro Terminal',
       items: [
-        { id: 'market-overview',   label: 'Global State',       icon: Globe },
-        { id: 'attention-feed',    label: 'Attention Feed',     icon: Bell },
-        { id: 'narrative-monitor', label: 'Narrative Intensity',icon: MessageSquare },
+        { id: 'market-overview',   label: 'Global State',        icon: Globe },
+        { id: 'attention-feed',    label: 'Attention Feed',      icon: Bell },
+        { id: 'narrative-monitor', label: 'Narrative Intensity', icon: MessageSquare },
       ]
     },
     {
       title: 'Alpha Suite',
       items: [
-        { id: 'alpha-hunter',   label: 'Alpha Hunter',   icon: Flame },
-        { id: 'dump-detector',  label: 'Dump Detector',  icon: AlertTriangle },
-        { id: 'signal-feed',    label: 'Signal Feed',    icon: Radio },
-        { id: 'wallet-ranking', label: 'Wallet Rankings',icon: Trophy },
+        { id: 'alpha-hunter',   label: 'Alpha Hunter',    icon: Flame },
+        { id: 'dump-detector',  label: 'Dump Detector',   icon: AlertTriangle },
+        { id: 'signal-feed',    label: 'Signal Feed',     icon: Radio },
+        { id: 'wallet-ranking', label: 'Wallet Rankings', icon: Trophy },
       ]
     },
     {
       title: 'Institutional',
       items: [
-        { id: 'investigation-gateway', label: 'Investigation',  icon: Search },
-        { id: 'archive',               label: 'Analyst Archive',icon: History },
-        { id: 'token-analysis',        label: 'Reports',        icon: FileText },
-        { id: 'solana-intel',          label: 'Solana Intel',   icon: Zap },
-        { id: 'hunter-feed',           label: 'Hunter Scanner', icon: Radar },
-        { id: 'smart-money',           label: 'Smart Money',    icon: Trophy },
-        { id: 'wallet-behavior',       label: 'Wallet Behavior',icon: Wallet },
-        { id: 'liquidity-intel',       label: 'Liquidity Intel',icon: Droplets },
+        { id: 'investigation-gateway', label: 'Investigation',   icon: Search },
+        { id: 'archive',               label: 'Analyst Archive', icon: History },
+        { id: 'token-analysis',        label: 'Reports',         icon: FileText },
+        { id: 'solana-intel',          label: 'Solana Intel',    icon: Zap },
+        { id: 'hunter-feed',           label: 'Hunter Scanner',  icon: Radar },
+        { id: 'smart-money',           label: 'Smart Money',     icon: Trophy },
+        { id: 'wallet-behavior',       label: 'Wallet Behavior', icon: Wallet },
+        { id: 'liquidity-intel',       label: 'Liquidity Intel', icon: Droplets },
       ]
     },
     {
@@ -73,26 +76,31 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
     }
   ];
 
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
+  const initials = displayName.charAt(0).toUpperCase();
+
   return (
-    <div className="w-[220px] h-screen bg-white border-r border-slate-200 flex flex-col shrink-0">
+    <aside className="w-56 h-screen bg-white border-r border-slate-200 flex flex-col fixed left-0 top-0 z-30">
       {/* Logo */}
-      <div className="px-4 py-5">
-        <div className="flex items-center gap-2.5">
-          <Waves size={18} className="text-blue-600 shrink-0" />
-          <span>
-            <span className="font-semibold text-sm text-slate-900">Splash</span>
-            <span className="text-sm text-slate-400">Signal</span>
-          </span>
+      <div className="px-4 py-4 border-b border-slate-100">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shrink-0">
+            <Waves className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <span className="font-bold text-slate-900 text-sm">Splash</span>
+            <span className="font-bold text-blue-600 text-sm">Signal</span>
+          </div>
         </div>
       </div>
 
       {/* Nav */}
-      <div className="flex-1 overflow-y-auto py-2 scrollbar-hide">
-        {categories.map((cat, idx) => (
-          <div key={idx} className="mb-4">
-            <div className="px-3 mb-1 text-[10px] font-medium text-slate-400 uppercase tracking-widest">
+      <nav className="flex-1 overflow-y-auto px-3 py-3 scrollbar-hide">
+        {categories.map((cat) => (
+          <div key={cat.title} className="mb-4">
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-2 mb-1">
               {cat.title}
-            </div>
+            </p>
             {cat.items.map((item) => {
               const isActive = activeView === item.id;
               return (
@@ -100,36 +108,42 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
                   key={item.id}
                   onClick={() => onViewChange(item.id as ViewId)}
                   className={cn(
-                    'w-full px-3 py-1.5 flex items-center gap-2.5 text-sm rounded-md transition-colors focus:outline-none',
+                    'w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-all focus:outline-none',
                     isActive
-                      ? 'bg-blue-50 text-blue-700'
+                      ? 'bg-blue-50 text-blue-700 font-medium'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   )}
                 >
                   <item.icon
-                    size={14}
-                    className={isActive ? 'text-blue-600' : 'text-slate-400'}
+                    className={cn('w-4 h-4 flex-shrink-0', isActive ? 'text-blue-600' : 'text-slate-400')}
                   />
-                  <span>{item.label}</span>
+                  <span className="truncate">{item.label}</span>
                 </button>
               );
             })}
           </div>
         ))}
-      </div>
+      </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs text-slate-600 font-medium">
-            Z
+      <div className="px-3 py-3 border-t border-slate-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+              <span className="text-blue-700 text-xs font-bold">{initials}</span>
+            </div>
+            <span className="text-xs text-slate-600 truncate max-w-[80px]">{displayName}</span>
           </div>
-          <span className="text-xs text-slate-600">v2.1</span>
+          <button
+            onClick={() => logout()}
+            className="text-slate-400 hover:text-slate-600 transition-colors"
+            title="Log out"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+          </button>
         </div>
-        <button className="text-slate-400 hover:text-slate-600 transition-colors">
-          <LogOut size={13} />
-        </button>
+        <p className="text-[10px] text-slate-400 mt-1 px-0.5">v2.1</p>
       </div>
-    </div>
+    </aside>
   );
 };

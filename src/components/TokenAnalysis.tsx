@@ -2,20 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { 
   ShieldCheck, 
   AlertTriangle, 
-  Users, 
-  History, 
   ArrowLeft,
   PieChart as PieChartIcon,
-  Activity,
-  Lock,
   ExternalLink,
   Loader2,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  BarChart3,
+  FileText,
   Sparkles,
-  Link as LinkIcon
+  Zap
 } from 'lucide-react';
 import { 
   PieChart, 
@@ -54,6 +47,7 @@ import { ClusterIntelligenceSystem } from './ClusterIntelligenceSystem';
 
 export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = ({ target, onBack }) => {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [analysisId, setAnalysisId] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<TokenMetadata | null>(null);
   const [risk, setRisk] = useState<RiskAssessment | null>(null);
@@ -71,8 +65,7 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
       setLoading(true);
       try {
         const init = await initAnalysis(target);
-        setAnalysisId(init.analysisId);
-        
+        setAnalysisId(init.analysisId);        
         // Poll for completion
         let completed = false;
         let attempts = 0;
@@ -117,12 +110,17 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
         }
       } catch (e) {
         console.error('Analysis failed', e);
+        setError(e instanceof Error ? e.message : 'Analysis failed');
       } finally {
         setLoading(false);
       }
     };
 
-    if (target) startAnalysis();
+    if (target) {
+      startAnalysis();
+    } else {
+      setLoading(false);
+    }
   }, [target]);
 
   if (loading) {
@@ -131,6 +129,25 @@ export const TokenAnalysis: React.FC<{ target?: string; onBack: () => void }> = 
         <Loader2 className="w-12 h-12 text-primary animate-spin" />
         <div className="text-xl font-display font-bold text-slate-900 animate-pulse">CONDUCTING MULTI-LAYER INTEGRITY AUDIT...</div>
         <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">Scanning Smart Contracts & Liquidity Pools</p>
+      </div>
+    );
+  }
+
+  if (error || !target) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center p-8">
+        <button onClick={onBack} className="self-start p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 hover:text-slate-900 mb-8">
+          <ArrowLeft size={20} />
+        </button>
+        <div className="flex flex-col items-center justify-center h-64 text-center">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mb-3">
+            <FileText className="w-6 h-6 text-slate-400" />
+          </div>
+          <p className="text-slate-600 font-medium">Reports unavailable</p>
+          <p className="text-slate-400 text-sm mt-1">
+            {error ? error : 'Connect your data sources to view analysis reports'}
+          </p>
+        </div>
       </div>
     );
   }

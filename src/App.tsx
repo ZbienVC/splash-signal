@@ -125,7 +125,7 @@ const AppContent: React.FC = () => {
       <NarrativeSync />
       <Sidebar activeView={activeView} onViewChange={setActiveView} />
       
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative ml-56">
         <Header 
           activeView={activeView} 
           onSearch={(query) => {

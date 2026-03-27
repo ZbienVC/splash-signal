@@ -9,52 +9,76 @@ const Landing: React.FC<LandingProps> = ({ onLaunch }) => {
   return (
     <div className="min-h-screen bg-white">
       {/* NAV */}
-      <nav className="border-b border-slate-200 px-6 py-4 flex items-center justify-between bg-white/90 backdrop-blur-sm sticky top-0 z-10">
+      <nav className="border-b border-slate-100 px-6 py-3.5 flex items-center justify-between bg-white/95 backdrop-blur-sm sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-2">
-          <Waves className="w-5 h-5 text-blue-600" />
-          <span className="font-semibold text-slate-900">Splash Signal</span>
+          <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
+            <Waves className="w-4 h-4 text-white" />
+          </div>
+          <span className="font-bold text-slate-900">Splash<span className="text-blue-600">Signal</span></span>
           <span className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-medium ml-1">Beta</span>
         </div>
         <button
           onClick={onLaunch}
-          className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors shadow-sm shadow-blue-500/20"
         >
           Launch App →
         </button>
       </nav>
 
       {/* HERO */}
-      <section className="px-6 py-24 text-center max-w-4xl mx-auto">
-        {/* Eyebrow */}
-        <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-live" />
-          Real-time crypto intelligence
+      <section className="relative px-6 py-24 text-center max-w-4xl mx-auto overflow-hidden">
+        {/* Background gradient blob */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-to-b from-blue-100/60 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10">
+          {/* Eyebrow */}
+          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-live" />
+            Real-time crypto intelligence
+          </div>
+
+          {/* Headline */}
+          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
+            Find alpha early.<br />
+            <span className="text-blue-600">Avoid the dump.</span>
+          </h1>
+
+          {/* Sub */}
+          <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Splash Signal detects early-stage momentum, tracks smart wallet behavior,
+            and warns you before coordinated sell-offs happen.
+          </p>
+
+          {/* CTA */}
+          <button
+            onClick={onLaunch}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/20"
+          >
+            Launch App — Free →
+          </button>
+          <p className="text-slate-400 text-sm mt-3">No account required to explore</p>
         </div>
-
-        {/* Headline */}
-        <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
-          Find alpha early.<br />
-          <span className="text-blue-600">Avoid the dump.</span>
-        </h1>
-
-        {/* Sub */}
-        <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Splash Signal detects early-stage momentum, tracks smart wallet behavior,
-          and warns you before coordinated sell-offs happen.
-        </p>
-
-        {/* CTA */}
-        <button
-          onClick={onLaunch}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/20"
-        >
-          Launch App — Free →
-        </button>
-        <p className="text-slate-400 text-sm mt-3">No account required to explore</p>
       </section>
 
+      {/* STATS BAR */}
+      <div className="border-y border-slate-200 bg-slate-50/50 py-4">
+        <div className="max-w-4xl mx-auto px-6 flex items-center justify-center gap-12 flex-wrap">
+          {[
+            { value: 'Free', label: 'No API key needed' },
+            { value: 'Real-time', label: 'DexScreener data' },
+            { value: 'Solana', label: 'Focused chain' },
+            { value: 'Open', label: 'No wallet required' },
+          ].map(stat => (
+            <div key={stat.label} className="text-center">
+              <p className="font-bold text-slate-900 text-sm">{stat.value}</p>
+              <p className="text-slate-500 text-xs">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* 3 FEATURES */}
-      <section className="px-6 py-16 bg-slate-50 border-y border-slate-200">
+      <section className="px-6 py-16 bg-slate-50 border-b border-slate-200">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             {
@@ -76,7 +100,9 @@ const Landing: React.FC<LandingProps> = ({ onLaunch }) => {
               description: 'Track high-performing wallets ranked by win rate and entry timing. Get alerted when top wallets enter or exit positions.',
             },
           ].map((f, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div key={i} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm relative overflow-hidden card-hover">
+              {/* Blue gradient accent at top */}
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400" />
               <div className={`w-12 h-12 ${f.iconBg} rounded-xl flex items-center justify-center mb-4`}>
                 {f.icon}
               </div>
@@ -114,15 +140,25 @@ const Landing: React.FC<LandingProps> = ({ onLaunch }) => {
       </section>
 
       {/* BOTTOM CTA */}
-      <section className="px-6 py-20 bg-gradient-to-br from-blue-600 to-blue-800 text-center">
-        <h2 className="text-3xl font-bold text-white mb-4">Start finding alpha now</h2>
-        <p className="text-blue-200 mb-8 max-w-lg mx-auto">Free to use. No wallet connection required. Real-time Solana data.</p>
-        <button
-          onClick={onLaunch}
-          className="bg-white text-blue-700 font-semibold px-8 py-4 rounded-xl text-lg hover:bg-blue-50 transition-colors shadow-lg"
-        >
-          Launch Splash Signal →
-        </button>
+      <section
+        className="relative px-6 py-20 text-center overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #1e40af 100%)' }}
+      >
+        {/* Subtle grid overlay */}
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '32px 32px' }}
+        />
+        <div className="relative z-10">
+          <h2 className="text-3xl font-bold text-white mb-4">Start finding alpha now</h2>
+          <p className="text-blue-200 mb-8 max-w-lg mx-auto">Free to use. Real-time Solana data via DexScreener.</p>
+          <button
+            onClick={onLaunch}
+            className="bg-white text-blue-700 font-bold px-8 py-4 rounded-xl text-lg hover:bg-blue-50 transition-colors shadow-xl"
+          >
+            Launch Splash Signal →
+          </button>
+        </div>
       </section>
 
       {/* FOOTER */}
