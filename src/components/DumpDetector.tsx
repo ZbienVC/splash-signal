@@ -255,15 +255,22 @@ export const DumpDetector: React.FC<DumpDetectorProps> = ({ onSelectToken: _onSe
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
-      className="p-6 space-y-4"
+      className="p-6 flex flex-col gap-4 min-h-[calc(100vh-52px)]"
     >
-      {/* Header */}
-      <div className="flex items-center gap-2">
-        <AlertTriangle size={16} className="text-slate-500" />
-        <h1 className="text-base font-semibold text-slate-900">Dump Detector</h1>
+      {/* Blue gradient header card */}
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="px-6 py-4 bg-gradient-to-r from-white via-blue-50/20 to-white flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-sm shadow-blue-500/30">
+            <AlertTriangle size={16} className="text-white" />
+          </div>
+          <div>
+            <h1 className="text-base font-bold text-slate-900">Dump Detector</h1>
+            <p className="text-xs text-slate-500 mt-0.5">Analyze token risk and monitor live dump signals</p>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
         {/* LEFT: Search + Analysis */}
         <div className="space-y-4">
           <form onSubmit={e => { void analyzeToken(e); }} className="flex gap-2">

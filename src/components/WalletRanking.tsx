@@ -67,32 +67,39 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
-      className="p-6 space-y-4"
+      className="p-6 flex flex-col gap-4 min-h-[calc(100vh-52px)]"
     >
-      {/* Header */}
-      <div className="flex items-center gap-2">
-        <Trophy size={16} className="text-slate-500" />
-        <h1 className="text-base font-semibold text-slate-900">Wallet Rankings</h1>
-      </div>
+      {/* Main card — fills remaining height */}
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden flex-1 flex flex-col">
+        {/* Blue gradient header */}
+        <div className="px-6 py-4 bg-gradient-to-r from-white via-blue-50/20 to-white border-b border-slate-200 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-sm shadow-blue-500/30">
+              <Trophy size={16} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-base font-bold text-slate-900">Wallet Rankings</h1>
+              <p className="text-xs text-slate-500 mt-0.5">High-performing wallets tracked by win rate and multiple</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+            <div>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wide">Tracked</span>
+              <span className="text-sm font-bold text-slate-900 ml-2 num">{totalWallets.toLocaleString()}</span>
+            </div>
+            <div>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wide">Avg Win Rate</span>
+              <span className="text-sm font-bold text-green-600 ml-2 num">{avgWinRate}%</span>
+            </div>
+            <div>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wide">Best Avg Multiple</span>
+              <span className="text-sm font-bold text-amber-600 ml-2 num">{MOCK_WALLETS[0].avgMultiple}x</span>
+            </div>
+          </div>
+        </div>
 
-      {/* Stats */}
-      <div className="flex items-center gap-6">
-        <div>
-          <span className="text-[10px] text-slate-400 uppercase tracking-wide">Tracked</span>
-          <span className="text-sm font-bold text-slate-900 ml-2 num">{totalWallets.toLocaleString()}</span>
-        </div>
-        <div>
-          <span className="text-[10px] text-slate-400 uppercase tracking-wide">Avg Win Rate</span>
-          <span className="text-sm font-bold text-green-600 ml-2 num">{avgWinRate}%</span>
-        </div>
-        <div>
-          <span className="text-[10px] text-slate-400 uppercase tracking-wide">Best Avg Multiple</span>
-          <span className="text-sm font-bold text-amber-600 ml-2 num">{MOCK_WALLETS[0].avgMultiple}x</span>
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        {/* Table — flex-1 fills remaining */}
+        <div className="flex-1 overflow-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
@@ -188,6 +195,7 @@ export const WalletRanking: React.FC<WalletRankingProps> = ({ onSelectWallet }) 
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </motion.div>
   );

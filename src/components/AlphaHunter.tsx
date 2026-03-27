@@ -241,88 +241,98 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
-      className="p-6 space-y-4"
+      className="p-6 flex flex-col gap-4 min-h-[calc(100vh-52px)]"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Flame size={16} className="text-slate-500" />
-          <h1 className="text-base font-semibold text-slate-900">Alpha Hunter</h1>
-          <LiveIndicator isLive={isLiveData} lastUpdated={lastUpdated} />
-        </div>
-        <button
-          onClick={() => { void fetchTokens(); }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors"
-        >
-          <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-          Refresh
-        </button>
-      </div>
-
-      {/* Filter Bar */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <select
-          value={timeFilter}
-          onChange={e => setTimeFilter(e.target.value as typeof timeFilter)}
-          className="h-7 px-2 text-xs bg-slate-100 border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
-        >
-          {(['5m', '1h', '6h', '24h'] as const).map(t => (
-            <option key={t} value={t}>Time: {t}</option>
-          ))}
-        </select>
-
-        <select
-          value={minAlpha}
-          onChange={e => setMinAlpha(Number(e.target.value))}
-          className="h-7 px-2 text-xs bg-slate-100 border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
-        >
-          {[0, 20, 40, 60, 80].map(v => (
-            <option key={v} value={v}>Min Alpha: {v}+</option>
-          ))}
-        </select>
-
-        <select
-          value={chainFilter}
-          onChange={e => setChainFilter(e.target.value as typeof chainFilter)}
-          className="h-7 px-2 text-xs bg-slate-100 border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
-        >
-          {(['ALL', 'SOL', 'ETH', 'BSC'] as const).map(c => (
-            <option key={c} value={c}>Chain: {c}</option>
-          ))}
-        </select>
-
-        <select
-          value={sortMode}
-          onChange={e => setSortMode(e.target.value as SortMode)}
-          className="h-7 px-2 text-xs bg-slate-100 border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
-        >
-          <option value="alpha">Sort: Alpha</option>
-          <option value="risk">Sort: Risk</option>
-          <option value="volume">Sort: Volume</option>
-        </select>
-
-        <span className="ml-auto text-xs text-slate-400">Showing {filtered.length} tokens</span>
-      </div>
-
-      {/* Table */}
-      {loading ? (
-        <div className="space-y-2">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-12 bg-slate-100 rounded animate-skeleton" />
-          ))}
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="border border-dashed border-slate-300 rounded-lg p-12 text-center">
-          <p className="text-sm text-slate-500">No tokens match your filters</p>
+      {/* Main card — fills remaining height */}
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden flex-1 flex flex-col">
+        {/* Blue gradient header */}
+        <div className="px-6 py-4 bg-gradient-to-r from-white via-blue-50/20 to-white border-b border-slate-200 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-sm shadow-blue-500/30">
+              <Flame size={16} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-base font-bold text-slate-900">Alpha Hunter</h1>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <LiveIndicator isLive={isLiveData} lastUpdated={lastUpdated} />
+              </div>
+            </div>
+          </div>
           <button
-            onClick={() => { setMinAlpha(0); setChainFilter('ALL'); }}
-            className="mt-3 px-3 py-1.5 text-xs text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+            onClick={() => { void fetchTokens(); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors"
           >
-            Reset filters
+            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+            Refresh
           </button>
         </div>
-      ) : (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+
+        {/* Filter Bar */}
+        <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3 flex-wrap">
+          <select
+            value={timeFilter}
+            onChange={e => setTimeFilter(e.target.value as typeof timeFilter)}
+            className="h-7 px-2 text-xs bg-white border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
+          >
+            {(['5m', '1h', '6h', '24h'] as const).map(t => (
+              <option key={t} value={t}>Time: {t}</option>
+            ))}
+          </select>
+
+          <select
+            value={minAlpha}
+            onChange={e => setMinAlpha(Number(e.target.value))}
+            className="h-7 px-2 text-xs bg-white border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
+          >
+            {[0, 20, 40, 60, 80].map(v => (
+              <option key={v} value={v}>Min Alpha: {v}+</option>
+            ))}
+          </select>
+
+          <select
+            value={chainFilter}
+            onChange={e => setChainFilter(e.target.value as typeof chainFilter)}
+            className="h-7 px-2 text-xs bg-white border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
+          >
+            {(['ALL', 'SOL', 'ETH', 'BSC'] as const).map(c => (
+              <option key={c} value={c}>Chain: {c}</option>
+            ))}
+          </select>
+
+          <select
+            value={sortMode}
+            onChange={e => setSortMode(e.target.value as SortMode)}
+            className="h-7 px-2 text-xs bg-white border border-slate-200 rounded text-slate-600 focus:outline-none focus:border-blue-400"
+          >
+            <option value="alpha">Sort: Alpha</option>
+            <option value="risk">Sort: Risk</option>
+            <option value="volume">Sort: Volume</option>
+          </select>
+
+          <span className="ml-auto text-xs text-slate-400">Showing {filtered.length} tokens</span>
+        </div>
+
+        {/* Table area — flex-1 fills remaining */}
+        {loading ? (
+          <div className="p-4 space-y-2 flex-1">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-12 bg-slate-100 rounded animate-skeleton" />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center p-12">
+            <div className="border border-dashed border-slate-300 rounded-lg p-12 text-center w-full max-w-sm">
+              <p className="text-sm text-slate-500">No tokens match your filters</p>
+              <button
+                onClick={() => { setMinAlpha(0); setChainFilter('ALL'); }}
+                className="mt-3 px-3 py-1.5 text-xs text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                Reset filters
+              </button>
+            </div>
+          </div>
+        ) : (
+        <div className="flex-1 overflow-auto">
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
@@ -457,7 +467,8 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
             ))}
           </div>
         </div>
-      )}
+        )}
+      </div>
     </motion.div>
   );
 };

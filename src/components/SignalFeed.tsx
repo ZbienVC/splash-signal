@@ -82,80 +82,84 @@ export const SignalFeed: React.FC<SignalFeedProps> = ({ onSelectToken }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
-      className="p-6 space-y-4"
+      className="p-6 flex flex-col gap-4 min-h-[calc(100vh-52px)]"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Radio size={16} className="text-slate-500" />
-          <h1 className="text-base font-semibold text-slate-900">Signal Feed</h1>
-          <div className="flex items-center gap-1.5 ml-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-live" />
-            <span className="text-xs text-slate-500">Live</span>
-          </div>
-        </div>
-        <span className="text-xs text-slate-400">{filtered.length} signals</span>
-      </div>
-
-      {/* Filter tabs */}
-      <div className="flex items-center gap-1 border-b border-slate-200">
-        {(['ALL', 'ENTRY', 'EXIT', 'WATCH'] as FilterType[]).map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveFilter(tab)}
-            className={cn(
-              'px-3 pb-2 text-xs font-medium transition-colors',
-              activeFilter === tab
-                ? 'text-slate-900 border-b-2 border-blue-500 -mb-px'
-                : 'text-slate-500 hover:text-slate-700'
-            )}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {/* Signal rows */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        {filtered.map((signal, idx) => {
-          const key = `${signal.token}-${signal.timeAgo}`;
-          const confPct = Math.round(signal.confidence * 100);
-
-          return (
-            <div
-              key={key}
-              className={cn(
-                'flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group cursor-pointer',
-                idx < filtered.length - 1 ? 'border-b border-slate-100' : ''
-              )}
-              onClick={() => signal.address && onSelectToken?.('solana-intel', signal.address)}
-              title={signal.reasons?.join(' • ')}
-            >
-              {/* Dot */}
-              <span className={cn('w-2 h-2 rounded-full shrink-0', DOT_COLOR[signal.action])} />
-
-              {/* Signal type */}
-              <span className={cn('text-[10px] font-mono font-medium w-10 shrink-0', ACTION_COLOR[signal.action])}>
-                {signal.action}
-              </span>
-
-              {/* Token */}
-              <span className="text-sm font-medium text-slate-900 w-16 shrink-0">{signal.token}</span>
-
-              {/* Description */}
-              <span className="text-sm text-slate-500 flex-1 truncate">{signal.description}</span>
-
-              {/* Confidence */}
-              <span className="text-xs text-slate-400 shrink-0">{confPct}% conf</span>
-
-              {/* Time */}
-              <span className="text-xs text-slate-400 w-14 text-right shrink-0">{signal.timeAgo}</span>
-
-              {/* Arrow */}
-              <ChevronRight size={13} className="text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+      {/* Main card */}
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden flex-1 flex flex-col">
+        {/* Blue gradient header */}
+        <div className="px-6 py-4 bg-gradient-to-r from-white via-blue-50/20 to-white border-b border-slate-200 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-sm shadow-blue-500/30">
+              <Radio size={16} className="text-white" />
             </div>
-          );
-        })}
+            <div>
+              <h1 className="text-base font-bold text-slate-900">Signal Feed</h1>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-live" />
+                <span className="text-xs text-slate-500">Live</span>
+              </div>
+            </div>
+          </div>
+          <span className="text-xs text-slate-400">{filtered.length} signals</span>
+        </div>
+
+        {/* Filter tabs */}
+        <div className="flex items-center gap-1 border-b border-slate-200 px-4 bg-slate-50/50">
+          {(['ALL', 'ENTRY', 'EXIT', 'WATCH'] as FilterType[]).map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveFilter(tab)}
+              className={cn(
+                'px-3 py-2.5 text-xs font-medium transition-colors',
+                activeFilter === tab
+                  ? 'text-slate-900 border-b-2 border-blue-500 -mb-px'
+                  : 'text-slate-500 hover:text-slate-700'
+              )}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Signal rows — flex-1 fills remaining */}
+        <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+          {filtered.map((signal, idx) => {
+            const key = `${signal.token}-${signal.timeAgo}`;
+            const confPct = Math.round(signal.confidence * 100);
+
+            return (
+              <div
+                key={key}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group cursor-pointer"
+                onClick={() => signal.address && onSelectToken?.('solana-intel', signal.address)}
+                title={signal.reasons?.join(' • ')}
+              >
+                {/* Dot */}
+                <span className={cn('w-2 h-2 rounded-full shrink-0', DOT_COLOR[signal.action])} />
+
+                {/* Signal type */}
+                <span className={cn('text-[10px] font-mono font-medium w-10 shrink-0', ACTION_COLOR[signal.action])}>
+                  {signal.action}
+                </span>
+
+                {/* Token */}
+                <span className="text-sm font-medium text-slate-900 w-16 shrink-0">{signal.token}</span>
+
+                {/* Description */}
+                <span className="text-sm text-slate-500 flex-1 truncate">{signal.description}</span>
+
+                {/* Confidence */}
+                <span className="text-xs text-slate-400 shrink-0">{confPct}% conf</span>
+
+                {/* Time */}
+                <span className="text-xs text-slate-400 w-14 text-right shrink-0">{signal.timeAgo}</span>
+
+                {/* Arrow */}
+                <ChevronRight size={13} className="text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </motion.div>
   );

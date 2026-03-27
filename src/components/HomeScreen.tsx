@@ -83,7 +83,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate, onSelectToke
     >
       {/* Now Panel */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-white via-blue-50/20 to-white">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-live" />
             <span className="text-sm font-medium text-slate-900">Now</span>

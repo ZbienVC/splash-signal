@@ -30,6 +30,14 @@ const Landing: React.FC<LandingProps> = ({ onLaunch }) => {
         {/* Background gradient blob */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-to-b from-blue-100/60 to-transparent rounded-full blur-3xl pointer-events-none" />
 
+        {/* Animated gradient orbs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-100px] right-[-100px] w-[400px] h-[400px] rounded-full"
+            style={{background: 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)'}} />
+          <div className="absolute bottom-[-50px] left-[-50px] w-[300px] h-[300px] rounded-full"
+            style={{background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)'}} />
+        </div>
+
         <div className="relative z-10">
           {/* Eyebrow */}
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
@@ -40,7 +48,7 @@ const Landing: React.FC<LandingProps> = ({ onLaunch }) => {
           {/* Headline */}
           <h1 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
             Find alpha early.<br />
-            <span className="text-blue-600">Avoid the dump.</span>
+            <span className="text-gradient-blue">Avoid the dump.</span>
           </h1>
 
           {/* Sub */}
@@ -113,6 +121,28 @@ const Landing: React.FC<LandingProps> = ({ onLaunch }) => {
         </div>
       </section>
 
+      {/* HOW IT WORKS */}
+      <section className="px-6 py-16 max-w-4xl mx-auto">
+        <h2 className="text-2xl font-bold text-slate-900 text-center mb-10">How it works</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { step: '01', title: 'Scan new tokens', desc: 'DexScreener feeds new Solana pairs in real-time. We score each one instantly.' },
+            { step: '02', title: 'Score & rank', desc: 'Alpha and dump risk scores computed from volume, holders, wallet behavior, and on-chain data.' },
+            { step: '03', title: 'Get signals', desc: 'Entry, exit, and watch signals generated when conditions align. Act before the crowd.' },
+          ].map(item => (
+            <div key={item.step} className="flex gap-4">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">
+                {item.step}
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 mb-1">{item.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* SIGNAL EXAMPLE */}
       <section className="px-6 py-16 max-w-5xl mx-auto">
         <div className="text-center mb-10">
@@ -127,7 +157,8 @@ const Landing: React.FC<LandingProps> = ({ onLaunch }) => {
             { dot: 'bg-red-500',   type: 'EXIT',  typeColor: 'text-red-600',   token: '$MOON',  desc: 'Dev sold $12K, top 3 holders reducing positions', conf: '91%', time: '5m ago' },
             { dot: 'bg-amber-500', type: 'WATCH', typeColor: 'text-amber-600', token: '$WIF2',  desc: 'Smart wallet entered at $89K MC — monitor for follow-through', conf: '72%', time: '12m ago' },
           ].map((s, i) => (
-            <div key={i} className="flex items-center gap-4 bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm">
+            <div key={i} className="flex items-center gap-4 bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm card-hover cursor-default border-l-4"
+              style={{borderLeftColor: s.dot === 'bg-green-500' ? '#16a34a' : s.dot === 'bg-red-500' ? '#dc2626' : '#d97706'}}>
               <div className={`w-2 h-2 rounded-full ${s.dot} flex-shrink-0`} />
               <span className={`font-mono font-medium w-12 flex-shrink-0 ${s.typeColor}`}>{s.type}</span>
               <span className="font-medium text-slate-900 w-16 flex-shrink-0">{s.token}</span>
