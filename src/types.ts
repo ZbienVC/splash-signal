@@ -78,4 +78,8 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'solana-intel', label: 'Solana Intel', icon: 'Zap', category: 'tools' },
   { id: 'hunter-feed', label: 'Hunter Scanner', icon: 'Radar', category: 'tools' },
   { id: 'smart-money', label: 'Smart Money', icon: 'Trophy', category: 'tools' },
+  { id: 'alpha-hunter', label: 'Alpha Hunter', icon: 'Bolt', category: 'tools' },
+  { id: 'dump-detector', label: 'Dump Detector', icon: 'Warning', category: 'tools' },
+  { id: 'wallet-ranking', label: 'Wallet Rankings', icon: 'EmojiEvents', category: 'tools' },
+  { id: 'signal-feed', label: 'Signal Feed', icon: 'Campaign', category: 'tools' },
 ];
