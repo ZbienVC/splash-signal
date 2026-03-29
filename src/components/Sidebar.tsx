@@ -3,6 +3,7 @@ import {
   Home,
   Globe,
   Bell,
+  BellRing,
   Search,
   History,
   FileText,
@@ -71,6 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) =>
     {
       title: 'System',
       items: [
+        { id: 'alerts',   label: 'Alerts',   icon: BellRing },
         { id: 'settings', label: 'Settings', icon: Settings },
       ]
     }

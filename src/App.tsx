@@ -27,6 +27,9 @@ import { SignalFeed } from './components/SignalFeed';
 import { WalletRanking } from './components/WalletRanking';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { WatchlistProvider } from './contexts/WatchlistContext';
+import { AlertProvider } from './contexts/AlertContext';
+import { AlertChecker } from './components/AlertChecker';
+import { AlertsPanel } from './components/AlertsPanel';
 import { ViewId } from './types';
 import { motion, AnimatePresence } from 'motion/react';
 import { NarrativeSync } from './components/NarrativeSync';
@@ -56,6 +59,8 @@ const AppContent: React.FC = () => {
 
   const renderView = () => {
     switch (activeView) {
+      case 'alerts':
+        return <AlertsPanel />;
       case 'settings':
         return <Settings />;
       case 'solana-intel':
@@ -123,6 +128,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-[#F8FAFC] overflow-hidden selection:bg-blue-100 selection:text-blue-900">
+      <AlertChecker />
       <NarrativeSync />
       <Sidebar activeView={activeView} onViewChange={setActiveView} />
       
@@ -210,8 +216,10 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <WatchlistProvider>
-        <LinkAuditUtility />
-        <AppContent />
+        <AlertProvider>
+          <LinkAuditUtility />
+          <AppContent />
+        </AlertProvider>
       </WatchlistProvider>
     </AuthProvider>
   );

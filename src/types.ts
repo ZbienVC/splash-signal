@@ -59,7 +59,8 @@ export type ViewId =
   | 'alpha-hunter'      // New Alpha Hunter view
   | 'dump-detector'     // New Dump/Risk view
   | 'wallet-ranking'    // New Wallet Ranking view
-  | 'signal-feed';      // New Signal Feed view
+  | 'signal-feed'       // New Signal Feed view
+  | 'alerts';           // Alert Thresholds
 
 export interface NavItem {
   id: ViewId;
