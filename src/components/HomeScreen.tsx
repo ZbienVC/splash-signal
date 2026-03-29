@@ -8,6 +8,7 @@ import {
 import { ViewId } from '../types';
 import { cn } from '../lib/utils';
 import { DexTrendingFeed } from './DexTrendingFeed';
+import { WatchlistPanel } from './WatchlistPanel';
 import { motion } from 'motion/react';
 
 type SuggestedAction = 'ENTRY' | 'EXIT' | 'WATCH';
@@ -138,6 +139,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate, onSelectToke
           </button>
         ))}
       </div>
+
+      {/* Watchlist */}
+      <WatchlistPanel onSelectToken={onSelectToken} />
 
       {/* Trending */}
       <DexTrendingFeed onNavigate={onNavigate} />

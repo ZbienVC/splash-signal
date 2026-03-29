@@ -26,6 +26,7 @@ import { DumpDetector } from './components/DumpDetector';
 import { SignalFeed } from './components/SignalFeed';
 import { WalletRanking } from './components/WalletRanking';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { WatchlistProvider } from './contexts/WatchlistContext';
 import { ViewId } from './types';
 import { motion, AnimatePresence } from 'motion/react';
 import { NarrativeSync } from './components/NarrativeSync';
@@ -208,8 +209,10 @@ const LinkAuditUtility = () => {
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <LinkAuditUtility />
-      <AppContent />
+      <WatchlistProvider>
+        <LinkAuditUtility />
+        <AppContent />
+      </WatchlistProvider>
     </AuthProvider>
   );
 };

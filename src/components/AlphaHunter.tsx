@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Flame, Copy, Check, RefreshCw, ChevronRight } from 'lucide-react';
+import { WatchlistButton } from './ui/WatchlistButton';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { getTrendingPairs, getNewPairs, DexToken } from '../services/dexscreenerClient';
@@ -430,9 +431,22 @@ export const AlphaHunter: React.FC<AlphaHunterProps> = ({ onSelectToken }) => {
 
                     {/* ACTION */}
                     <td className="px-4 py-3">
-                      <span className="flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-700 transition-colors whitespace-nowrap">
-                        View <ChevronRight size={12} />
-                      </span>
+                      <div className="flex items-center gap-1">
+                        <WatchlistButton
+                          token={{
+                            address: token.address,
+                            symbol: token.symbol,
+                            name: token.name,
+                            chain: token.chain,
+                            addedAt: Date.now(),
+                            signal: token.signal,
+                            alphaScore: token.alphaScore,
+                          }}
+                        />
+                        <span className="flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-700 transition-colors whitespace-nowrap">
+                          View <ChevronRight size={12} />
+                        </span>
+                      </div>
                     </td>
                   </tr>
                 ))}
